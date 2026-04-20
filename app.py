@@ -7,10 +7,22 @@ app = Flask(__name__)
 def rodzic():
     return render_template('rodzic.html')
 
-# Strona Dziecka
 @app.route('/')
+@app.route('/dziecko')
 def dziecko():
     return render_template('dziecko.html')
+
+@app.route('/quiz')
+def quiz():
+    return render_template('quiz.html')
+
+@app.route('/gra')
+def gra():
+    return render_template('gra.html')
+
+@app.route('/posilek')
+def posilek():
+    return render_template('posilek.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
