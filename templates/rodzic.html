@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historia Posiłków - GlikoKids</title>
+    <title>Panel Rodzica - GlikoKids</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .navbar { background-color: #4e73df; }
+        .stats-card { border-left: 4px solid #4e73df; }
+        .goal-section { background-color: #fff; border-radius: 15px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .notification-badge { padding: 4px; border-radius: 50%; background-color: #e74a3b; position: absolute; top: 5px; right: 0px; }
     </style>
 </head>
 <body>
@@ -18,86 +21,152 @@
             <a class="navbar-brand font-weight-bold" href="index.html">
                 <i class="fas fa-heartbeat"></i> GlikoKids
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Przełącz nawigację">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
+                
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="rodzic.html"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
+                        <a class="nav-link active" aria-current="page" href="rodzic.html"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="historia_rodzic.html"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
+                        <a class="nav-link" href="historia_rodzic.html"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="baza_rodzic.html"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
                     </li>
                 </ul>
+                
                 <ul class="navbar-nav ms-auto align-items-center">
+                    
                     <li class="nav-item me-3 position-relative">
-                        <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
+                        <a class="nav-link text-white" href="#" title="Powiadomienia">
+                            <i class="fas fa-bell fa-lg"></i>
+                            <span class="position-absolute translate-middle bg-danger border border-light rounded-circle" style="width: 10px; height: 10px; top: 10px; right: 0;">
+                                <span class="visually-hidden">Nowe powiadomienia</span>
+                            </span>
+                        </a>
                     </li>
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle fa-lg me-2"></i> Tata Ani
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li><a class="dropdown-item" href="#">Ustawienia</a></li>
-                            <li><a class="dropdown-item text-danger" href="#">Wyloguj się</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog fa-sm fa-fw me-2 text-gray-400"></i> Ustawienia konta</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-child fa-sm fa-fw me-2 text-gray-400"></i> Ustawienia dziecka</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2"></i> Wyloguj się</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-
     <div class="container">
-        <h2 class="h4 text-gray-800 mb-4">Historia Posiłków</h2>
-        
-        <div class="card shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Zatwierdzone posiłki z tego tygodnia</h6>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Data i godzina</th>
-                                <th>Posiłek</th>
-                                <th>Obliczenia Dziecka</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Dzisiaj, 10:45</td>
-                                <td><strong>🥪 Kanapka z serem, jabłko</strong></td>
-                                <td>2.5 WW, 1.0 WBT</td>
-                                <td><span class="badge bg-success">Zatwierdzone</span></td>
-                            </tr>
-                            <tr>
-                                <td>Wczoraj, 14:30</td>
-                                <td><strong>🍲 Zupa pomidorowa z ryżem</strong></td>
-                                <td>3.0 WW, 0.5 WBT</td>
-                                <td><span class="badge bg-success">Zatwierdzone</span></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
-                                    <em>Tutaj w przyszłości pojawi się więcej rekordów pobieranych z bazy danych...</em>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="goal-section">
+                    <h2 class="h4 text-primary">Nasz Cel</h2>
+                    <p class="text-muted">
+                        Budujemy samodzielność Twojego dziecka w zarządzaniu cukrzycą typu 1. 
+                        Dzięki grywalizacji, nauka obliczania wymienników WW i WBT staje się zabawą, 
+                        a Ty zyskujesz spokój ducha, wiedząc, że Twoje dziecko czuje się pewnie.
+                    </p>
                 </div>
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card stats-card shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Aktywność Dziecka</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">Twoje dziecko wykonało dziś <span class="badge bg-success">12</span> obliczeń WW/WBT!</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calculator fa-2x text-secondary opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+    <div class="card shadow h-100 py-2" style="border-left: 4px solid #1cc88a;">
+        <div class="card-body">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-3">Dzisiejsze postępy (WW)</div>
+            
+            <div class="row align-items-center">
+                <div class="col-6 text-center">
+                    <div style="position: relative; height: 120px; width: 120px; margin: 0 auto;">
+                        <canvas id="wwProgressChart"></canvas>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; color: #5a5c69;">
+                            8 / 12<br><small>WW</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="mb-3">
+                        <span class="small font-weight-bold">Cel dzienny:</span>
+                        <span class="float-end text-muted small">66% zrealizowane</span>
+                    </div>
+                    
+                    <h6 class="small font-weight-bold mt-4">Poprawność obliczeń dziecka: <span class="float-end text-success">90%</span></h6>
+                    <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted">Ania świetnie sobie radzi z szacowaniem!</small>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+        </div>
+
         <footer class="text-center mt-5 text-muted pb-4">
-            <small>&copy; 2026 GlikoKids Team</small>
+            <small>&copy; 2026 GlikoKids Team - Digital Health Project</small>
         </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('wwProgressChart').getContext('2d');
+            
+            // Konfiguracja wykresu
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Spożyte WW', 'Pozostało do celu'],
+                    datasets: [{
+                        data: [8, 4], // Zjedzono 8 WW, Zostało 4 WW (z limitu 12)
+                        backgroundColor: ['#1cc88a', '#eaecf4'], // Zielony i szary
+                        hoverBackgroundColor: ['#17a673', '#dddfeb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutout: '75%', // Jak grube ma być kółko (75% to ładny cienki pierścień)
+                    plugins: {
+                        legend: { display: false }, // Ukrywamy legendę dla czystszego wyglądu
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
