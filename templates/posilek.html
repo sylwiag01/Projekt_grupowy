@@ -6,7 +6,7 @@
     <title>Posiłek – GlikoKids</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../style/main.css">
+    <link rel="stylesheet" href="/style/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
 </head>
@@ -15,7 +15,7 @@
     <header class="header">
         <nav class="navbar navbar-dark mb-3">
             <div class="container text-center">
-                <a href="dziecko.html" class="navbar-brand mx-auto logo mb-0 text-decoration-none">
+                <a href="/dziecko" class="navbar-brand mx-auto logo mb-0 text-decoration-none">
                     <i class="fas fa-star star-animate"></i> GlikoKids
                 </a>
             </div>
@@ -23,42 +23,95 @@
     </header>
 
     <div class="container text-center mt-4">
-
         <h2>🍽️ Mój posiłek</h2>
 
         <div class="card p-4 mt-3">
 
-            <input type="text" id="meal" class="form-control mb-3" placeholder="Co zjadłeś? np. kanapka, jabłko">
+            <div class="mb-3 text-start">
+                <label class="form-label fw-bold">Co zjadłeś? 🥗</label>
+                <input type="text" id="meal_name" class="form-control" placeholder="np. kanapka, jabłko">
+            </div>
 
-            <button class="btn btn-primary" onclick="saveMeal()">Zapisz</button>
+            <div class="row mb-3">
+                <div class="col-6 text-start">
+                    <label class="form-label fw-bold">Moje WW 🌾</label>
+                    <input type="number" id="ww" class="form-control" placeholder="np. 2.5" step="0.1" min="0">
+                </div>
+                <div class="col-6 text-start">
+                    <label class="form-label fw-bold">Moje WBT 🥩</label>
+                    <input type="number" id="wbt" class="form-control" placeholder="np. 1.0" step="0.1" min="0">
+                </div>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label fw-bold">Kalorie 🔥</label>
+                <input type="number" id="calories" class="form-control" placeholder="np. 350" min="0">
+            </div>
+
+<button class="btn btn-primary" onclick="saveMeal()">Zapisz 💾</button>
 
             <div id="summary" class="mt-4"></div>
-
         </div>
+
         <div class="container mt-2">
-            <a href="dziecko.html" class="btn btn-secondary">
+            <a href="/dziecko" class="btn btn-secondary">
                 ← Powrót do menu
             </a>
         </div>
     </div>
 
     <script>
-        function saveMeal() {
-            const meal = document.getElementById("meal").value;
+        const USER_ID = {{ user_id }};
+
+        const parseNum = id => {
+            const v = parseFloat(document.getElementById(id).value);
+            return isNaN(v) ? null : v;
+        };
+
+        async function saveMeal() {
+            const mealName = document.getElementById("meal_name").value.trim();
             const summary = document.getElementById("summary");
 
-            if (meal.trim() === "") {
-                summary.innerHTML = "😅 Wpisz coś!";
+            if (!mealName) {
+                summary.innerHTML = "😅 Wpisz nazwę posiłku!";
                 return;
             }
 
-            summary.innerHTML = `
-        <div class="p-3 rounded" style="background:#eafaf1">
-            🎉 Super robota!<br>
-            Zjadłeś: <strong>${meal}</strong><br><br>
-            🌟 Dbając o jedzenie, dbasz o zdrowie!
-        </div>
-    `;
+            const data = {
+                child_id: USER_ID,
+                meal_name: mealName,
+                calories: parseNum("calories"),
+                ww: parseNum("ww"),
+                wbt: parseNum("wbt"),
+            };
+
+            try {
+                const resp = await fetch('/api/meal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (resp.ok) {
+                    summary.innerHTML = `
+                        <div class="p-3 rounded" style="background:#eafaf1">
+                            🎉 Super robota!<br>
+                            Zjadłeś: <strong>${mealName}</strong><br>
+                            ${data.ww !== null ? `WW: <strong>${data.ww}</strong>` : ''}
+                            ${data.wbt !== null ? ` | WBT: <strong>${data.wbt}</strong>` : ''}<br><br>
+                            🌟 Dbając o jedzenie, dbasz o zdrowie!
+                        </div>
+                    `;
+                    document.getElementById("meal_name").value = "";
+                    document.getElementById("ww").value = "";
+                    document.getElementById("wbt").value = "";
+                    document.getElementById("calories").value = "";
+                } else {
+                    summary.innerHTML = "❌ Błąd zapisu. Spróbuj ponownie.";
+                }
+            } catch {
+                summary.innerHTML = "❌ Błąd połączenia. Spróbuj ponownie.";
+            }
         }
     </script>
 

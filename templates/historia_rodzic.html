@@ -9,13 +9,16 @@
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .navbar { background-color: #4e73df; }
+        .actual-input { width: 72px; }
+        .actual-display { font-weight: 600; color: #2c3e50; }
+        .actual-empty { color: #adb5bd; font-style: italic; }
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
         <div class="container">
-            <a class="navbar-brand font-weight-bold" href="index.html">
+            <a class="navbar-brand font-weight-bold" href="/rodzic">
                 <i class="fas fa-heartbeat"></i> GlikoKids
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -24,10 +27,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="rodzic.html"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
+                        <a class="nav-link" href="/rodzic"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="historia_rodzic.html"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
+                        <a class="nav-link active" aria-current="page" href="/historia_rodzic"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="baza_rodzic.html"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
@@ -53,10 +56,11 @@
 
     <div class="container">
         <h2 class="h4 text-gray-800 mb-4">Historia Posiłków</h2>
-        
+
         <div class="card shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Zatwierdzone posiłki z tego tygodnia</h6>
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Zapisane posiłki dziecka</h6>
+                <span class="badge bg-secondary" id="meal-count">Ładowanie...</span>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -65,26 +69,16 @@
                             <tr>
                                 <th>Data i godzina</th>
                                 <th>Posiłek</th>
+                                <th>Kalorie</th>
                                 <th>Obliczenia Dziecka</th>
-                                <th>Status</th>
+                                <th>Wartości Rzeczywiste</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="meals-tbody">
                             <tr>
-                                <td>Dzisiaj, 10:45</td>
-                                <td><strong>🥪 Kanapka z serem, jabłko</strong></td>
-                                <td>2.5 WW, 1.0 WBT</td>
-                                <td><span class="badge bg-success">Zatwierdzone</span></td>
-                            </tr>
-                            <tr>
-                                <td>Wczoraj, 14:30</td>
-                                <td><strong>🍲 Zupa pomidorowa z ryżem</strong></td>
-                                <td>3.0 WW, 0.5 WBT</td>
-                                <td><span class="badge bg-success">Zatwierdzone</span></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
-                                    <em>Tutaj w przyszłości pojawi się więcej rekordów pobieranych z bazy danych...</em>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                    Ładowanie posiłków...
                                 </td>
                             </tr>
                         </tbody>
@@ -99,5 +93,100 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const USER_ID = {{ user_id }};
+
+        function formatTimestamp(iso) {
+            const d = new Date(iso);
+            return d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                + ', ' + d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function fmt(val, unit = '') {
+            return val !== null && val !== undefined ? `${val}${unit}` : '—';
+        }
+
+        async function loadMeals() {
+            const tbody = document.getElementById('meals-tbody');
+            const counter = document.getElementById('meal-count');
+            try {
+                const resp = await fetch(`/api/meals/${USER_ID}`);
+                const meals = await resp.json();
+
+                counter.textContent = `${meals.length} posiłków`;
+
+                if (meals.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <em>Brak zapisanych posiłków.</em>
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = meals.map(m => {
+                    const hasActual = m.actual_ww !== null || m.actual_wbt !== null;
+                    const displayHtml = hasActual
+                        ? `<span class="actual-display">${fmt(m.actual_ww, ' WW')} / ${fmt(m.actual_wbt, ' WBT')}</span>`
+                        : `<span class="actual-empty">Nie uzupełniono</span>`;
+                    return `
+                    <tr>
+                        <td class="text-nowrap">${formatTimestamp(m.timestamp)}</td>
+                        <td><strong>${m.meal_name}</strong></td>
+                        <td>${fmt(m.calories, ' kcal')}</td>
+                        <td>${fmt(m.ww, ' WW')} / ${fmt(m.wbt, ' WBT')}</td>
+                        <td>
+                            <div class="mb-2" id="display-${m.id}">${displayHtml}</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="number" id="aww-${m.id}" class="form-control form-control-sm actual-input"
+                                       value="${m.actual_ww ?? ''}" step="0.1" min="0" placeholder="WW">
+                                <input type="number" id="awbt-${m.id}" class="form-control form-control-sm actual-input"
+                                       value="${m.actual_wbt ?? ''}" step="0.1" min="0" placeholder="WBT">
+                                <button class="btn btn-success btn-sm px-3" onclick="saveActual(${m.id})">
+                                    <i class="fas fa-save me-1"></i> Zapisz
+                                </button>
+                                <i class="fas fa-check-circle text-success fs-5" id="saved-${m.id}" style="display:none"></i>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-danger py-4">
+                            Błąd ładowania danych.
+                        </td>
+                    </tr>`;
+                counter.textContent = 'Błąd';
+            }
+        }
+
+        async function saveActual(mealId) {
+            const aww = parseFloat(document.getElementById(`aww-${mealId}`).value);
+            const awbt = parseFloat(document.getElementById(`awbt-${mealId}`).value);
+            const actualWw = isNaN(aww) ? null : aww;
+            const actualWbt = isNaN(awbt) ? null : awbt;
+
+            await fetch(`/api/meal/${mealId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ actual_ww: actualWw, actual_wbt: actualWbt })
+            });
+
+            const display = document.getElementById(`display-${mealId}`);
+            if (actualWw !== null || actualWbt !== null) {
+                display.innerHTML = `<span class="actual-display">${fmt(actualWw, ' WW')} / ${fmt(actualWbt, ' WBT')}</span>`;
+            } else {
+                display.innerHTML = `<span class="actual-empty">Nie uzupełniono</span>`;
+            }
+
+            const icon = document.getElementById(`saved-${mealId}`);
+            icon.style.display = 'inline';
+            setTimeout(() => icon.style.display = 'none', 2000);
+        }
+
+        loadMeals();
+    </script>
 </body>
 </html>
