@@ -9,76 +9,367 @@
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .navbar { background-color: #4e73df; }
+        .ww-badge  { background-color: #e8f4fd; color: #2980b9; font-weight: 700; }
+        .wbt-badge { background-color: #eafaf1; color: #27ae60; font-weight: 700; }
+        .table th  { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #6c757d; }
+        .cat-badge { font-size: .75rem; }
+        #sync-result { font-size: .9rem; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand font-weight-bold" href="index.html">
-                <i class="fas fa-heartbeat"></i> GlikoKids
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="rodzic.html"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="historia_rodzic.html"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="baza_rodzic.html"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-3 position-relative">
-                        <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle fa-lg me-2"></i> Tata Ani
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li><a class="dropdown-item" href="#">Ustawienia</a></li>
-                            <li><a class="dropdown-item text-danger" href="#">Wyloguj się</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+<nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h4 text-gray-800 mb-0">Baza Produktów</h2>
-            <button class="btn btn-primary"><i class="fas fa-plus"></i> Dodaj własny przepis</button>
+        <a class="navbar-brand font-weight-bold" href="/rodzic">
+            <i class="fas fa-heartbeat"></i> GlikoKids
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/rodzic"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/historia_rodzic"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/baza_rodzic"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3 position-relative">
+                    <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle fa-lg me-2"></i> Tata Ani
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#">Ustawienia</a></li>
+                        <li><a class="dropdown-item text-danger" href="#">Wyloguj się</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-        
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="input-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="Szukaj produktu (np. jabłko, chleb...)" aria-label="Szukaj">
-                    <button class="btn btn-outline-primary" type="button"><i class="fas fa-search"></i> Szukaj</button>
-                </div>
-            </div>
-        </div>
+    </div>
+</nav>
 
-        <div class="row">
-            <div class="col-12 text-center py-5 text-muted">
-                <i class="fas fa-box-open fa-3x mb-3 text-secondary opacity-25"></i>
-                <h5>Baza jest gotowa</h5>
-                <p>Wpisz nazwę produktu powyżej, aby przeszukać bazę (ta funkcja zostanie podłączona do API wkrótce).</p>
-            </div>
-        </div>
+<div class="container">
 
-        <footer class="text-center mt-5 text-muted pb-4">
-            <small>&copy; 2026 GlikoKids Team</small>
-        </footer>
+    <!-- Header + sync -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <h2 class="h4 mb-0">Baza Produktów</h2>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <span id="sync-result"></span>
+            <button class="btn btn-outline-danger" id="purge-btn" onclick="purgeAll()">
+                <i class="fas fa-trash me-1"></i> Wyczyść bazę
+            </button>
+            <button class="btn btn-primary" id="sync-btn" onclick="syncProducts()">
+                <i class="fas fa-sync me-1"></i> Synchronizuj z OpenFoodFacts
+            </button>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-0" id="mainTabs">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-produce" onclick="onTabClick('produce')">
+                <i class="fas fa-carrot me-1"></i> Produkty spożywcze
+                <span class="badge bg-secondary ms-1" id="produce-total-badge">—</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-dishes" onclick="onTabClick('dishes')">
+                <i class="fas fa-utensils me-1"></i> Gotowe dania
+                <span class="badge bg-secondary ms-1" id="dishes-total-badge">—</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- ── PRODUCE TAB ── -->
+        <div class="tab-pane fade show active" id="tab-produce">
+            <div class="card shadow-sm border-top-0 rounded-top-0">
+                <div class="card-body border-bottom">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="produce-search" class="form-control"
+                                       placeholder="Szukaj produktu..."
+                                       onkeydown="if(event.key==='Enter') search('produce')">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="produce-category" class="form-select" onchange="search('produce')">
+                                <option value="">Wszystkie kategorie</option>
+                                {% for cat in produce_cats %}
+                                <option value="{{ cat }}">{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-primary w-100" onclick="search('produce')">
+                                <i class="fas fa-filter me-1"></i> Filtruj
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Nazwa</th>
+                                    <th>Kategoria</th>
+                                    <th class="text-end">Kalorie<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="text-end">Węglowodany<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="text-end">WW<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="text-end">WBT<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="pe-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="produce-tbody">
+                                <tr><td colspan="7" class="text-center text-muted py-5">
+                                    Kliknij <strong>Synchronizuj</strong>, aby pobrać dane z OpenFoodFacts.
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white" id="produce-pagination"></div>
+            </div>
+        </div>
+
+        <!-- ── DISHES TAB ── -->
+        <div class="tab-pane fade" id="tab-dishes">
+            <div class="card shadow-sm border-top-0 rounded-top-0">
+                <div class="card-body border-bottom">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="dishes-search" class="form-control"
+                                       placeholder="Szukaj dania..."
+                                       onkeydown="if(event.key==='Enter') search('dishes')">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="dishes-category" class="form-select" onchange="search('dishes')">
+                                <option value="">Wszystkie kategorie</option>
+                                {% for cat in dish_cats %}
+                                <option value="{{ cat }}">{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-primary w-100" onclick="search('dishes')">
+                                <i class="fas fa-filter me-1"></i> Filtruj
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Nazwa</th>
+                                    <th>Kategoria</th>
+                                    <th class="text-end">Kalorie<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="text-end">Węglowodany<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="text-end">WW<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="text-end">WBT<br><small class="fw-normal">/ 100g</small></th>
+                                    <th class="pe-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="dishes-tbody">
+                                <tr><td colspan="7" class="text-center text-muted py-5">
+                                    Kliknij <strong>Synchronizuj</strong>, aby pobrać dane z OpenFoodFacts.
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white" id="dishes-pagination"></div>
+            </div>
+        </div>
+
+    </div><!-- /tab-content -->
+
+    <footer class="text-center mt-5 text-muted pb-4">
+        <small>&copy; 2026 GlikoKids Team</small>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const state = {
+        produce: { page: 1, q: '', category: '' },
+        dishes:  { page: 1, q: '', category: '' },
+    };
+
+    const CAT_COLOURS = {
+        'Owoce': 'bg-danger', 'Warzywa': 'bg-success', 'Nabiał': 'bg-info text-dark',
+        'Mięso': 'bg-warning text-dark', 'Pieczywo': 'bg-secondary', 'Zboża': 'bg-secondary',
+        'Zupy': 'bg-primary', 'Dania gotowe': 'bg-dark', 'Sałatki': 'bg-success',
+        'Desery': 'bg-danger', 'Przekąski': 'bg-warning text-dark',
+    };
+
+    function catBadge(cat) {
+        const cls = CAT_COLOURS[cat] || 'bg-secondary';
+        return `<span class="badge cat-badge ${cls}">${cat}</span>`;
+    }
+
+    function fmt(v) { return v !== null && v !== undefined ? v : '—'; }
+
+    async function loadTab(tab) {
+        const s = state[tab];
+        const tbody = document.getElementById(`${tab}-tbody`);
+        const pager = document.getElementById(`${tab}-pagination`);
+        const badge = document.getElementById(`${tab}-total-badge`);
+
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-primary me-2"></div> Ładowanie...
+        </td></tr>`;
+
+        try {
+            const url = `/api/${tab}?q=${encodeURIComponent(s.q)}&category=${encodeURIComponent(s.category)}&page=${s.page}`;
+            const data = await fetch(url).then(r => r.json());
+
+            badge.textContent = data.total;
+
+            if (data.items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-5">Brak wyników.</td></tr>`;
+                pager.innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = data.items.map(i => `
+                <tr id="row-${tab}-${i.id}">
+                    <td class="ps-3 fw-semibold">${i.name}</td>
+                    <td>${catBadge(i.category)}</td>
+                    <td class="text-end">${fmt(i.calories)}</td>
+                    <td class="text-end">${fmt(i.carbs)} g</td>
+                    <td class="text-end"><span class="badge ww-badge">${fmt(i.ww)}</span></td>
+                    <td class="text-end"><span class="badge wbt-badge">${fmt(i.wbt)}</span></td>
+                    <td class="text-end pe-3">
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteItem('${tab}', ${i.id})" title="Usuń">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            renderPagination(tab, data.page, data.pages);
+        } catch {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">Błąd ładowania.</td></tr>`;
+        }
+    }
+
+    function renderPagination(tab, page, pages) {
+        const el = document.getElementById(`${tab}-pagination`);
+        if (pages <= 1) { el.innerHTML = ''; return; }
+
+        const maxVisible = 5;
+        let start = Math.max(1, page - Math.floor(maxVisible / 2));
+        let end   = Math.min(pages, start + maxVisible - 1);
+        if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+
+        let html = '<nav aria-label="Paginacja"><ul class="pagination pagination-sm justify-content-center mb-0">';
+        html += `<li class="page-item ${page === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage('${tab}',${page-1});return false">‹</a></li>`;
+        for (let p = start; p <= end; p++) {
+            html += `<li class="page-item ${p === page ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changePage('${tab}',${p});return false">${p}</a></li>`;
+        }
+        html += `<li class="page-item ${page === pages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage('${tab}',${page+1});return false">›</a></li>`;
+        html += '</ul></nav>';
+        el.innerHTML = html;
+    }
+
+    function changePage(tab, page) {
+        state[tab].page = page;
+        loadTab(tab);
+    }
+
+    function search(tab) {
+        state[tab].q = document.getElementById(`${tab}-search`).value.trim();
+        state[tab].category = document.getElementById(`${tab}-category`).value;
+        state[tab].page = 1;
+        loadTab(tab);
+    }
+
+    function onTabClick(tab) {
+        if (state[tab].loaded) return;
+        state[tab].loaded = true;
+        loadTab(tab);
+    }
+
+    async function syncProducts() {
+        const btn = document.getElementById('sync-btn');
+        const result = document.getElementById('sync-result');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Synchronizowanie...';
+        result.innerHTML = '<span class="text-muted">Pobieranie danych z OpenFoodFacts (może potrwać ~30 sekund)...</span>';
+
+        try {
+            const data = await fetch('/api/sync', { method: 'POST' }).then(r => r.json());
+            if (data.errors && data.errors.length) {
+                result.innerHTML = `<span class="text-warning">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    Dodano <strong>${data.added_produce}</strong> produktów i <strong>${data.added_dishes}</strong> dań
+                    — błędy: ${data.errors.join('; ')}
+                </span>`;
+            } else {
+                result.innerHTML = `<span class="text-success">
+                    <i class="fas fa-check-circle me-1"></i>
+                    Dodano <strong>${data.added_produce}</strong> produktów i <strong>${data.added_dishes}</strong> dań
+                </span>`;
+            }
+            state.produce.page = 1; state.produce.q = ''; state.produce.category = '';
+            state.dishes.page  = 1; state.dishes.q  = ''; state.dishes.category  = '';
+            loadTab('produce');
+            loadTab('dishes');
+        } catch (e) {
+            result.innerHTML = `<span class="text-danger"><i class="fas fa-times-circle me-1"></i> Błąd: ${e.message}</span>`;
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sync me-1"></i> Synchronizuj z OpenFoodFacts';
+    }
+
+    async function purgeAll() {
+        if (!confirm('Usunąć wszystkie produkty i dania z bazy?')) return;
+        const btn = document.getElementById('purge-btn');
+        btn.disabled = true;
+        await fetch('/api/purge', { method: 'DELETE' });
+        document.getElementById('sync-result').innerHTML =
+            '<span class="text-muted">Baza wyczyszczona.</span>';
+        ['produce', 'dishes'].forEach(tab => {
+            state[tab].page = 1; state[tab].q = ''; state[tab].category = '';
+            loadTab(tab);
+        });
+        btn.disabled = false;
+    }
+
+    async function deleteItem(tab, id) {
+        const endpoint = tab === 'produce' ? 'produce' : 'dish';
+        if (!confirm('Usunąć ten wpis?')) return;
+        await fetch(`/api/${endpoint}/${id}`, { method: 'DELETE' });
+        const row = document.getElementById(`row-${tab}-${id}`);
+        if (row) row.remove();
+        const badge = document.getElementById(`${tab}-total-badge`);
+        badge.textContent = Math.max(0, parseInt(badge.textContent) - 1);
+    }
+
+    // Load produce on first render (it's the active tab)
+    state.produce.loaded = true;
+    loadTab('produce');
+</script>
 </body>
 </html>
