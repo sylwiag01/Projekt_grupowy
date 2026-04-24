@@ -32,10 +32,16 @@
                     <a class="nav-link" href="/rodzic"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/historia_rodzic"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
+                    <a class="nav-link" href="{{ url_for('aktywnosc_dziecka') }}"><i class="fas fa-child me-1"></i>
+                        Aktywność Dziecka</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/baza_rodzic"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
+                    <a class="nav-link" href="/historia_rodzic"><i class="fas fa-history me-1"></i> Historia
+                        Posiłków</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/baza_rodzic"><i
+                            class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto align-items-center">
@@ -43,7 +49,8 @@
                     <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#"
+                       data-bs-toggle="dropdown">
                         <i class="fas fa-user-circle fa-lg me-2"></i> Tata Ani
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow">
@@ -75,7 +82,8 @@
     <!-- Tabs -->
     <ul class="nav nav-tabs mb-0" id="mainTabs">
         <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-produce" onclick="onTabClick('produce')">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-produce"
+                    onclick="onTabClick('produce')">
                 <i class="fas fa-carrot me-1"></i> Produkty spożywcze
                 <span class="badge bg-secondary ms-1" id="produce-total-badge">—</span>
             </button>
@@ -122,20 +130,22 @@
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Nazwa</th>
-                                    <th>Kategoria</th>
-                                    <th class="text-end">Kalorie<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="text-end">Węglowodany<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="text-end">WW<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="text-end">WBT<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="pe-3"></th>
-                                </tr>
+                            <tr>
+                                <th class="ps-3">Nazwa</th>
+                                <th>Kategoria</th>
+                                <th class="text-end">Kalorie<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="text-end">Węglowodany<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="text-end">WW<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="text-end">WBT<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="pe-3"></th>
+                            </tr>
                             </thead>
                             <tbody id="produce-tbody">
-                                <tr><td colspan="7" class="text-center text-muted py-5">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
                                     Kliknij <strong>Synchronizuj</strong>, aby pobrać dane z OpenFoodFacts.
-                                </td></tr>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -176,20 +186,22 @@
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Nazwa</th>
-                                    <th>Kategoria</th>
-                                    <th class="text-end">Kalorie<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="text-end">Węglowodany<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="text-end">WW<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="text-end">WBT<br><small class="fw-normal">/ 100g</small></th>
-                                    <th class="pe-3"></th>
-                                </tr>
+                            <tr>
+                                <th class="ps-3">Nazwa</th>
+                                <th>Kategoria</th>
+                                <th class="text-end">Kalorie<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="text-end">Węglowodany<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="text-end">WW<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="text-end">WBT<br><small class="fw-normal">/ 100g</small></th>
+                                <th class="pe-3"></th>
+                            </tr>
                             </thead>
                             <tbody id="dishes-tbody">
-                                <tr><td colspan="7" class="text-center text-muted py-5">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
                                     Kliknij <strong>Synchronizuj</strong>, aby pobrać dane z OpenFoodFacts.
-                                </td></tr>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
