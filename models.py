@@ -3,11 +3,13 @@ from extensions import db
 
 
 class Child(db.Model):
-    id       = db.Column(db.Integer, primary_key=True)
-    name     = db.Column(db.String(100), nullable=False)
-    meals    = db.relationship('Meal',       backref='child', lazy=True)
-    stats    = db.relationship('ChildStats', backref='child', lazy=True,
-                               order_by='ChildStats.recorded_at')
+    id         = db.Column(db.Integer, primary_key=True)
+    name       = db.Column(db.String(100), nullable=False)
+    meals      = db.relationship('Meal',       backref='child', lazy=True)
+    stats      = db.relationship('ChildStats', backref='child', lazy=True,
+                                 order_by='ChildStats.recorded_at')
+    activities = db.relationship('Activity',   backref='child', lazy=True,
+                                 order_by='Activity.created_at')
 
 
 class Meal(db.Model):
@@ -29,6 +31,15 @@ class ChildStats(db.Model):
     height_cm   = db.Column(db.Float)
     age_years   = db.Column(db.Integer)
     recorded_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Activity(db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    child_id      = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    activity_type = db.Column(db.String(20), nullable=False)  # 'quiz' | 'game' | 'meal'
+    score         = db.Column(db.Float)   # quiz: pct correct, game: stars earned, meal: WW
+    details       = db.Column(db.Text)    # JSON string with extra context
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Produce(db.Model):

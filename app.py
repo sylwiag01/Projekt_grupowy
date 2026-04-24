@@ -1,10 +1,12 @@
+import json
 import time
+from datetime import datetime
 
 import requests as http
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
 from extensions import db
-from models import Child, ChildStats, Dish, Meal, Produce
+from models import Activity, Child, ChildStats, Dish, Meal, Produce
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///glikokids.db'
@@ -118,12 +120,14 @@ def dziecko():
 
 @app.route('/quiz')
 def quiz():
-    return render_template('quiz.html')
+    user_id = request.args.get('user_id', 1, type=int)
+    return render_template('quiz.html', user_id=user_id)
 
 
 @app.route('/gra')
 def gra():
-    return render_template('gra.html')
+    user_id = request.args.get('user_id', 1, type=int)
+    return render_template('gra.html', user_id=user_id)
 
 
 @app.route('/posilek')
@@ -141,6 +145,12 @@ def rodzic():
 def historia_rodzic():
     user_id = request.args.get('user_id', 1, type=int)
     return render_template('historia_rodzic.html', user_id=user_id)
+
+
+@app.route('/aktywnosc_dziecka')
+def aktywnosc_dziecka():
+    child_id = request.args.get('child_id', 1, type=int)
+    return render_template('aktywnosc_dziecka.html', child_id=child_id)
 
 
 @app.route('/baza_rodzic')
@@ -242,6 +252,64 @@ def delete_child_stats(entry_id):
     db.session.delete(entry)
     db.session.commit()
     return jsonify({'ok': True})
+
+
+# ── Activity API ─────────────────────────────────────────────────────────────
+
+def _serialize_activity(a):
+    return {
+        'id': a.id,
+        'child_id': a.child_id,
+        'activity_type': a.activity_type,
+        'score': a.score,
+        'details': json.loads(a.details) if a.details else {},
+        'created_at': a.created_at.isoformat(),
+    }
+
+
+@app.route('/api/activity', methods=['POST'])
+def save_activity():
+    data = request.get_json()
+    if not data or not data.get('child_id') or not data.get('activity_type'):
+        return jsonify({'error': 'child_id and activity_type are required'}), 400
+    entry = Activity(
+        child_id=data['child_id'],
+        activity_type=data['activity_type'],
+        score=data.get('score'),
+        details=json.dumps(data.get('details', {})),
+    )
+    db.session.add(entry)
+    db.session.commit()
+    return jsonify({'id': entry.id}), 201
+
+
+@app.route('/api/activity/<int:child_id>/today')
+def get_activities_today(child_id):
+    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    items = (Activity.query
+             .filter_by(child_id=child_id)
+             .filter(Activity.created_at >= today)
+             .order_by(Activity.created_at.desc())
+             .limit(5).all())
+    return jsonify([_serialize_activity(a) for a in items])
+
+
+@app.route('/api/activity/<int:child_id>')
+def get_activities(child_id):
+    per_page = 10
+    page     = request.args.get('page', 1, type=int)
+    q        = (Activity.query
+                .filter_by(child_id=child_id)
+                .order_by(Activity.created_at.desc()))
+    total = q.count()
+    items = q.offset((page - 1) * per_page).limit(per_page).all()
+    return jsonify({
+        'items': [_serialize_activity(a) for a in items],
+        'total': total,
+        'page': page,
+        'pages': max(1, (total + per_page - 1) // per_page),
+    })
+
 
 
 # ── Product API ───────────────────────────────────────────────────────────────

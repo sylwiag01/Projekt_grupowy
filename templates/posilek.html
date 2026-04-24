@@ -231,6 +231,12 @@
         const resp = await fetch('/api/meal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
         if (resp.ok) {
           summary.innerHTML = `<div class="alert alert-success mt-2">🎉 <strong>Super robota!</strong> Zjadłeś: <strong>${esc(mealName)}</strong> | WW: <strong>${data.ww}</strong> | WBT: <strong>${data.wbt}</strong> | 🔥 ${data.calories} kcal</div>`;
+          fetch('/api/activity', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ child_id: USER_ID, activity_type: 'meal', score: data.ww,
+              details: { meal_name: mealName, ww: data.ww, wbt: data.wbt, calories: data.calories } }),
+          }).catch(() => {});
           plate = [];
           renderPlate();
           mealNameInput.value = '';

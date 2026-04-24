@@ -172,6 +172,15 @@ function nextQuestion() {
     }
 }
 
+function logActivity(type, actScore, details) {
+    const childId = (typeof CHILD_ID !== 'undefined') ? CHILD_ID : 1;
+    fetch('/api/activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ child_id: childId, activity_type: type, score: actScore, details }),
+    }).catch(() => {});
+}
+
 function showResults() {
     document.getElementById('quiz-screen').style.display = 'none';
     document.getElementById('back-btn').style.display = 'none';
@@ -179,6 +188,8 @@ function showResults() {
 
     const total = questions.length;
     const pct = score / total;
+
+    logActivity('quiz', Math.round(pct * 100), { correct: score, total });
 
     let emoji, msg, sub;
     if      (pct === 1)   { emoji = '🏆'; msg = 'Idealny wynik! Jesteś mistrzem WW!';   sub = 'Wszystkie odpowiedzi poprawne – niesamowite!'; }

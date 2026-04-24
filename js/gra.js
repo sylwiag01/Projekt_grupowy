@@ -197,6 +197,15 @@
             });
         }
 
+        function logActivity(type, actScore, details) {
+            const childId = (typeof CHILD_ID !== 'undefined') ? CHILD_ID : 1;
+            fetch('/api/activity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ child_id: childId, activity_type: type, score: actScore, details }),
+            }).catch(() => {});
+        }
+
         function showResult({ won, stars, totWW, totWBT, totKcal, isLast, text }) {
             document.getElementById('r-emoji').textContent = won ? (stars === 3 ? '🏆' : '🎉') : '😅';
             document.getElementById('r-title').textContent = won ? (stars === 3 ? 'Perfekcyjnie!' : 'Brawo!') : 'Prawie!';
@@ -219,6 +228,15 @@
                 btn.onclick = nextLevel;
             }
 
+            if (won) {
+                const lvl = LEVELS[currentLevel];
+                logActivity('game', stars, {
+                    level: currentLevel + 1,
+                    level_name: lvl.label,
+                    stars,
+                    ww: parseFloat(totWW.toFixed(1)),
+                });
+            }
             document.getElementById('overlay').classList.add('show');
         }
 
