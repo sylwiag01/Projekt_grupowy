@@ -327,7 +327,7 @@
         const result = document.getElementById('sync-result');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Synchronizowanie...';
-        result.innerHTML = '<span class="text-muted">Pobieranie danych z OpenFoodFacts (może potrwać ~30 sekund)...</span>';
+        result.innerHTML = '<span class="text-muted">Pobieranie wszystkich polskich produktów z OpenFoodFacts (może potrwać ~3–5 minut)...</span>';
 
         try {
             const data = await fetch('/api/sync', { method: 'POST' }).then(r => r.json());
@@ -335,7 +335,7 @@
                 result.innerHTML = `<span class="text-warning">
                     <i class="fas fa-exclamation-triangle me-1"></i>
                     Dodano <strong>${data.added_produce}</strong> produktów i <strong>${data.added_dishes}</strong> dań
-                    — błędy: ${data.errors.join('; ')}
+
                 </span>`;
             } else {
                 result.innerHTML = `<span class="text-success">

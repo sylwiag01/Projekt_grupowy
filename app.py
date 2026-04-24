@@ -27,20 +27,20 @@ def load_user(user_id):
 # ── OpenFoodFacts sync helpers ────────────────────────────────────────────────
 
 PRODUCE_CATEGORIES = [
-    ('Owoce',    'en:fruits'),
-    ('Warzywa',  'en:vegetables'),
-    ('Nabiał',   'en:dairies'),
-    ('Mięso',    'en:meats'),
+    ('Owoce', 'en:fruits'),
+    ('Warzywa', 'en:vegetables'),
+    ('Nabiał', 'en:dairies'),
+    ('Mięso', 'en:meats'),
     ('Pieczywo', 'en:breads'),
-    ('Zboża',    'en:cereals-and-potatoes'),
+    ('Zboża', 'en:cereals-and-potatoes'),
 ]
 
 DISH_CATEGORIES = [
-    ('Zupy',         'en:soups'),
+    ('Zupy', 'en:soups'),
     ('Dania gotowe', 'en:meals'),
-    ('Sałatki',      'en:salads'),
-    ('Desery',       'en:desserts'),
-    ('Przekąski',    'en:snacks'),
+    ('Sałatki', 'en:salads'),
+    ('Desery', 'en:desserts'),
+    ('Przekąski', 'en:snacks'),
 ]
 
 _OFF_HEADERS = {'User-Agent': 'GlikoKids/1.0 (educational app for diabetic children)'}
@@ -55,25 +55,36 @@ def _calc_wbt(protein, fat):
     return round((float(protein or 0) * 4 + float(fat or 0) * 9) / 100, 1)
 
 
-def _fetch_off(tag, page_size=50):
-    try:
-        r = http.get(
-            'https://world.openfoodfacts.org/cgi/search.pl',
-            params={
-                'action': 'process',
-                'tagtype_0': 'categories', 'tag_contains_0': 'contains', 'tag_0': tag,
-                'tagtype_1': 'languages',  'tag_contains_1': 'contains', 'tag_1': 'pl',
-                'json': '1', 'page_size': page_size, 'sort_by': 'unique_scans_n',
-                'fields': 'product_name_pl,nutriments',
-            },
-            headers=_OFF_HEADERS,
-            timeout=20,
-        )
-        r.raise_for_status()
-        r.encoding = 'utf-8'
-        return r.json().get('products', []), None
-    except Exception as e:
-        return [], str(e)
+def _fetch_off(tag, page_size=500):
+    all_products = []
+    page = 1
+    while True:
+        try:
+            r = http.get(
+                'https://world.openfoodfacts.org/cgi/search.pl',
+                params={
+                    'action': 'process',
+                    'tagtype_0': 'categories', 'tag_contains_0': 'contains', 'tag_0': tag,
+                    'tagtype_1': 'languages', 'tag_contains_1': 'contains', 'tag_1': 'pl',
+                    'json': '1', 'page': page, 'page_size': page_size,
+                    'sort_by': 'unique_scans_n',
+                    'fields': 'product_name_pl,nutriments',
+                },
+                headers=_OFF_HEADERS,
+                timeout=30,
+            )
+            r.raise_for_status()
+            r.encoding = 'utf-8'
+            data = r.json()
+            products = data.get('products', [])
+            all_products.extend(products)
+            if len(products) < page_size:
+                break  # last page reached
+            page += 1
+            time.sleep(0.5)  # be respectful of the API
+        except Exception as e:
+            return all_products, str(e)
+    return all_products, None
 
 
 def _parse(p, category):
@@ -88,9 +99,9 @@ def _parse(p, category):
             kcal = float(kj) / 4.184
     if kcal is None:
         return None
-    carbs   = float(n.get('carbohydrates_100g') or 0)
+    carbs = float(n.get('carbohydrates_100g') or 0)
     protein = float(n.get('proteins_100g') or 0)
-    fat     = float(n.get('fat_100g') or 0)
+    fat = float(n.get('fat_100g') or 0)
     return dict(
         name=name[:200], category=category,
         calories=round(float(kcal), 1),
@@ -138,9 +149,9 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('rodzic'))
     if request.method == 'POST':
-        email    = request.form.get('email', '').strip().lower()
+        email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
-        parent   = Parent.query.filter_by(email=email).first()
+        parent = Parent.query.filter_by(email=email).first()
         if parent and parent.check_password(password):
             login_user(parent)
             return redirect(url_for('rodzic'))
@@ -153,16 +164,16 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('rodzic'))
     if request.method == 'POST':
-        parent_name   = request.form.get('parent_name', '').strip()
-        email         = request.form.get('email', '').strip().lower()
-        password      = request.form.get('password', '')
-        confirm       = request.form.get('confirm_password', '')
-        child_name    = request.form.get('child_name', '').strip()
-        weight        = request.form.get('weight_kg',             type=float)
-        height        = request.form.get('height_cm',             type=float)
-        age           = request.form.get('age_years',             type=int)
+        parent_name = request.form.get('parent_name', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        confirm = request.form.get('confirm_password', '')
+        child_name = request.form.get('child_name', '').strip()
+        weight = request.form.get('weight_kg', type=float)
+        height = request.form.get('height_cm', type=float)
+        age = request.form.get('age_years', type=int)
         insulin_ratio = request.form.get('insulin_to_carb_ratio', type=float)
-        blood_sugar   = request.form.get('blood_sugar_target',    type=float)
+        blood_sugar = request.form.get('blood_sugar_target', type=float)
 
         if not parent_name or not email or not password or not child_name:
             flash('Wypełnij wszystkie wymagane pola.', 'danger')
@@ -339,14 +350,14 @@ def _serialize_stats(e):
 @app.route('/api/child_stats/<int:child_id>')
 def get_child_stats(child_id):
     entries = ChildStats.query.filter_by(child_id=child_id) \
-                              .order_by(ChildStats.recorded_at.desc()).all()
+        .order_by(ChildStats.recorded_at.desc()).all()
     return jsonify([_serialize_stats(e) for e in entries])
 
 
 @app.route('/api/child_stats/<int:child_id>/latest')
 def get_child_stats_latest(child_id):
     entry = ChildStats.query.filter_by(child_id=child_id) \
-                            .order_by(ChildStats.recorded_at.desc()).first()
+        .order_by(ChildStats.recorded_at.desc()).first()
     if not entry:
         return jsonify(None)
     return jsonify(_serialize_stats(entry))
@@ -403,10 +414,10 @@ def get_activities_today(child_id):
 @app.route('/api/activity/<int:child_id>')
 def get_activities(child_id):
     per_page = 10
-    page     = request.args.get('page', 1, type=int)
-    q        = (Activity.query
-                .filter_by(child_id=child_id)
-                .order_by(Activity.created_at.desc()))
+    page = request.args.get('page', 1, type=int)
+    q = (Activity.query
+         .filter_by(child_id=child_id)
+         .order_by(Activity.created_at.desc()))
     total = q.count()
     items = q.offset((page - 1) * per_page).limit(per_page).all()
     return jsonify({
@@ -420,9 +431,9 @@ def get_activities(child_id):
 # ── Product API ───────────────────────────────────────────────────────────────
 
 def _paginate(query, model_cls):
-    search   = request.args.get('q', '').strip()
+    search = request.args.get('q', '').strip()
     category = request.args.get('category', '').strip()
-    page     = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1, type=int)
     if search:
         query = query.filter(model_cls.name.ilike(f'%{search}%'))
     if category:
@@ -488,7 +499,7 @@ def sync_products():
     seen = set()
     Produce.query.delete()
     for cat_name, tag in PRODUCE_CATEGORIES:
-        products, err = _fetch_off(tag, 50)
+        products, err = _fetch_off(tag)
         if err:
             errors.append(f'{cat_name}: {err}')
         for p in products:
@@ -497,12 +508,12 @@ def sync_products():
                 seen.add(parsed['name'])
                 db.session.add(Produce(**parsed))
                 added_produce += 1
-        time.sleep(0.3)
+        time.sleep(0.5)
 
     seen = set()
     Dish.query.delete()
     for cat_name, tag in DISH_CATEGORIES:
-        products, err = _fetch_off(tag, 50)
+        products, err = _fetch_off(tag)
         if err:
             errors.append(f'{cat_name}: {err}')
         for p in products:
@@ -511,7 +522,7 @@ def sync_products():
                 seen.add(parsed['name'])
                 db.session.add(Dish(**parsed))
                 added_dishes += 1
-        time.sleep(0.3)
+        time.sleep(0.5)
 
     db.session.commit()
     return jsonify({'added_produce': added_produce, 'added_dishes': added_dishes, 'errors': errors})
@@ -525,13 +536,13 @@ def sync_debug():
         n = p.get('nutriments', {})
         sample.append({
             'name_pl': p.get('product_name_pl'),
-            'name':    p.get('product_name'),
+            'name': p.get('product_name'),
             'name_en': p.get('product_name_en'),
-            'kcal':    n.get('energy-kcal_100g'),
-            'kj':      n.get('energy-kj_100g'),
-            'energy':  n.get('energy_100g'),
-            'carbs':   n.get('carbohydrates_100g'),
-            'parsed':  _parse(p, 'Owoce'),
+            'kcal': n.get('energy-kcal_100g'),
+            'kj': n.get('energy-kj_100g'),
+            'energy': n.get('energy_100g'),
+            'carbs': n.get('carbohydrates_100g'),
+            'parsed': _parse(p, 'Owoce'),
         })
     return jsonify({'fetched': len(products), 'error': err, 'sample': sample})
 
