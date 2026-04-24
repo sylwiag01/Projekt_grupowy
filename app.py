@@ -351,6 +351,25 @@ def get_dishes():
     })
 
 
+@app.route('/api/products/search')
+def search_products():
+    q = request.args.get('q', '').strip()
+    if len(q) < 2:
+        return jsonify([])
+    produce = Produce.query.filter(Produce.name.ilike(f'%{q}%')).limit(8).all()
+    dishes = Dish.query.filter(Dish.name.ilike(f'%{q}%')).limit(8).all()
+    results = []
+    for item in produce:
+        r = _serialize(item)
+        r['type'] = 'produce'
+        results.append(r)
+    for item in dishes:
+        r = _serialize(item)
+        r['type'] = 'dish'
+        results.append(r)
+    return jsonify(results[:15])
+
+
 @app.route('/api/purge', methods=['DELETE'])
 def purge_all():
     Produce.query.delete()

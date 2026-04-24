@@ -1,138 +1,142 @@
 <!DOCTYPE html>
-<html lang="pl">
-
+<html lang="pl" data-theme="glikokids">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlikoKids – Talerz Detektywa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/style/main.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlikoKids – Talerz Detektywa</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style/child.css">
 </head>
+<body class="min-h-screen">
 
-<body>
-    <header class="header">
-        <nav class="navbar navbar-dark mb-3">
-            <div class="container text-center">
-                <a href="/dziecko" class="navbar-brand mx-auto logo mb-0 text-decoration-none">
-                    <i class="fas fa-star star-animate"></i> GlikoKids
-                </a>
-            </div>
-        </nav>
-    </header>
+  <!-- Floating candy background -->
+  <div class="candy-bg" aria-hidden="true" id="candy-bg"></div>
 
-    <div class="level-bar">
-        <span id="level-label">Poziom 1 – Odkrywca</span>
-        <div class="level-dots" id="level-dots"></div>
-        <div class="stars-display"><span class="star-icon">⭐</span> <span id="total-stars">0</span> gwiazdki</div>
+  <!-- Header -->
+  <div class="site-header">
+    <div class="max-w-2xl mx-auto px-4 py-4 text-center">
+      <a href="/dziecko" class="logo">⭐ GlikoKids</a>
+    </div>
+  </div>
+
+  <!-- Level bar -->
+  <div class="level-bar" style="position:relative;z-index:9">
+    <span id="level-label" class="font-extrabold">Poziom 1 – Odkrywca</span>
+    <div class="level-dots" id="level-dots"></div>
+    <div class="stars-display"><span class="star-icon">⭐</span> <span id="total-stars">0</span> gwiazdki</div>
+  </div>
+
+  <div class="page-wrap max-w-2xl mx-auto px-4 pb-10 pt-3">
+
+    <div class="mb-3">
+      <a href="/dziecko" class="btn btn-ghost btn-sm">← Powrót do menu</a>
     </div>
 
-    <main class="main">
-        <div class="container mb-2">
-            <a href="/dziecko" class="btn btn-secondary">
-                ← Powrót do menu
-            </a>
+    <!-- Mission -->
+    <div class="mission-card shadow-md">
+      <div class="mission-emoji" id="mission-emoji">🕵️</div>
+      <div>
+        <div class="mission-title">Twoja misja</div>
+        <div class="mission-text" id="mission-text">
+          Ułóż śniadanie z dokładnie <strong>3–4 WW</strong>. Klikaj produkty, żeby je dodać na talerz!
         </div>
-        <!-- MISJA -->
-        <div class="mission-card">
-            <div class="mission-emoji" id="mission-emoji">🕵️</div>
-            <div>
-                <div class="mission-title">Twoja misja</div>
-                <div class="mission-text" id="mission-text">Ułóż śniadanie z dokładnie <strong>3–4 WW</strong>. Klikaj
-                    produkty, żeby je dodać na talerz!</div>
-            </div>
-        </div>
-
-        <!-- GAME AREA -->
-        <div class="game-grid">
-            <div class="panel">
-                <div class="panel-title">🛒 Produkty – kliknij, żeby dodać</div>
-                <div class="food-grid" id="food-grid"></div>
-            </div>
-            <div class="panel">
-                <div class="panel-title">🍽️ Twój talerz</div>
-                <div class="plate-area" id="plate-area">
-                    <div class="plate-empty" id="plate-empty">Pusto! Dodaj coś 👆</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- WW BAR -->
-        <div class="ww-bar-wrap">
-            <div class="ww-bar-labels">
-                <span>0 WW</span>
-                <span id="bar-target-label">Cel: 3–4 WW</span>
-                <span id="bar-max-label">6 WW</span>
-            </div>
-            <div class="ww-bar-track">
-                <div class="ww-bar-fill" id="ww-bar" style="width:0%"></div>
-                <div class="ww-bar-limit" id="ww-limit-line" style="left:66.7%"></div>
-            </div>
-        </div>
-
-        <!-- STATS -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <span class="stat-label">WW wymienniki</span>
-                <span class="stat-val" id="stat-ww">0.0</span>
-                <span class="stat-sub">węglowodanowe</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">WBT wymienniki</span>
-                <span class="stat-val" id="stat-wbt">0.0</span>
-                <span class="stat-sub">białkowo-tłuszczowe</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Kalorie</span>
-                <span class="stat-val" id="stat-kcal">0</span>
-                <span class="stat-sub">kcal</span>
-            </div>
-        </div>
-
-        <!-- FEEDBACK -->
-        <div class="feedback-box" id="feedback-box">
-            <span class="feedback-icon">👆</span>
-            <span id="feedback-text">Dodaj produkty na talerz, żeby zobaczyć wynik!</span>
-        </div>
-
-        <!-- BUTTONS -->
-        <div class="action-row">
-            <button class="btn btn-secondary" onclick="clearPlate()">🗑️ Wyczyść talerz</button>
-            <button class="btn btn-primary" onclick="checkMission()">✅ Sprawdź wynik!</button>
-        </div>
-
-    </main>
-
-    <!-- RESULT OVERLAY -->
-    <div class="overlay" id="overlay" onclick="closeOverlay(event)">
-        <div class="result-card">
-            <span class="result-big" id="r-emoji">🎉</span>
-            <div class="result-title" id="r-title">Super!</div>
-            <div class="result-stars" id="r-stars"></div>
-            <div class="result-text" id="r-text"></div>
-            <div class="result-stats">
-                <div class="result-stat">
-                    <div class="rv" id="r-ww">0</div>
-                    <div class="rl">WW</div>
-                </div>
-                <div class="result-stat">
-                    <div class="rv" id="r-wbt">0</div>
-                    <div class="rl">WBT</div>
-                </div>
-                <div class="result-stat">
-                    <div class="rv" id="r-kcal">0</div>
-                    <div class="rl">kcal</div>
-                </div>
-            </div>
-            <button class="btn btn-primary" id="r-btn" onclick="nextLevel()">Następny poziom! 🚀</button>
-        </div>
+      </div>
     </div>
-    <script src="/js/gra.js"></script>
-    <script>
 
-    </script>
+    <!-- Game grid -->
+    <div class="game-grid">
+      <div class="panel shadow-md">
+        <div class="panel-title">🛒 Produkty – kliknij, żeby dodać</div>
+        <div class="food-grid" id="food-grid"></div>
+      </div>
+      <div class="panel shadow-md">
+        <div class="panel-title">🍽️ Twój talerz</div>
+        <div class="plate-area" id="plate-area">
+          <div class="plate-empty" id="plate-empty">Pusto! Dodaj coś 👆</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WW bar -->
+    <div class="ww-bar-wrap">
+      <div class="ww-bar-labels">
+        <span>0 WW</span>
+        <span id="bar-target-label">Cel: 3–4 WW</span>
+        <span id="bar-max-label">6 WW</span>
+      </div>
+      <div class="ww-bar-track">
+        <div class="ww-bar-fill" id="ww-bar" style="width:0%"></div>
+        <div class="ww-bar-limit" id="ww-limit-line" style="left:66.7%"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card shadow-sm">
+        <span class="stat-label">WW wymienniki</span>
+        <span class="stat-val" id="stat-ww">0.0</span>
+        <span class="stat-sub">węglowodanowe</span>
+      </div>
+      <div class="stat-card shadow-sm">
+        <span class="stat-label">WBT wymienniki</span>
+        <span class="stat-val" id="stat-wbt">0.0</span>
+        <span class="stat-sub">białkowo-tłuszczowe</span>
+      </div>
+      <div class="stat-card shadow-sm">
+        <span class="stat-label">Kalorie</span>
+        <span class="stat-val" id="stat-kcal">0</span>
+        <span class="stat-sub">kcal</span>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon">👆</span>
+      <span id="feedback-text">Dodaj produkty na talerz, żeby zobaczyć wynik!</span>
+    </div>
+
+    <!-- Buttons -->
+    <div class="action-row">
+      <button class="btn btn-outline" onclick="clearPlate()">🗑️ Wyczyść talerz</button>
+      <button class="btn btn-primary" onclick="checkMission()">✅ Sprawdź wynik!</button>
+    </div>
+
+  </div>
+
+  <!-- Result overlay -->
+  <div class="overlay" id="overlay" onclick="closeOverlay(event)">
+    <div class="result-card">
+      <span class="result-big" id="r-emoji">🎉</span>
+      <div class="result-title" id="r-title">Super!</div>
+      <div class="result-stars" id="r-stars"></div>
+      <div class="result-text" id="r-text"></div>
+      <div class="result-stats">
+        <div class="result-stat"><div class="rv" id="r-ww">0</div><div class="rl">WW</div></div>
+        <div class="result-stat"><div class="rv" id="r-wbt">0</div><div class="rl">WBT</div></div>
+        <div class="result-stat"><div class="rv" id="r-kcal">0</div><div class="rl">kcal</div></div>
+      </div>
+      <button class="btn btn-primary w-full" id="r-btn" onclick="nextLevel()">Następny poziom! 🚀</button>
+    </div>
+  </div>
+
+  <script src="/js/gra.js"></script>
+  <script>
+    (function() {
+      const emojis = ['⭐','🍎','🍊','🍋','🥦','🧀','🍗','🍞','🌟','💫','🎈','✨','🍭'];
+      const bg = document.getElementById('candy-bg');
+      for (let i = 0; i < 14; i++) {
+        const s = document.createElement('span');
+        s.textContent = emojis[i % emojis.length];
+        s.style.left = (Math.random() * 100) + '%';
+        s.style.fontSize = (0.9 + Math.random() * 1.1) + 'rem';
+        s.style.animationDuration = (8 + Math.random() * 10) + 's';
+        s.style.animationDelay = (Math.random() * 14) + 's';
+        bg.appendChild(s);
+      }
+    })();
+  </script>
 </body>
-
 </html>

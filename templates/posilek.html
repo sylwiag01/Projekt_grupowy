@@ -1,120 +1,264 @@
 <!DOCTYPE html>
-<html lang="pl">
-
+<html lang="pl" data-theme="glikokids">
 <head>
-    <meta charset="UTF-8">
-    <title>Posiłek – GlikoKids</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/style/main.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posiłek – GlikoKids</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style/child.css">
 </head>
+<body class="min-h-screen">
 
-<body>
-    <header class="header">
-        <nav class="navbar navbar-dark mb-3">
-            <div class="container text-center">
-                <a href="/dziecko" class="navbar-brand mx-auto logo mb-0 text-decoration-none">
-                    <i class="fas fa-star star-animate"></i> GlikoKids
-                </a>
-            </div>
-        </nav>
-    </header>
+  <!-- Floating candy background -->
+  <div class="candy-bg" aria-hidden="true" id="candy-bg"></div>
 
-    <div class="container text-center mt-4">
-        <h2>🍽️ Mój posiłek</h2>
+  <!-- Header -->
+  <div class="site-header">
+    <div class="max-w-2xl mx-auto px-4 py-4 text-center">
+      <a href="/dziecko" class="logo">⭐ GlikoKids</a>
+    </div>
+  </div>
 
-        <div class="card p-4 mt-3">
+  <div class="page-wrap max-w-2xl mx-auto px-4 py-6 space-y-4">
 
-            <div class="mb-3 text-start">
-                <label class="form-label fw-bold">Co zjadłeś? 🥗</label>
-                <input type="text" id="meal_name" class="form-control" placeholder="np. kanapka, jabłko">
-            </div>
+    <h2 class="text-center text-3xl font-extrabold" style="font-family:'Bubblegum Sans',cursive;animation:rainbowText 5s linear infinite">🍽️ Mój posiłek</h2>
 
-            <div class="row mb-3">
-                <div class="col-6 text-start">
-                    <label class="form-label fw-bold">Moje WW 🌾</label>
-                    <input type="number" id="ww" class="form-control" placeholder="np. 2.5" step="0.1" min="0">
-                </div>
-                <div class="col-6 text-start">
-                    <label class="form-label fw-bold">Moje WBT 🥩</label>
-                    <input type="number" id="wbt" class="form-control" placeholder="np. 1.0" step="0.1" min="0">
-                </div>
-            </div>
-
-            <div class="mb-3 text-start">
-                <label class="form-label fw-bold">Kalorie 🔥</label>
-                <input type="number" id="calories" class="form-control" placeholder="np. 350" min="0">
-            </div>
-
-<button class="btn btn-primary" onclick="saveMeal()">Zapisz 💾</button>
-
-            <div id="summary" class="mt-4"></div>
+    <!-- Search -->
+    <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
+      <div class="card-body p-5">
+        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🔍 Dodaj produkty</h3>
+        <div class="search-wrap">
+          <input id="search-input" type="text" class="input input-bordered w-full" style="font-family:'Nunito',sans-serif;font-weight:600"
+                 placeholder="np. jabłko, chleb, jogurt…" autocomplete="off">
+          <div class="search-drop" id="search-drop"></div>
         </div>
-
-        <div class="container mt-2">
-            <a href="/dziecko" class="btn btn-secondary">
-                ← Powrót do menu
-            </a>
-        </div>
+        <p class="text-xs font-semibold mt-2" style="color:var(--text-soft)">Zacznij pisać, żeby znaleźć produkty z bazy danych 🌟</p>
+      </div>
     </div>
 
-    <script>
-        const USER_ID = {{ user_id }};
+    <!-- Plate -->
+    <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
+      <div class="card-body p-5">
+        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🍽️ Twój talerz</h3>
+        <div class="space-y-2" id="plate-list">
+          <div class="text-center py-6 font-semibold" style="color:var(--text-soft)">
+            Talerz jest pusty 🍽️<br><small>Dodaj coś do jedzenia!</small>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        const parseNum = id => {
-            const v = parseFloat(document.getElementById(id).value);
-            return isNaN(v) ? null : v;
-        };
+    <!-- Summary + save -->
+    <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
+      <div class="card-body p-5">
+        <h3 class="font-extrabold text-lg mb-4" style="font-family:'Bubblegum Sans',cursive">📊 Podsumowanie</h3>
 
-        async function saveMeal() {
-            const mealName = document.getElementById("meal_name").value.trim();
-            const summary = document.getElementById("summary");
+        <div class="stats stats-horizontal shadow w-full mb-5" style="border-radius:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.07);border:none">
+          <div class="stat place-items-center py-3">
+            <div class="stat-title text-xs font-bold uppercase tracking-wider">🌾 WW</div>
+            <div class="stat-value text-primary" id="total-ww">0.0</div>
+          </div>
+          <div class="stat place-items-center py-3">
+            <div class="stat-title text-xs font-bold uppercase tracking-wider">🥩 WBT</div>
+            <div class="stat-value text-secondary" id="total-wbt" style="color:var(--orange)">0.0</div>
+          </div>
+          <div class="stat place-items-center py-3">
+            <div class="stat-title text-xs font-bold uppercase tracking-wider">🔥 kcal</div>
+            <div class="stat-value" id="total-cal">0</div>
+          </div>
+        </div>
 
-            if (!mealName) {
-                summary.innerHTML = "😅 Wpisz nazwę posiłku!";
-                return;
-            }
+        <div class="form-control mb-4">
+          <label class="label pb-1"><span class="label-text font-bold">Nazwa posiłku</span></label>
+          <input id="meal-name" type="text" class="input input-bordered" style="font-family:'Nunito',sans-serif;font-weight:600"
+                 placeholder="np. śniadanie, obiad…">
+        </div>
 
-            const data = {
-                child_id: USER_ID,
-                meal_name: mealName,
-                calories: parseNum("calories"),
-                ww: parseNum("ww"),
-                wbt: parseNum("wbt"),
-            };
+        <div class="flex gap-3 flex-wrap">
+          <button class="btn btn-primary flex-1" id="save-btn" onclick="saveMeal()" disabled>💾 Zapisz posiłek</button>
+          <a href="/dziecko" class="btn btn-outline flex-1">← Powrót</a>
+        </div>
 
-            try {
-                const resp = await fetch('/api/meal', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+        <div id="summary" class="mt-3"></div>
+      </div>
+    </div>
 
-                if (resp.ok) {
-                    summary.innerHTML = `
-                        <div class="p-3 rounded" style="background:#eafaf1">
-                            🎉 Super robota!<br>
-                            Zjadłeś: <strong>${mealName}</strong><br>
-                            ${data.ww !== null ? `WW: <strong>${data.ww}</strong>` : ''}
-                            ${data.wbt !== null ? ` | WBT: <strong>${data.wbt}</strong>` : ''}<br><br>
-                            🌟 Dbając o jedzenie, dbasz o zdrowie!
-                        </div>
-                    `;
-                    document.getElementById("meal_name").value = "";
-                    document.getElementById("ww").value = "";
-                    document.getElementById("wbt").value = "";
-                    document.getElementById("calories").value = "";
-                } else {
-                    summary.innerHTML = "❌ Błąd zapisu. Spróbuj ponownie.";
-                }
-            } catch {
-                summary.innerHTML = "❌ Błąd połączenia. Spróbuj ponownie.";
-            }
+  </div>
+
+  <script>
+    const USER_ID = {{ user_id }};
+
+    const CAT_EMOJI = {
+      'Owoce':'🍎','Warzywa':'🥦','Nabiał':'🧀','Mięso':'🍗','Pieczywo':'🍞','Zboża':'🌾',
+      'Zupy':'🍲','Dania gotowe':'🍽️','Sałatki':'🥗','Desery':'🍰','Przekąski':'🍿',
+    };
+
+    let plate = [];
+    let searchData = [];
+
+    // ── Search ────────────────────────────────────────────────────────
+    const searchInput = document.getElementById('search-input');
+    const searchDrop  = document.getElementById('search-drop');
+    let searchTimer   = null;
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      const q = searchInput.value.trim();
+      if (q.length < 2) { closeDrop(); return; }
+      searchTimer = setTimeout(() => doSearch(q), 300);
+    });
+    searchInput.addEventListener('blur', () => setTimeout(closeDrop, 180));
+
+    function closeDrop() { searchDrop.classList.remove('open'); }
+
+    async function doSearch(q) {
+      try {
+        const resp = await fetch('/api/products/search?q=' + encodeURIComponent(q));
+        searchData = await resp.json();
+        renderDrop();
+      } catch { closeDrop(); }
+    }
+
+    function renderDrop() {
+      if (!searchData.length) {
+        searchDrop.innerHTML = '<div class="sri" style="cursor:default;color:var(--text-soft)">Brak wyników 😕</div>';
+      } else {
+        searchDrop.innerHTML = searchData.map((item, i) => {
+          const emoji = CAT_EMOJI[item.category] || '🍴';
+          return `<div class="sri" onclick="addItem(${i})">
+            <span style="font-size:1.3rem">${emoji}</span>
+            <div style="flex:1;min-width:0">
+              <div class="sri-name">${esc(item.name)}</div>
+              <div class="sri-meta">${esc(item.category || '')}</div>
+            </div>
+            <div class="sri-ww">WW ${item.ww ?? '–'}/100g</div>
+          </div>`;
+        }).join('');
+      }
+      searchDrop.classList.add('open');
+    }
+
+    function addItem(i) {
+      plate.push({ product: searchData[i], grams: 100 });
+      searchInput.value = '';
+      closeDrop();
+      renderPlate();
+      autoName();
+    }
+
+    // ── Plate ─────────────────────────────────────────────────────────
+    function renderPlate() {
+      const list = document.getElementById('plate-list');
+      if (!plate.length) {
+        list.innerHTML = '<div class="text-center py-6 font-semibold" style="color:var(--text-soft)">Talerz jest pusty 🍽️<br><small>Dodaj coś do jedzenia!</small></div>';
+        refreshTotals();
+        document.getElementById('save-btn').disabled = true;
+        return;
+      }
+      list.innerHTML = plate.map((e, i) => {
+        const { product, grams } = e;
+        const emoji = CAT_EMOJI[product.category] || '🍴';
+        const ww  = ((product.ww  || 0) * grams / 100).toFixed(1);
+        const wbt = ((product.wbt || 0) * grams / 100).toFixed(1);
+        return `<div class="plate-row" id="pr-${i}">
+          <span class="pr-emoji">${emoji}</span>
+          <div class="pr-name">${esc(product.name)}</div>
+          <input type="number" class="input input-bordered pr-grams" value="${grams}"
+                 min="1" max="2000" step="10"
+                 style="width:72px;padding:3px 6px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px"
+                 oninput="setGrams(${i}, this.value)">
+          <span style="font-size:11px;color:var(--text-soft)">g</span>
+          <div class="pr-vals" id="pv-${i}">WW <strong>${ww}</strong><br><span class="v-wbt">WBT <strong>${wbt}</strong></span></div>
+          <button class="pr-remove" onclick="removeItem(${i})" title="Usuń">✕</button>
+        </div>`;
+      }).join('');
+      refreshTotals();
+      document.getElementById('save-btn').disabled = false;
+    }
+
+    function setGrams(i, val) {
+      const g = Math.max(1, parseInt(val) || 1);
+      plate[i].grams = g;
+      const { product } = plate[i];
+      const ww  = ((product.ww  || 0) * g / 100).toFixed(1);
+      const wbt = ((product.wbt || 0) * g / 100).toFixed(1);
+      const pv = document.getElementById('pv-' + i);
+      if (pv) pv.innerHTML = `WW <strong>${ww}</strong><br><span class="v-wbt">WBT <strong>${wbt}</strong></span>`;
+      refreshTotals();
+    }
+
+    function removeItem(i) { plate.splice(i, 1); renderPlate(); autoName(); }
+
+    function refreshTotals() {
+      let ww = 0, wbt = 0, cal = 0;
+      for (const { product, grams } of plate) {
+        ww  += (product.ww  || 0) * grams / 100;
+        wbt += (product.wbt || 0) * grams / 100;
+        cal += (product.calories || 0) * grams / 100;
+      }
+      document.getElementById('total-ww').textContent  = ww.toFixed(1);
+      document.getElementById('total-wbt').textContent = wbt.toFixed(1);
+      document.getElementById('total-cal').textContent = Math.round(cal);
+    }
+
+    // ── Meal name ─────────────────────────────────────────────────────
+    const mealNameInput = document.getElementById('meal-name');
+    mealNameInput.addEventListener('input', () => { mealNameInput.dataset.manual = '1'; });
+    function autoName() {
+      if (!mealNameInput.dataset.manual && plate.length)
+        mealNameInput.value = plate.map(e => e.product.name).join(', ').slice(0, 200);
+    }
+
+    // ── Save ──────────────────────────────────────────────────────────
+    async function saveMeal() {
+      const summary = document.getElementById('summary');
+      if (!plate.length) {
+        summary.innerHTML = '<div class="alert alert-warning mt-2">😅 Dodaj najpierw produkty do talerza!</div>';
+        return;
+      }
+      const mealName = mealNameInput.value.trim() || plate.map(e => e.product.name).join(', ').slice(0, 200);
+      let ww = 0, wbt = 0, cal = 0;
+      for (const { product, grams } of plate) {
+        ww  += (product.ww  || 0) * grams / 100;
+        wbt += (product.wbt || 0) * grams / 100;
+        cal += (product.calories || 0) * grams / 100;
+      }
+      const data = { child_id: USER_ID, meal_name: mealName, calories: Math.round(cal), ww: parseFloat(ww.toFixed(1)), wbt: parseFloat(wbt.toFixed(1)) };
+      try {
+        const resp = await fetch('/api/meal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+        if (resp.ok) {
+          summary.innerHTML = `<div class="alert alert-success mt-2">🎉 <strong>Super robota!</strong> Zjadłeś: <strong>${esc(mealName)}</strong> | WW: <strong>${data.ww}</strong> | WBT: <strong>${data.wbt}</strong> | 🔥 ${data.calories} kcal</div>`;
+          plate = [];
+          renderPlate();
+          mealNameInput.value = '';
+          delete mealNameInput.dataset.manual;
+        } else {
+          summary.innerHTML = '<div class="alert alert-error mt-2">❌ Błąd zapisu. Spróbuj ponownie.</div>';
         }
-    </script>
+      } catch {
+        summary.innerHTML = '<div class="alert alert-error mt-2">❌ Błąd połączenia. Spróbuj ponownie.</div>';
+      }
+    }
 
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  </script>
+  <script>
+    (function() {
+      const emojis = ['🍎','🍊','🥦','🧀','🍗','🍞','🌾','🥗','🍲','🍽️','⭐','🌟','✨'];
+      const bg = document.getElementById('candy-bg');
+      for (let i = 0; i < 14; i++) {
+        const s = document.createElement('span');
+        s.textContent = emojis[i % emojis.length];
+        s.style.left = (Math.random() * 100) + '%';
+        s.style.fontSize = (0.9 + Math.random() * 1.1) + 'rem';
+        s.style.animationDuration = (8 + Math.random() * 10) + 's';
+        s.style.animationDelay = (Math.random() * 14) + 's';
+        bg.appendChild(s);
+      }
+    })();
+  </script>
 </body>
-
 </html>
