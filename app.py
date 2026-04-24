@@ -3,15 +3,25 @@ import time
 from datetime import datetime
 
 import requests as http
-from flask import Flask, jsonify, render_template, request, send_from_directory
+from flask import Flask, flash, jsonify, redirect, render_template, request, send_from_directory, url_for
+from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy import inspect, text
 
-from extensions import db
-from models import Activity, Child, ChildStats, Dish, Meal, Produce
+from extensions import db, login_manager
+from models import Activity, Child, ChildStats, Dish, Meal, Parent, Produce
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///glikokids.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'glikokids-secret-key-2026-change-in-prod'
+
 db.init_app(app)
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(Parent, int(user_id))
 
 
 # ── OpenFoodFacts sync helpers ────────────────────────────────────────────────
@@ -98,6 +108,18 @@ def _serialize(item):
     }
 
 
+def _migrate_db():
+    """Add new columns to existing tables without dropping data."""
+    inspector = inspect(db.engine)
+    existing = {col['name'] for col in inspector.get_columns('child_stats')}
+    with db.engine.connect() as conn:
+        if 'insulin_to_carb_ratio' not in existing:
+            conn.execute(text('ALTER TABLE child_stats ADD COLUMN insulin_to_carb_ratio FLOAT'))
+        if 'blood_sugar_target' not in existing:
+            conn.execute(text('ALTER TABLE child_stats ADD COLUMN blood_sugar_target FLOAT'))
+        conn.commit()
+
+
 # ── Static files ──────────────────────────────────────────────────────────────
 
 @app.route('/style/<path:filename>')
@@ -110,50 +132,131 @@ def serve_js(filename):
     return send_from_directory('js', filename)
 
 
+# ── Auth routes ───────────────────────────────────────────────────────────────
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('rodzic'))
+    if request.method == 'POST':
+        email    = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        parent   = Parent.query.filter_by(email=email).first()
+        if parent and parent.check_password(password):
+            login_user(parent)
+            return redirect(url_for('rodzic'))
+        flash('Nieprawidłowy adres e-mail lub hasło.', 'danger')
+    return render_template('login.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('rodzic'))
+    if request.method == 'POST':
+        parent_name   = request.form.get('parent_name', '').strip()
+        email         = request.form.get('email', '').strip().lower()
+        password      = request.form.get('password', '')
+        confirm       = request.form.get('confirm_password', '')
+        child_name    = request.form.get('child_name', '').strip()
+        weight        = request.form.get('weight_kg',             type=float)
+        height        = request.form.get('height_cm',             type=float)
+        age           = request.form.get('age_years',             type=int)
+        insulin_ratio = request.form.get('insulin_to_carb_ratio', type=float)
+        blood_sugar   = request.form.get('blood_sugar_target',    type=float)
+
+        if not parent_name or not email or not password or not child_name:
+            flash('Wypełnij wszystkie wymagane pola.', 'danger')
+            return render_template('register.html')
+        if password != confirm:
+            flash('Hasła nie są identyczne.', 'danger')
+            return render_template('register.html')
+        if len(password) < 6:
+            flash('Hasło musi mieć co najmniej 6 znaków.', 'danger')
+            return render_template('register.html')
+        if Parent.query.filter_by(email=email).first():
+            flash('Konto z tym adresem e-mail już istnieje.', 'danger')
+            return render_template('register.html')
+
+        child = Child(name=child_name)
+        db.session.add(child)
+        db.session.flush()
+
+        parent = Parent(name=parent_name, email=email, child_id=child.id)
+        parent.set_password(password)
+        db.session.add(parent)
+
+        stats = ChildStats(
+            child_id=child.id,
+            weight_kg=weight,
+            height_cm=height,
+            age_years=age,
+            insulin_to_carb_ratio=insulin_ratio,
+            blood_sugar_target=blood_sugar,
+        )
+        db.session.add(stats)
+        db.session.commit()
+
+        login_user(parent)
+        return redirect(url_for('rodzic'))
+
+    return render_template('register.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
 # ── Pages ─────────────────────────────────────────────────────────────────────
 
 @app.route('/')
 @app.route('/dziecko')
+@login_required
 def dziecko():
-    return render_template('dziecko.html')
+    return render_template('dziecko.html', child=current_user.child)
 
 
 @app.route('/quiz')
+@login_required
 def quiz():
-    user_id = request.args.get('user_id', 1, type=int)
-    return render_template('quiz.html', user_id=user_id)
+    return render_template('quiz.html', user_id=current_user.child_id)
 
 
 @app.route('/gra')
+@login_required
 def gra():
-    user_id = request.args.get('user_id', 1, type=int)
-    return render_template('gra.html', user_id=user_id)
+    return render_template('gra.html', user_id=current_user.child_id)
 
 
 @app.route('/posilek')
+@login_required
 def posilek():
-    user_id = request.args.get('user_id', 1, type=int)
-    return render_template('posilek.html', user_id=user_id)
+    return render_template('posilek.html', user_id=current_user.child_id)
 
 
 @app.route('/rodzic')
+@login_required
 def rodzic():
-    return render_template('rodzic.html')
+    return render_template('rodzic.html', parent=current_user, child=current_user.child)
 
 
 @app.route('/historia_rodzic')
+@login_required
 def historia_rodzic():
-    user_id = request.args.get('user_id', 1, type=int)
-    return render_template('historia_rodzic.html', user_id=user_id)
+    return render_template('historia_rodzic.html', user_id=current_user.child_id)
 
 
 @app.route('/aktywnosc_dziecka')
+@login_required
 def aktywnosc_dziecka():
-    child_id = request.args.get('child_id', 1, type=int)
-    return render_template('aktywnosc_dziecka.html', child_id=child_id)
+    return render_template('aktywnosc_dziecka.html', child_id=current_user.child_id)
 
 
 @app.route('/baza_rodzic')
+@login_required
 def baza_rodzic():
     return render_template('baza_rodzic.html',
                            produce_cats=[c[0] for c in PRODUCE_CATEGORIES],
@@ -216,21 +319,29 @@ def save_child_stats():
         weight_kg=data.get('weight_kg'),
         height_cm=data.get('height_cm'),
         age_years=data.get('age_years'),
+        insulin_to_carb_ratio=data.get('insulin_to_carb_ratio'),
+        blood_sugar_target=data.get('blood_sugar_target'),
     )
     db.session.add(entry)
     db.session.commit()
     return jsonify({'id': entry.id}), 201
 
 
+def _serialize_stats(e):
+    return {
+        'id': e.id, 'child_id': e.child_id,
+        'weight_kg': e.weight_kg, 'height_cm': e.height_cm, 'age_years': e.age_years,
+        'insulin_to_carb_ratio': e.insulin_to_carb_ratio,
+        'blood_sugar_target': e.blood_sugar_target,
+        'recorded_at': e.recorded_at.isoformat(),
+    }
+
+
 @app.route('/api/child_stats/<int:child_id>')
 def get_child_stats(child_id):
     entries = ChildStats.query.filter_by(child_id=child_id) \
                               .order_by(ChildStats.recorded_at.desc()).all()
-    return jsonify([{
-        'id': e.id, 'child_id': e.child_id,
-        'weight_kg': e.weight_kg, 'height_cm': e.height_cm, 'age_years': e.age_years,
-        'recorded_at': e.recorded_at.isoformat(),
-    } for e in entries])
+    return jsonify([_serialize_stats(e) for e in entries])
 
 
 @app.route('/api/child_stats/<int:child_id>/latest')
@@ -239,11 +350,7 @@ def get_child_stats_latest(child_id):
                             .order_by(ChildStats.recorded_at.desc()).first()
     if not entry:
         return jsonify(None)
-    return jsonify({
-        'id': entry.id, 'child_id': entry.child_id,
-        'weight_kg': entry.weight_kg, 'height_cm': entry.height_cm,
-        'age_years': entry.age_years, 'recorded_at': entry.recorded_at.isoformat(),
-    })
+    return jsonify(_serialize_stats(entry))
 
 
 @app.route('/api/child_stats/<int:entry_id>', methods=['DELETE'])
@@ -309,7 +416,6 @@ def get_activities(child_id):
         'page': page,
         'pages': max(1, (total + per_page - 1) // per_page),
     })
-
 
 
 # ── Product API ───────────────────────────────────────────────────────────────
@@ -435,6 +541,7 @@ def sync_debug():
 
 with app.app_context():
     db.create_all()
+    _migrate_db()
 
 if __name__ == '__main__':
     app.run(debug=True)

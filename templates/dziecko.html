@@ -17,8 +17,15 @@
 
   <!-- Header -->
   <div class="site-header">
-    <div class="max-w-2xl mx-auto px-4 py-4 text-center">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="/dziecko" class="logo">⭐ GlikoKids</a>
+      <!-- Switch to parent view -->
+      <a href="{{ url_for('rodzic') }}"
+         style="background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);color:#fff;border-radius:2rem;padding:0.35rem 1rem;font-weight:700;font-size:0.82rem;text-decoration:none;backdrop-filter:blur(4px);transition:background .2s;"
+         onmouseover="this.style.background='rgba(255,255,255,0.4)'"
+         onmouseout="this.style.background='rgba(255,255,255,0.25)'">
+        <i class="fas fa-user-circle me-1"></i> Panel rodzica
+      </a>
     </div>
   </div>
 
@@ -37,7 +44,9 @@
         <!-- Progress -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--text-soft)">Poziom</span>
+            <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--text-soft)">
+              Cześć, {{ child.name }}! 👋
+            </span>
             <div class="flex gap-2">
               <span style="background:linear-gradient(135deg,#FFC81E,#FF9A3C);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(255,200,30,0.3)">⭐ 12</span>
               <span style="background:linear-gradient(135deg,#3498DB,#2980B9);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(52,152,219,0.3)">🪙 8</span>
@@ -108,7 +117,6 @@
       m.style.display = m.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Generate floating candy background elements
     (function() {
       const emojis = ['⭐','🍎','🍊','🍋','🍇','🍓','🌟','💫','🎈','🎉','🍭','🧁','🌈','✨','🦋'];
       const bg = document.getElementById('candy-bg');

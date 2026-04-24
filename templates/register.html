@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rejestracja – GlikoKids</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1rem;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 560px;
+      padding: 2.5rem 2rem;
+    }
+    .brand {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    .brand-icon { font-size: 2.6rem; display: block; margin-bottom: 0.4rem; }
+    .brand h1 { font-size: 1.7rem; font-weight: 700; color: #4e73df; margin: 0; }
+    .brand p { color: #6c757d; font-size: 0.88rem; margin: 0.3rem 0 0; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.2rem;
+    }
+    .section-parent { background: #e8edff; color: #3a56c7; }
+    .section-child  { background: #e6f8f1; color: #1a8a5e; }
+
+    .form-label { font-weight: 600; color: #495057; font-size: 0.88rem; }
+    .form-text  { font-size: 0.78rem; }
+
+    .btn-register {
+      background-color: #4e73df;
+      border-color: #4e73df;
+      font-weight: 700;
+      padding: 0.7rem;
+      font-size: 1rem;
+    }
+    .btn-register:hover { background-color: #2e59d9; border-color: #2653d4; }
+
+    .divider { border-top: 1px solid #e3e6f0; margin: 1.5rem 0; }
+    .login-link { text-align: center; font-size: 0.9rem; color: #6c757d; }
+    .login-link a { color: #4e73df; font-weight: 600; text-decoration: none; }
+    .login-link a:hover { text-decoration: underline; }
+
+    .required-star { color: #e74a3b; }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-icon">🩺</span>
+      <h1>GlikoKids</h1>
+      <p>Utwórz konto dla siebie i swojego dziecka</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show py-2" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}" novalidate>
+
+      <!-- ── Dane rodzica ── -->
+      <div class="section-header section-parent">
+        <i class="fas fa-user-circle"></i> Dane rodzica
+      </div>
+
+      <div class="mb-3">
+        <label for="parent_name" class="form-label">
+          Imię i nazwisko <span class="required-star">*</span>
+        </label>
+        <input type="text" class="form-control" id="parent_name" name="parent_name"
+               placeholder="np. Anna Kowalska" required
+               value="{{ request.form.get('parent_name', '') }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">
+          Adres e-mail <span class="required-star">*</span>
+        </label>
+        <input type="email" class="form-control" id="email" name="email"
+               placeholder="rodzic@example.com" required
+               value="{{ request.form.get('email', '') }}">
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-sm-6">
+          <label for="password" class="form-label">
+            Hasło <span class="required-star">*</span>
+          </label>
+          <input type="password" class="form-control" id="password" name="password"
+                 placeholder="min. 6 znaków" required>
+        </div>
+        <div class="col-sm-6">
+          <label for="confirm_password" class="form-label">
+            Potwierdź hasło <span class="required-star">*</span>
+          </label>
+          <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                 placeholder="••••••••" required>
+        </div>
+      </div>
+
+      <!-- ── Dane dziecka ── -->
+      <div class="section-header section-child">
+        <i class="fas fa-child"></i> Dane dziecka
+      </div>
+
+      <div class="mb-3">
+        <label for="child_name" class="form-label">
+          Imię dziecka <span class="required-star">*</span>
+        </label>
+        <input type="text" class="form-control" id="child_name" name="child_name"
+               placeholder="np. Ania" required
+               value="{{ request.form.get('child_name', '') }}">
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-4">
+          <label for="weight_kg" class="form-label">Waga (kg)</label>
+          <input type="number" class="form-control" id="weight_kg" name="weight_kg"
+                 placeholder="np. 32" step="0.1" min="5" max="200"
+                 value="{{ request.form.get('weight_kg', '') }}">
+        </div>
+        <div class="col-sm-4">
+          <label for="height_cm" class="form-label">Wzrost (cm)</label>
+          <input type="number" class="form-control" id="height_cm" name="height_cm"
+                 placeholder="np. 135" step="1" min="50" max="250"
+                 value="{{ request.form.get('height_cm', '') }}">
+        </div>
+        <div class="col-sm-4">
+          <label for="age_years" class="form-label">Wiek (lata)</label>
+          <input type="number" class="form-control" id="age_years" name="age_years"
+                 placeholder="np. 9" step="1" min="1" max="18"
+                 value="{{ request.form.get('age_years', '') }}">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-sm-6">
+          <label for="insulin_to_carb_ratio" class="form-label">
+            Współczynnik insulina / WW
+          </label>
+          <input type="number" class="form-control" id="insulin_to_carb_ratio" name="insulin_to_carb_ratio"
+                 placeholder="np. 1.5" step="0.1" min="0.1" max="20"
+                 value="{{ request.form.get('insulin_to_carb_ratio', '') }}">
+          <div class="form-text text-muted">Jednostki insuliny na 1 WW (10 g węglowodanów)</div>
+        </div>
+        <div class="col-sm-6">
+          <label for="blood_sugar_target" class="form-label">
+            Docelowy poziom cukru (mg/dL)
+          </label>
+          <input type="number" class="form-control" id="blood_sugar_target" name="blood_sugar_target"
+                 placeholder="np. 120" step="1" min="60" max="300"
+                 value="{{ request.form.get('blood_sugar_target', '') }}">
+          <div class="form-text text-muted">Ustalony z diabetologiem cel glikemii</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-register btn-primary w-100">
+        <i class="fas fa-user-plus me-2"></i> Zarejestruj się
+      </button>
+    </form>
+
+    <div class="divider"></div>
+    <p class="login-link">
+      Masz już konto?
+      <a href="{{ url_for('login') }}">Zaloguj się</a>
+    </p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
