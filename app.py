@@ -112,12 +112,11 @@ def _migrate_db():
     """Add new columns to existing tables without dropping data."""
     inspector = inspect(db.engine)
     existing = {col['name'] for col in inspector.get_columns('child_stats')}
-    with db.engine.connect() as conn:
+    with db.engine.begin() as conn:
         if 'insulin_to_carb_ratio' not in existing:
             conn.execute(text('ALTER TABLE child_stats ADD COLUMN insulin_to_carb_ratio FLOAT'))
         if 'blood_sugar_target' not in existing:
             conn.execute(text('ALTER TABLE child_stats ADD COLUMN blood_sugar_target FLOAT'))
-        conn.commit()
 
 
 # ── Static files ──────────────────────────────────────────────────────────────
