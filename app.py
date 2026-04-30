@@ -8,7 +8,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import inspect, text
 
 from extensions import db, login_manager
-from models import Activity, Child, ChildStats, Dish, Meal, Parent, Produce, UserProgress
+from models import Activity, Child, ChildStats, Dish, Friendship, Meal, Parent, Produce, UserProgress
 from progression_service import LEVELS, award_game_stars, award_xp, get_progress_data
 
 app = Flask(__name__)
@@ -645,6 +645,120 @@ def sync_debug():
         })
     return jsonify({'fetched': len(products), 'error': err, 'sample': sample})
 
+
+
+def _friend_child_data(friend_child_id, friendship_id):
+    child = db.session.get(Child, friend_child_id)
+    if not child:
+        return None
+    prog = get_progress_data(friend_child_id)
+    return {
+        'friendship_id': friendship_id,
+        'child_id': friend_child_id,
+        'name': child.name,
+        'level_name': prog['level_name'],
+        'animal_icon': prog['animal_icon'],
+        'xp_in_level': prog['xp_in_level'],
+        'xp_for_next': prog['xp_for_next'],
+        'xp_percent': prog['xp_percent'],
+    }
+
+
+@app.route('/api/friends/add', methods=['POST'])
+@login_required
+def add_friend():
+    data = request.get_json()
+    if not data or not data.get('email'):
+        return jsonify({'error': 'Podaj adres email rodzica.'}), 400
+
+    email = data['email'].strip().lower()
+    my_child_id = current_user.child_id
+
+    if email == current_user.email.lower():
+        return jsonify({'error': 'Nie możesz dodać własnego dziecka.'}), 400
+
+    other_parent = Parent.query.filter_by(email=email).first()
+    if not other_parent or not other_parent.child_id:
+        return jsonify({'error': 'Nie znaleziono konta z tym adresem email.'}), 404
+
+    other_child_id = other_parent.child_id
+
+    if other_child_id == my_child_id:
+        return jsonify({'error': 'Nie możesz dodać własnego dziecka.'}), 400
+
+    existing = Friendship.query.filter(
+        ((Friendship.child_id_1 == my_child_id) & (Friendship.child_id_2 == other_child_id)) |
+        ((Friendship.child_id_1 == other_child_id) & (Friendship.child_id_2 == my_child_id))
+    ).first()
+
+    if existing:
+        msg = 'To dziecko jest już znajomym.' if existing.status == 'accepted' else 'Zaproszenie już zostało wysłane.'
+        return jsonify({'error': msg}), 409
+
+    f = Friendship(child_id_1=my_child_id, child_id_2=other_child_id, status='pending')
+    db.session.add(f)
+    db.session.commit()
+    return jsonify({'id': f.id, 'friend_name': other_parent.child.name, 'status': 'pending'}), 201
+
+
+@app.route('/api/friends/requests')
+@login_required
+def get_friend_requests():
+    my_child_id = current_user.child_id
+    pending = Friendship.query.filter_by(child_id_2=my_child_id, status='pending').all()
+    result = []
+    for f in pending:
+        child = db.session.get(Child, f.child_id_1)
+        if child:
+            parent = Parent.query.filter_by(child_id=f.child_id_1).first()
+            result.append({
+                'id': f.id,
+                'from_child_name': child.name,
+                'from_parent_name': parent.name if parent else '',
+                'created_at': f.created_at.isoformat(),
+            })
+    return jsonify(result)
+
+
+@app.route('/api/friends/<int:friendship_id>/accept', methods=['POST'])
+@login_required
+def accept_friend(friendship_id):
+    f = db.get_or_404(Friendship, friendship_id)
+    if f.child_id_2 != current_user.child_id:
+        return jsonify({'error': 'Brak uprawnień.'}), 403
+    if f.status != 'pending':
+        return jsonify({'error': 'To zaproszenie nie jest oczekujące.'}), 400
+    f.status = 'accepted'
+    db.session.commit()
+    return jsonify({'ok': True})
+
+
+@app.route('/api/friends/<int:friendship_id>/reject', methods=['POST'])
+@login_required
+def reject_friend(friendship_id):
+    f = db.get_or_404(Friendship, friendship_id)
+    if f.child_id_2 != current_user.child_id:
+        return jsonify({'error': 'Brak uprawnień.'}), 403
+    db.session.delete(f)
+    db.session.commit()
+    return jsonify({'ok': True})
+
+
+@app.route('/api/friends')
+@login_required
+def get_friends():
+    my_child_id = current_user.child_id
+    friendships = Friendship.query.filter(
+        ((Friendship.child_id_1 == my_child_id) | (Friendship.child_id_2 == my_child_id)),
+        Friendship.status == 'accepted'
+    ).all()
+    result = []
+    for f in friendships:
+        friend_id = f.child_id_2 if f.child_id_1 == my_child_id else f.child_id_1
+        entry = _friend_child_data(friend_id, f.id)
+        if entry:
+            result.append(entry)
+    return jsonify(result)
 
 
 with app.app_context():

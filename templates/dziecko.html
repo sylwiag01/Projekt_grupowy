@@ -89,23 +89,8 @@
     <!-- Friends -->
     <div class="friends-card">
       <h3 class="text-xl font-extrabold mb-4" style="font-family:'Bubblegum Sans',cursive;color:var(--purple)">👫 Twoi znajomi</h3>
-      <div class="grid grid-cols-3 gap-3 text-center">
-        <div class="friend-item">
-          <span class="text-5xl" style="animation:floatBob 3s ease-in-out infinite">🧒</span>
-          <span class="font-bold text-sm">Kuba</span>
-          <span class="badge font-bold text-xs" style="background:linear-gradient(135deg,#FF6B9D,#FF4081);color:#fff;border:none">Bohater 🦸</span>
-        </div>
-        <div class="friend-item">
-          <span class="text-5xl" style="animation:floatBob 3s ease-in-out infinite;animation-delay:.5s">👧</span>
-          <span class="font-bold text-sm">Ola</span>
-          <span class="badge font-bold text-xs" style="background:linear-gradient(135deg,#FFC81E,#FF9A3C);color:#fff;border:none">Mistrz 🏆</span>
-        </div>
-        <div class="friend-item">
-          <span class="text-5xl" style="animation:floatBob 3s ease-in-out infinite;animation-delay:1s">🧑</span>
-          <span class="font-bold text-sm">Antek</span>
-          <span class="badge font-bold text-xs" style="background:linear-gradient(135deg,#2ECC71,#27AE60);color:#fff;border:none">Odkrywca 🚀</span>
-        </div>
-      </div>
+      <div id="friends-grid" class="grid grid-cols-3 gap-3 text-center"></div>
+      <p id="friends-empty" class="text-center text-sm font-bold" style="color:var(--text-soft);display:none;">Nie masz jeszcze znajomych 🌟<br><span style="font-size:0.75rem;font-weight:400;">Poproś rodzica, żeby dodał znajomego!</span></p>
     </div>
 
   </div>
@@ -129,6 +114,53 @@
         bg.appendChild(s);
       }
     })();
+
+    const BADGE_GRADIENTS = [
+      'linear-gradient(135deg,#FF6B9D,#FF4081)',
+      'linear-gradient(135deg,#FFC81E,#FF9A3C)',
+      'linear-gradient(135deg,#2ECC71,#27AE60)',
+      'linear-gradient(135deg,#3498DB,#2980B9)',
+      'linear-gradient(135deg,#9B59B6,#8E44AD)',
+      'linear-gradient(135deg,#E74C3C,#C0392B)',
+    ];
+
+    async function loadFriends() {
+      const grid  = document.getElementById('friends-grid');
+      const empty = document.getElementById('friends-empty');
+      try {
+        const res     = await fetch('/api/friends');
+        const friends = await res.json();
+        if (!Array.isArray(friends) || friends.length === 0) {
+          grid.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        const delays = ['0s', '.4s', '.8s', '1.2s', '1.6s', '2s'];
+        grid.innerHTML = friends.map((f, i) => {
+          const grad  = BADGE_GRADIENTS[i % BADGE_GRADIENTS.length];
+          const delay = delays[i % delays.length];
+          return `
+            <div class="friend-item">
+              <span style="font-size:2.8rem;animation:floatBob 3s ease-in-out infinite;animation-delay:${delay};display:block">${f.animal_icon}</span>
+              <span class="font-bold text-sm">${escHtml(f.name)}</span>
+              <span class="badge font-bold text-xs" style="background:${grad};color:#fff;border:none;">${escHtml(f.level_name)}</span>
+              <div style="margin-top:4px;background:rgba(0,0,0,0.08);border-radius:20px;height:6px;width:80%;margin-left:auto;margin-right:auto;">
+                <div style="width:${f.xp_percent}%;height:100%;border-radius:20px;background:linear-gradient(90deg,#FF6B9D,#FFC81E);"></div>
+              </div>
+              <span style="font-size:0.65rem;color:var(--text-soft);font-weight:600;">${f.xp_in_level}/${f.xp_for_next} XP</span>
+            </div>`;
+        }).join('');
+      } catch(e) {
+        console.error('Friends load error', e);
+      }
+    }
+
+    function escHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadFriends);
   </script>
 </body>
 </html>

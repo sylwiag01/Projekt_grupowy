@@ -161,6 +161,48 @@
             </div>
         </div>
 
+        <!-- Friends management -->
+        <div class="row mt-2">
+            <div class="col-12 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background:#fff;border-bottom:2px solid #eaecf4;">
+                        <h6 class="m-0 fw-bold text-primary"><i class="fas fa-user-friends me-2"></i>Znajomi dziecka</h6>
+                        <span class="badge bg-warning text-dark" id="requests-badge" style="display:none;font-size:.75rem;"></span>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Add friend form -->
+                        <div class="mb-4">
+                            <p class="small text-muted mb-2">Dodaj znajomego wpisując adres email jego rodzica.</p>
+                            <div class="input-group" style="max-width:420px;">
+                                <input type="email" class="form-control" id="friend-email" placeholder="email@rodzica.pl">
+                                <button class="btn btn-primary" onclick="addFriend()">
+                                    <i class="fas fa-plus me-1"></i> Dodaj
+                                </button>
+                            </div>
+                            <div id="add-friend-msg" class="mt-2 small"></div>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <!-- Pending incoming requests -->
+                        <div id="requests-section" style="display:none;" class="mb-4">
+                            <h6 class="fw-bold mb-3" style="color:#f6c23e;"><i class="fas fa-clock me-1"></i> Oczekujące zaproszenia</h6>
+                            <div id="requests-list"></div>
+                            <hr class="my-3">
+                        </div>
+
+                        <!-- Accepted friends list -->
+                        <h6 class="fw-bold text-muted text-uppercase small mb-3">Znajomi</h6>
+                        <div id="friends-list">
+                            <p class="text-muted small" id="no-friends-msg">Brak znajomych. Dodaj pierwszego powyżej!</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer class="text-center mt-5 text-muted pb-4">
             <small>&copy; 2026 GlikoKids Team – Digital Health Project</small>
         </footer>
@@ -233,6 +275,101 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
+
+    <script>
+        async function loadFriends() {
+            const [frRes, reqRes] = await Promise.all([
+                fetch('/api/friends'),
+                fetch('/api/friends/requests'),
+            ]);
+            const friends  = await frRes.json();
+            const requests = await reqRes.json();
+
+            // Pending requests
+            const reqSection = document.getElementById('requests-section');
+            const reqList    = document.getElementById('requests-list');
+            const badge      = document.getElementById('requests-badge');
+            if (requests.length > 0) {
+                badge.textContent = requests.length + ' nowe';
+                badge.style.display = 'inline-block';
+                reqSection.style.display = 'block';
+                reqList.innerHTML = requests.map(r => `
+                    <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background:#fffbf0;border:1px solid #fde68a;">
+                        <span><i class="fas fa-child me-2 text-warning"></i><strong>${escHtml(r.from_parent_name)}</strong> (dziecko: ${escHtml(r.from_child_name)}) chce zostać znajomym!</span>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-success" onclick="acceptFriend(${r.id})"><i class="fas fa-check"></i> Akceptuj</button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectFriend(${r.id})"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>`).join('');
+            } else {
+                reqSection.style.display = 'none';
+                badge.style.display = 'none';
+            }
+
+            // Accepted friends
+            const friendsList  = document.getElementById('friends-list');
+            const noFriendsMsg = document.getElementById('no-friends-msg');
+            if (friends.length > 0) {
+                noFriendsMsg.style.display = 'none';
+                friendsList.innerHTML = friends.map(f => `
+                    <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background:#f8f9fa;border:1px solid #e3e6f0;">
+                        <div class="d-flex align-items-center gap-3">
+                            <span style="font-size:1.8rem;">${f.animal_icon}</span>
+                            <div>
+                                <strong>${escHtml(f.name)}</strong>
+                                <div class="small text-muted">${escHtml(f.level_name)}</div>
+                                <div class="progress mt-1" style="height:6px;width:120px;">
+                                    <div class="progress-bar bg-primary" style="width:${f.xp_percent}%"></div>
+                                </div>
+                                <div class="text-muted" style="font-size:0.72rem;">${f.xp_in_level} / ${f.xp_for_next} XP</div>
+                            </div>
+                        </div>
+                    </div>`).join('');
+            } else {
+                noFriendsMsg.style.display = 'block';
+                if (friends.length === 0 && requests.length === 0) {
+                    friendsList.innerHTML = '';
+                }
+            }
+        }
+
+        async function addFriend() {
+            const email = document.getElementById('friend-email').value.trim();
+            const msgEl = document.getElementById('add-friend-msg');
+            if (!email) { msgEl.innerHTML = '<span class="text-danger">Wpisz adres email.</span>'; return; }
+
+            const res  = await fetch('/api/friends/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email}),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                msgEl.innerHTML = `<span class="text-success"><i class="fas fa-check me-1"></i>Wysłano zaproszenie do rodzica dziecka <strong>${escHtml(data.friend_name)}</strong>!</span>`;
+                document.getElementById('friend-email').value = '';
+                loadFriends();
+            } else {
+                msgEl.innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>${escHtml(data.error)}</span>`;
+            }
+        }
+
+        async function acceptFriend(id) {
+            await fetch(`/api/friends/${id}/accept`, {method: 'POST'});
+            loadFriends();
+        }
+
+        async function rejectFriend(id) {
+            await fetch(`/api/friends/${id}/reject`, {method: 'POST'});
+            loadFriends();
+        }
+
+        function escHtml(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFriends);
     </script>
 </body>
 </html>

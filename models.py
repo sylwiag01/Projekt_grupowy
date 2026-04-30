@@ -94,3 +94,11 @@ class UserProgress(db.Model):
     child_id  = db.Column(db.Integer, db.ForeignKey('child.id'), unique=True, nullable=False)
     total_xp  = db.Column(db.Integer, default=0, nullable=False)
     coins     = db.Column(db.Integer, default=0, nullable=False)
+
+
+class Friendship(db.Model):
+    id         = db.Column(db.Integer, primary_key=True)
+    child_id_1 = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    child_id_2 = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    status     = db.Column(db.String(20), default='pending', nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
