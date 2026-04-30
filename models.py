@@ -64,27 +64,29 @@ class Activity(db.Model):
 
 
 class Produce(db.Model):
-    id       = db.Column(db.Integer, primary_key=True)
-    name     = db.Column(db.String(200), nullable=False)
-    category = db.Column(db.String(100))
-    calories = db.Column(db.Float)
-    carbs    = db.Column(db.Float)
-    protein  = db.Column(db.Float)
-    fat      = db.Column(db.Float)
-    ww       = db.Column(db.Float)
-    wbt      = db.Column(db.Float)
+    id        = db.Column(db.Integer, primary_key=True)
+    name      = db.Column(db.String(200), nullable=False)
+    category  = db.Column(db.String(100))
+    calories  = db.Column(db.Float)
+    carbs     = db.Column(db.Float)
+    protein   = db.Column(db.Float)
+    fat       = db.Column(db.Float)
+    ww        = db.Column(db.Float)
+    wbt       = db.Column(db.Float)
+    is_custom = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Dish(db.Model):
-    id       = db.Column(db.Integer, primary_key=True)
-    name     = db.Column(db.String(200), nullable=False)
-    category = db.Column(db.String(100))
-    calories = db.Column(db.Float)
-    carbs    = db.Column(db.Float)
-    protein  = db.Column(db.Float)
-    fat      = db.Column(db.Float)
-    ww       = db.Column(db.Float)
-    wbt      = db.Column(db.Float)
+    id        = db.Column(db.Integer, primary_key=True)
+    name      = db.Column(db.String(200), nullable=False)
+    category  = db.Column(db.String(100))
+    calories  = db.Column(db.Float)
+    carbs     = db.Column(db.Float)
+    protein   = db.Column(db.Float)
+    fat       = db.Column(db.Float)
+    ww        = db.Column(db.Float)
+    wbt       = db.Column(db.Float)
+    is_custom = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class UserProgress(db.Model):

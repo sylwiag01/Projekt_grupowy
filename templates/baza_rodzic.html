@@ -14,6 +14,7 @@
         .table th  { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #6c757d; }
         .cat-badge { font-size: .75rem; }
         #sync-result { font-size: .9rem; }
+        .custom-badge { background-color: #fff3cd; color: #856404; font-size: .7rem; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -72,6 +73,9 @@
             <span id="sync-result"></span>
             <button class="btn btn-outline-danger" id="purge-btn" onclick="purgeAll()">
                 <i class="fas fa-trash me-1"></i> Wyczyść bazę
+            </button>
+            <button class="btn btn-success" onclick="openAddModal()">
+                <i class="fas fa-plus me-1"></i> Dodaj własny produkt
             </button>
             <button class="btn btn-primary" id="sync-btn" onclick="syncProducts()">
                 <i class="fas fa-sync me-1"></i> Synchronizuj z OpenFoodFacts
@@ -217,6 +221,91 @@
     </footer>
 </div>
 
+<!-- Add custom product modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel"><i class="fas fa-plus-circle me-2 text-success"></i>Dodaj własny produkt</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Nazwa <span class="text-danger">*</span></label>
+                        <input type="text" id="add-name" class="form-control" placeholder="np. Jabłko, Pierogi ruskie...">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Typ <span class="text-danger">*</span></label>
+                        <select id="add-type" class="form-select">
+                            <option value="produce">Produkt spożywczy</option>
+                            <option value="dish">Gotowe danie</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Kategoria</label>
+                        <select id="add-category" class="form-select">
+                            <option value="">— brak —</option>
+                            {% for cat in produce_cats %}
+                            <option value="{{ cat }}" data-type="produce">{{ cat }}</option>
+                            {% endfor %}
+                            {% for cat in dish_cats %}
+                            <option value="{{ cat }}" data-type="dish">{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Kalorie / 100g <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" id="add-calories" class="form-control" min="0" step="0.1" placeholder="0">
+                            <span class="input-group-text">kcal</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Węglowodany / 100g <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" id="add-carbs" class="form-control" min="0" step="0.1" placeholder="0" oninput="updatePreview()">
+                            <span class="input-group-text">g</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Białko / 100g</label>
+                        <div class="input-group">
+                            <input type="number" id="add-protein" class="form-control" min="0" step="0.1" placeholder="0" oninput="updatePreview()">
+                            <span class="input-group-text">g</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Tłuszcze / 100g</label>
+                        <div class="input-group">
+                            <input type="number" id="add-fat" class="form-control" min="0" step="0.1" placeholder="0" oninput="updatePreview()">
+                            <span class="input-group-text">g</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0 d-flex align-items-center gap-4">
+                    <div>
+                        <div class="small text-muted mb-1">Wyliczone WW</div>
+                        <span class="badge ww-badge fs-6" id="preview-ww">—</span>
+                    </div>
+                    <div>
+                        <div class="small text-muted mb-1">Wyliczone WBT</div>
+                        <span class="badge wbt-badge fs-6" id="preview-wbt">—</span>
+                    </div>
+                    <div class="ms-auto small text-muted">Wartości na 100g produktu</div>
+                </div>
+                <div id="add-error" class="alert alert-danger mt-2 d-none"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-success" onclick="submitAdd()">
+                    <i class="fas fa-save me-1"></i> Zapisz produkt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const state = {
@@ -262,7 +351,10 @@
 
             tbody.innerHTML = data.items.map(i => `
                 <tr id="row-${tab}-${i.id}">
-                    <td class="ps-3 fw-semibold">${i.name}</td>
+                    <td class="ps-3 fw-semibold">
+                        ${i.name}
+                        ${i.is_custom ? '<span class="badge custom-badge ms-1"><i class="fas fa-user-edit me-1"></i>własny</span>' : ''}
+                    </td>
                     <td>${catBadge(i.category)}</td>
                     <td class="text-end">${fmt(i.calories)}</td>
                     <td class="text-end">${fmt(i.carbs)} g</td>
@@ -382,6 +474,72 @@
     // Load produce on first render (it's the active tab)
     state.produce.loaded = true;
     loadTab('produce');
+
+    let _addModal;
+    function openAddModal() {
+        if (!_addModal) _addModal = new bootstrap.Modal(document.getElementById('addModal'));
+        document.getElementById('add-name').value = '';
+        document.getElementById('add-type').value = 'produce';
+        document.getElementById('add-category').value = '';
+        document.getElementById('add-calories').value = '';
+        document.getElementById('add-carbs').value = '';
+        document.getElementById('add-protein').value = '';
+        document.getElementById('add-fat').value = '';
+        document.getElementById('preview-ww').textContent = '—';
+        document.getElementById('preview-wbt').textContent = '—';
+        document.getElementById('add-error').classList.add('d-none');
+        _addModal.show();
+    }
+
+    function updatePreview() {
+        const carbs   = parseFloat(document.getElementById('add-carbs').value)   || 0;
+        const protein = parseFloat(document.getElementById('add-protein').value) || 0;
+        const fat     = parseFloat(document.getElementById('add-fat').value)     || 0;
+        document.getElementById('preview-ww').textContent  = (carbs / 10).toFixed(1);
+        document.getElementById('preview-wbt').textContent = ((protein * 4 + fat * 9) / 100).toFixed(1);
+    }
+
+    async function submitAdd() {
+        const name     = document.getElementById('add-name').value.trim();
+        const type     = document.getElementById('add-type').value;
+        const category = document.getElementById('add-category').value;
+        const calories = document.getElementById('add-calories').value;
+        const carbs    = document.getElementById('add-carbs').value;
+        const protein  = document.getElementById('add-protein').value;
+        const fat      = document.getElementById('add-fat').value;
+        const errEl    = document.getElementById('add-error');
+
+        if (!name || calories === '' || carbs === '') {
+            errEl.textContent = 'Wypełnij wymagane pola: nazwa, kalorie, węglowodany.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+
+        const endpoint = type === 'produce' ? '/api/produce' : '/api/dish';
+        try {
+            const resp = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, category, calories: +calories, carbs: +carbs, protein: +protein || 0, fat: +fat || 0 }),
+            });
+            if (!resp.ok) {
+                const err = await resp.json();
+                errEl.textContent = err.error || 'Błąd zapisu.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            _addModal.hide();
+            state[type].page = 1; state[type].q = ''; state[type].category = '';
+            state[type].loaded = true;
+            loadTab(type);
+            // Switch to the correct tab visually
+            document.querySelector(`[data-bs-target="#tab-${type}"]`).click();
+        } catch (e) {
+            errEl.textContent = 'Błąd połączenia: ' + e.message;
+            errEl.classList.remove('d-none');
+        }
+    }
 </script>
 </body>
 </html>

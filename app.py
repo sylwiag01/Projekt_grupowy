@@ -127,17 +127,26 @@ def _serialize(item):
         'calories': item.calories, 'carbs': item.carbs,
         'protein': item.protein, 'fat': item.fat,
         'ww': item.ww, 'wbt': item.wbt,
+        'is_custom': getattr(item, 'is_custom', False),
     }
 
 
 def _migrate_db():
     inspector = inspect(db.engine)
-    existing = {col['name'] for col in inspector.get_columns('child_stats')}
+
+    existing_stats = {col['name'] for col in inspector.get_columns('child_stats')}
     with db.engine.begin() as conn:
-        if 'insulin_to_carb_ratio' not in existing:
+        if 'insulin_to_carb_ratio' not in existing_stats:
             conn.execute(text('ALTER TABLE child_stats ADD COLUMN insulin_to_carb_ratio FLOAT'))
-        if 'blood_sugar_target' not in existing:
+        if 'blood_sugar_target' not in existing_stats:
             conn.execute(text('ALTER TABLE child_stats ADD COLUMN blood_sugar_target FLOAT'))
+
+    for table in ('produce', 'dish'):
+        if inspector.has_table(table):
+            existing = {col['name'] for col in inspector.get_columns(table)}
+            if 'is_custom' not in existing:
+                with db.engine.begin() as conn:
+                    conn.execute(text(f'ALTER TABLE {table} ADD COLUMN is_custom BOOLEAN NOT NULL DEFAULT 0'))
 
 
 @app.route('/style/<path:filename>')
@@ -523,6 +532,56 @@ def delete_dish(item_id):
     return jsonify({'ok': True})
 
 
+@app.route('/api/produce', methods=['POST'])
+@login_required
+def add_produce():
+    data = request.get_json()
+    if not data or not data.get('name') or data.get('calories') is None or data.get('carbs') is None:
+        return jsonify({'error': 'name, calories i carbs są wymagane'}), 400
+    carbs = float(data['carbs'])
+    protein = float(data.get('protein') or 0)
+    fat = float(data.get('fat') or 0)
+    item = Produce(
+        name=str(data['name'])[:200],
+        category=data.get('category', ''),
+        calories=round(float(data['calories']), 1),
+        carbs=round(carbs, 1),
+        protein=round(protein, 1),
+        fat=round(fat, 1),
+        ww=_calc_ww(carbs),
+        wbt=_calc_wbt(protein, fat),
+        is_custom=True,
+    )
+    db.session.add(item)
+    db.session.commit()
+    return jsonify(_serialize(item)), 201
+
+
+@app.route('/api/dish', methods=['POST'])
+@login_required
+def add_dish():
+    data = request.get_json()
+    if not data or not data.get('name') or data.get('calories') is None or data.get('carbs') is None:
+        return jsonify({'error': 'name, calories i carbs są wymagane'}), 400
+    carbs = float(data['carbs'])
+    protein = float(data.get('protein') or 0)
+    fat = float(data.get('fat') or 0)
+    item = Dish(
+        name=str(data['name'])[:200],
+        category=data.get('category', ''),
+        calories=round(float(data['calories']), 1),
+        carbs=round(carbs, 1),
+        protein=round(protein, 1),
+        fat=round(fat, 1),
+        ww=_calc_ww(carbs),
+        wbt=_calc_wbt(protein, fat),
+        is_custom=True,
+    )
+    db.session.add(item)
+    db.session.commit()
+    return jsonify(_serialize(item)), 201
+
+
 @app.route('/api/purge', methods=['DELETE'])
 def purge_all():
     Produce.query.delete()
@@ -537,7 +596,7 @@ def sync_products():
     errors, added_produce, added_dishes = [], 0, 0
 
     seen = set()
-    Produce.query.delete()
+    Produce.query.filter_by(is_custom=False).delete()
     for cat_name, tag in PRODUCE_CATEGORIES:
         products, err = _fetch_off(tag)
         if err:
@@ -551,7 +610,7 @@ def sync_products():
         time.sleep(0.5)
 
     seen = set()
-    Dish.query.delete()
+    Dish.query.filter_by(is_custom=False).delete()
     for cat_name, tag in DISH_CATEGORIES:
         products, err = _fetch_off(tag)
         if err:
