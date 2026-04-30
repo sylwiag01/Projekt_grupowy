@@ -24,8 +24,6 @@ def load_user(user_id):
     return db.session.get(Parent, int(user_id))
 
 
-# ── OpenFoodFacts sync helpers ────────────────────────────────────────────────
-
 PRODUCE_CATEGORIES = [
     ('Owoce', 'en:fruits'),
     ('Warzywa', 'en:vegetables'),
@@ -91,9 +89,9 @@ def _fetch_off(tag, page_size=500):
             products = data.get('products', [])
             all_products.extend(products)
             if len(products) < page_size:
-                break  # last page reached
+                break
             page += 1
-            time.sleep(0.5)  # be respectful of the API
+            time.sleep(0.5)
         except Exception as e:
             return all_products, str(e)
     return all_products, None
@@ -132,7 +130,6 @@ def _serialize(item):
 
 
 def _migrate_db():
-    """Add new columns to existing tables without dropping data."""
     inspector = inspect(db.engine)
     existing = {col['name'] for col in inspector.get_columns('child_stats')}
     with db.engine.begin() as conn:
@@ -141,8 +138,6 @@ def _migrate_db():
         if 'blood_sugar_target' not in existing:
             conn.execute(text('ALTER TABLE child_stats ADD COLUMN blood_sugar_target FLOAT'))
 
-
-# ── Static files ──────────────────────────────────────────────────────────────
 
 @app.route('/style/<path:filename>')
 def serve_style(filename):
@@ -153,8 +148,6 @@ def serve_style(filename):
 def serve_js(filename):
     return send_from_directory('js', filename)
 
-
-# ── Auth routes ───────────────────────────────────────────────────────────────
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -232,7 +225,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-# ── Pages ─────────────────────────────────────────────────────────────────────
 
 @app.route('/')
 @app.route('/dziecko')
@@ -271,7 +263,10 @@ def rodzic():
 @app.route('/historia_rodzic')
 @login_required
 def historia_rodzic():
-    return render_template('historia_rodzic.html', user_id=current_user.child_id)
+    stats = ChildStats.query.filter_by(child_id=current_user.child_id) \
+        .order_by(ChildStats.recorded_at.desc()).first()
+    targets = _calc_daily_targets(stats)
+    return render_template('historia_rodzic.html', user_id=current_user.child_id, targets=targets)
 
 
 @app.route('/aktywnosc_dziecka')
@@ -288,7 +283,6 @@ def baza_rodzic():
                            dish_cats=[c[0] for c in DISH_CATEGORIES])
 
 
-# ── Meal API ──────────────────────────────────────────────────────────────────
 
 @app.route('/api/meal', methods=['POST'])
 def save_meal():
@@ -332,7 +326,6 @@ def get_meals(child_id):
     } for m in meals])
 
 
-# ── Child stats API ───────────────────────────────────────────────────────────
 
 @app.route('/api/child_stats', methods=['POST'])
 def save_child_stats():
@@ -386,7 +379,6 @@ def delete_child_stats(entry_id):
     return jsonify({'ok': True})
 
 
-# ── Activity API ─────────────────────────────────────────────────────────────
 
 def _serialize_activity(a):
     return {
@@ -443,7 +435,6 @@ def get_activities(child_id):
     })
 
 
-# ── Product API ───────────────────────────────────────────────────────────────
 
 def _paginate(query, model_cls):
     search = request.args.get('q', '').strip()
@@ -505,7 +496,6 @@ def purge_all():
     return jsonify({'ok': True})
 
 
-# ── Sync API ──────────────────────────────────────────────────────────────────
 
 @app.route('/api/sync', methods=['POST'])
 def sync_products():
@@ -562,7 +552,6 @@ def sync_debug():
     return jsonify({'fetched': len(products), 'error': err, 'sample': sample})
 
 
-# ── Init ──────────────────────────────────────────────────────────────────────
 
 with app.app_context():
     db.create_all()

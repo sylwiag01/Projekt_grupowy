@@ -49,17 +49,17 @@ class ChildStats(db.Model):
     weight_kg             = db.Column(db.Float)
     height_cm             = db.Column(db.Float)
     age_years             = db.Column(db.Integer)
-    insulin_to_carb_ratio = db.Column(db.Float)   # grams of carbs per 1 unit of insulin
-    blood_sugar_target    = db.Column(db.Float)   # target blood sugar in mg/dL
+    insulin_to_carb_ratio = db.Column(db.Float)
+    blood_sugar_target    = db.Column(db.Float)
     recorded_at           = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Activity(db.Model):
     id            = db.Column(db.Integer, primary_key=True)
     child_id      = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
-    activity_type = db.Column(db.String(20), nullable=False)  # 'quiz' | 'game' | 'meal'
+    activity_type = db.Column(db.String(20), nullable=False)
     score         = db.Column(db.Float)
-    details       = db.Column(db.Text)    # JSON string
+    details       = db.Column(db.Text)
     created_at    = db.Column(db.DateTime, default=datetime.utcnow)
 
 

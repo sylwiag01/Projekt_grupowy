@@ -7,18 +7,89 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f8; font-family: 'Segoe UI', sans-serif; }
         .navbar { background-color: #4e73df; }
-        .actual-input { width: 72px; }
-        .actual-display { font-weight: 600; color: #2c3e50; }
-        .actual-empty { color: #adb5bd; font-style: italic; }
+
+        .targets-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); background: #fff; margin-bottom: 1.5rem; overflow: hidden; }
+        .targets-header { background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); color: #fff; padding: 1rem 1.25rem; display: flex; align-items: center; gap: .6rem; }
+        .targets-header h6 { margin: 0; font-weight: 700; font-size: .95rem; letter-spacing: .02em; }
+        .targets-body { padding: 1.25rem; }
+        .target-block { text-align: center; padding: .5rem; border-radius: 10px; }
+        .target-block.kcal { background: #fff8f0; }
+        .target-block.ww   { background: #f0faf1; }
+        .target-block.wbt  { background: #f0f5ff; }
+        .target-val { font-size: 1.7rem; font-weight: 800; line-height: 1.1; }
+        .target-val.kcal { color: #e65100; }
+        .target-val.ww   { color: #2e7d32; }
+        .target-val.wbt  { color: #1565c0; }
+        .target-unit { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #9aa5b4; }
+        .target-label { font-size: .78rem; font-weight: 600; color: #555; margin-top: .2rem; }
+        .target-note { font-size: .75rem; color: #9aa5b4; background: #f8f9ff; border-radius: 8px; padding: .5rem .85rem; margin-top: .85rem; }
+
+        .day-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); margin-bottom: 1.25rem; overflow: hidden; }
+        .day-header { background: #fff; border-bottom: 1px solid #e8ecf4; padding: 0; }
+        .day-toggle { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; width: 100%; text-align: left; background: none; border: none; cursor: pointer; text-decoration: none; color: inherit; }
+        .day-toggle:hover { background: #f8f9ff; }
+        .day-toggle[aria-expanded="true"] .toggle-icon { transform: rotate(90deg); }
+        .toggle-icon { transition: transform .2s; color: #4e73df; font-size: .85rem; }
+
+        .day-date { font-weight: 700; font-size: 1rem; color: #2c3e50; flex: 1; }
+        .day-date small { font-weight: 400; font-size: .78rem; color: #6c757d; margin-left: .4rem; }
+
+        .day-stats { display: flex; gap: .5rem; flex-wrap: wrap; }
+        .stat-pill { display: inline-flex; align-items: center; gap: .3rem; border-radius: 20px; padding: 3px 10px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+        .stat-pill.kcal { background: #fff3e0; color: #e65100; }
+        .stat-pill.ww   { background: #e8f5e9; color: #2e7d32; }
+        .stat-pill.wbt  { background: #e3f2fd; color: #1565c0; }
+        .stat-pill .label { font-weight: 400; opacity: .75; font-size: .72rem; }
+
+        .day-body { background: #fff; }
+        .meal-table { margin: 0; }
+        .meal-table thead th { background: #f8f9ff; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: #6c757d; border-top: none; padding: .6rem 1rem; }
+        .meal-table tbody td { padding: .75rem 1rem; vertical-align: middle; font-size: .88rem; border-color: #f0f2f8; }
+        .meal-table tbody tr:last-child td { border-bottom: none; }
+        .meal-table tbody tr:hover td { background: #f8f9ff; }
+
+        .meal-name { font-weight: 600; color: #2c3e50; }
+        .meal-time { font-size: .75rem; color: #9aa5b4; }
+
+        .val-ww  { color: #2e7d32; font-weight: 600; }
+        .val-wbt { color: #1565c0; font-weight: 600; }
+        .val-cal { color: #e65100; font-weight: 600; }
+
+        .actual-input { width: 70px; font-size: .82rem; padding: .25rem .4rem; }
+        .actual-display { font-weight: 600; color: #2c3e50; font-size: .85rem; }
+        .actual-empty  { color: #adb5bd; font-style: italic; font-size: .82rem; }
+
+        .daily-summary td { font-weight: 700; font-size: .82rem; color: #2c3e50; border-top: 2px solid #dee2e6 !important; background: #f8f9ff; padding: .8rem 1rem; }
+        .daily-summary td:hover { background: #f8f9ff !important; }
+        .summary-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; font-weight: 600; margin-bottom: .2rem; }
+
+        .prog-wrap { margin-top: .45rem; }
+        .prog-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .25rem; }
+        .prog-bar-bg { flex: 1; height: 6px; background: #e8ecf4; border-radius: 3px; overflow: hidden; }
+        .prog-bar-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+        .prog-bar-fill.ok   { background: #4caf50; }
+        .prog-bar-fill.over { background: #f44336; }
+        .prog-pct { font-size: .7rem; font-weight: 700; min-width: 36px; text-align: right; }
+        .prog-pct.ok   { color: #2e7d32; }
+        .prog-pct.over { color: #c62828; }
+
+        .today-badge { background: #4e73df; color: #fff; font-size: .68rem; border-radius: 8px; padding: 1px 7px; font-weight: 600; margin-left: .4rem; vertical-align: middle; }
+
+        .empty-state { text-align: center; padding: 4rem 2rem; color: #9aa5b4; background: #fff; }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: .4; display: block; }
+
+        .save-ok { color: #2e7d32; }
+
+        .no-targets-notice { border-left: 4px solid #ffc107; background: #fffde7; border-radius: 0 8px 8px 0; padding: .65rem 1rem; font-size: .82rem; color: #7a6200; }
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
         <div class="container">
-            <a class="navbar-brand font-weight-bold" href="/rodzic">
+            <a class="navbar-brand fw-bold" href="/rodzic">
                 <i class="fas fa-heartbeat"></i> GlikoKids
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -57,40 +128,75 @@
         </div>
     </nav>
 
-    <div class="container">
-        <h2 class="h4 text-gray-800 mb-4">Historia Posiłków</h2>
+    <div class="container pb-5">
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Zapisane posiłki dziecka</h6>
-                <span class="badge bg-secondary" id="meal-count">Ładowanie...</span>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="h4 fw-bold text-dark mb-0"><i class="fas fa-history text-primary me-2"></i>Historia Posiłków</h2>
+                <p class="text-muted small mb-0 mt-1">Dzienne zestawienie posiłków dziecka z podsumowaniem WW, WBT i kalorii</p>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Data i godzina</th>
-                                <th>Posiłek</th>
-                                <th>Kalorie</th>
-                                <th>Obliczenia Dziecka</th>
-                                <th>Wartości Rzeczywiste</th>
-                            </tr>
-                        </thead>
-                        <tbody id="meals-tbody">
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-4">
-                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                                    Ładowanie posiłków...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <span class="badge bg-secondary fs-6 fw-normal" id="total-count" style="min-width:90px">Ładowanie…</span>
+        </div>
+
+        {% if targets %}
+        <div class="targets-card">
+            <div class="targets-header">
+                <i class="fas fa-bullseye fa-lg"></i>
+                <h6>Dzienne zapotrzebowanie dziecka</h6>
+            </div>
+            <div class="targets-body">
+                <div class="row g-3">
+                    <div class="col-4">
+                        <div class="target-block kcal">
+                            <div class="target-val kcal">{{ targets.kcal }}</div>
+                            <div class="target-unit">kcal / dzień</div>
+                            <div class="target-label">Energia</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="target-block ww">
+                            <div class="target-val ww">{{ targets.ww }}</div>
+                            <div class="target-unit">WW / dzień</div>
+                            <div class="target-label">Węglowodany</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="target-block wbt">
+                            <div class="target-val wbt">{{ targets.wbt }}</div>
+                            <div class="target-unit">WBT / dzień</div>
+                            <div class="target-label">Białko + tłuszcz</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="target-note">
+                    <i class="fas fa-info-circle me-1 text-primary"></i>
+                    Wartości wyliczone na podstawie wieku i masy ciała dziecka.
+                    Postęp względem tych celów widoczny jest w podsumowaniu każdego dnia.
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="no-targets-notice mb-4">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Brak danych o dziecku (wiek / masa ciała). Uzupełnij profil, aby zobaczyć dzienne zapotrzebowanie.
+            <a href="/rodzic" class="fw-semibold ms-1">Przejdź do ustawień →</a>
+        </div>
+        {% endif %}
 
-        <footer class="text-center mt-5 text-muted pb-4">
+        <div id="loading" class="text-center py-5 text-muted">
+            <div class="spinner-border text-primary mb-3" role="status"></div>
+            <div>Ładowanie posiłków…</div>
+        </div>
+
+        <div id="days-container" style="display:none"></div>
+
+        <div id="empty-state" class="empty-state day-card" style="display:none">
+            <i class="fas fa-utensils"></i>
+            <h5 class="fw-semibold text-muted">Brak zapisanych posiłków</h5>
+            <p class="small">Posiłki pojawią się tutaj po tym, jak dziecko je zapisze w aplikacji.</p>
+        </div>
+
+        <footer class="text-center mt-5 text-muted pb-2">
             <small>&copy; 2026 GlikoKids Team</small>
         </footer>
     </div>
@@ -98,95 +204,289 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const USER_ID = {{ user_id }};
+        const TARGETS = {{ targets | tojson if targets else 'null' }};
 
-        function formatTimestamp(iso) {
-            const d = new Date(iso);
-            return d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
-                + ', ' + d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        let allMeals = [];
+        const mealDateMap = {};
+
+        function localDateKey(isoStr) {
+            const d = new Date(isoStr);
+            return d.getFullYear() + '-'
+                + String(d.getMonth() + 1).padStart(2, '0') + '-'
+                + String(d.getDate()).padStart(2, '0');
         }
 
+        function formatDate(dateKey) {
+            const [y, m, d] = dateKey.split('-').map(Number);
+            const dt = new Date(y, m - 1, d);
+            return dt.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function formatTime(isoStr) {
+            return new Date(isoStr).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function todayKey() { return localDateKey(new Date().toISOString()); }
+
         function fmt(val, unit = '') {
-            return val !== null && val !== undefined ? `${val}${unit}` : '—';
+            return (val !== null && val !== undefined) ? `${val}${unit}` : '—';
+        }
+
+        function pluralPosilek(n) {
+            return n === 1 ? 'posiłek' : n < 5 ? 'posiłki' : 'posiłków';
+        }
+
+        function progBar(value, target, label, color) {
+            if (!target) return '';
+            const pct = Math.min(Math.round((value / target) * 100), 999);
+            const barPct = Math.min(pct, 100);
+            const cls = pct > 100 ? 'over' : 'ok';
+            return `<div class="prog-row">
+                <span style="font-size:.7rem;font-weight:600;width:32px;color:#555">${label}</span>
+                <div class="prog-bar-bg"><div class="prog-bar-fill ${cls}" style="width:${barPct}%"></div></div>
+                <span class="prog-pct ${cls}">${pct}%</span>
+            </div>`;
+        }
+
+        function renderDays(meals) {
+            const groups = {};
+            for (const m of meals) {
+                const key = localDateKey(m.timestamp);
+                (groups[key] = groups[key] || []).push(m);
+                mealDateMap[m.id] = key;
+            }
+            const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+            const today = todayKey();
+            const container = document.getElementById('days-container');
+            container.innerHTML = '';
+
+            sortedKeys.forEach((dateKey, idx) => {
+                const dayMeals = groups[dateKey];
+                const isToday = dateKey === today;
+
+                let sumCal = 0, sumWw = 0, sumWbt = 0, sumBestWw = 0, sumBestWbt = 0;
+                let correctedCount = 0;
+                for (const m of dayMeals) {
+                    sumCal  += m.calories || 0;
+                    sumWw   += m.ww  || 0;
+                    sumWbt  += m.wbt || 0;
+                    const hasActualWw  = m.actual_ww  !== null && m.actual_ww  !== undefined;
+                    const hasActualWbt = m.actual_wbt !== null && m.actual_wbt !== undefined;
+                    sumBestWw  += hasActualWw  ? m.actual_ww  : (m.ww  || 0);
+                    sumBestWbt += hasActualWbt ? m.actual_wbt : (m.wbt || 0);
+                    if (hasActualWw || hasActualWbt) correctedCount++;
+                }
+
+                const collapseId = `day-${dateKey.replace(/-/g, '')}`;
+                const isOpen = isToday || idx === 0;
+
+                const card = document.createElement('div');
+                card.className = 'day-card';
+                card.innerHTML = `
+                    <div class="day-header">
+                        <button class="day-toggle" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+                                aria-expanded="${isOpen}" aria-controls="${collapseId}">
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                            <div class="day-date">
+                                ${formatDate(dateKey)}
+                                ${isToday ? '<span class="today-badge">Dziś</span>' : ''}
+                                <small>${dayMeals.length} ${pluralPosilek(dayMeals.length)}</small>
+                            </div>
+                            <div class="day-stats" id="pills-${collapseId}">
+                                <span class="stat-pill kcal"><i class="fas fa-fire-alt"></i>&nbsp;${Math.round(sumCal)}&nbsp;<span class="label">kcal</span></span>
+                                <span class="stat-pill ww"><i class="fas fa-seedling"></i>&nbsp;${sumBestWw.toFixed(1)}&nbsp;<span class="label">WW</span></span>
+                                <span class="stat-pill wbt"><i class="fas fa-drumstick-bite"></i>&nbsp;${sumBestWbt.toFixed(1)}&nbsp;<span class="label">WBT</span></span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="collapse${isOpen ? ' show' : ''}" id="${collapseId}">
+                        <div class="day-body">
+                            <div class="table-responsive">
+                                <table class="table meal-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:120px">Godzina</th>
+                                            <th>Posiłek</th>
+                                            <th style="width:110px">Kalorie</th>
+                                            <th style="width:170px">Obliczenia dziecka</th>
+                                            <th>Wartości rzeczywiste</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${dayMeals.map(m => renderMealRow(m)).join('')}
+                                        ${renderSummaryRow(sumCal, sumWw, sumWbt, sumBestWw, sumBestWbt, correctedCount, dayMeals.length, collapseId)}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>`;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderMealRow(m) {
+            const hasActual = m.actual_ww !== null || m.actual_wbt !== null;
+            const displayHtml = hasActual
+                ? `<span class="actual-display">${fmt(m.actual_ww, ' WW')} / ${fmt(m.actual_wbt, ' WBT')}</span>`
+                : `<span class="actual-empty">Nie uzupełniono</span>`;
+
+            return `<tr id="row-${m.id}">
+                <td><span class="meal-time"><i class="fas fa-clock me-1 text-muted"></i>${formatTime(m.timestamp)}</span></td>
+                <td><div class="meal-name">${esc(m.meal_name)}</div></td>
+                <td><span class="val-cal">${fmt(m.calories, ' kcal')}</span></td>
+                <td>
+                    <span class="val-ww">${fmt(m.ww, ' WW')}</span>
+                    <span class="text-muted mx-1">/</span>
+                    <span class="val-wbt">${fmt(m.wbt, ' WBT')}</span>
+                </td>
+                <td>
+                    <div class="mb-1" id="display-${m.id}">${displayHtml}</div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <input type="number" id="aww-${m.id}" class="form-control form-control-sm actual-input"
+                               value="${m.actual_ww ?? ''}" step="0.1" min="0" placeholder="WW">
+                        <input type="number" id="awbt-${m.id}" class="form-control form-control-sm actual-input"
+                               value="${m.actual_wbt ?? ''}" step="0.1" min="0" placeholder="WBT">
+                        <button class="btn btn-outline-success btn-sm" onclick="saveActual(${m.id})" title="Zapisz">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <i class="fas fa-check-circle save-ok" id="saved-${m.id}" style="display:none"></i>
+                    </div>
+                </td>
+            </tr>`;
+        }
+
+        function pillsHtml(cal, bestWw, bestWbt) {
+            return `<span class="stat-pill kcal"><i class="fas fa-fire-alt"></i>&nbsp;${Math.round(cal)}&nbsp;<span class="label">kcal</span></span>
+                    <span class="stat-pill ww"><i class="fas fa-seedling"></i>&nbsp;${bestWw.toFixed(1)}&nbsp;<span class="label">WW</span></span>
+                    <span class="stat-pill wbt"><i class="fas fa-drumstick-bite"></i>&nbsp;${bestWbt.toFixed(1)}&nbsp;<span class="label">WBT</span></span>`;
+        }
+
+        function calcDayTotals(dateKey) {
+            const dayMeals = allMeals.filter(m => mealDateMap[m.id] === dateKey);
+            let sumCal = 0, sumWw = 0, sumWbt = 0, sumBestWw = 0, sumBestWbt = 0, correctedCount = 0;
+            for (const m of dayMeals) {
+                sumCal  += m.calories || 0;
+                sumWw   += m.ww  || 0;
+                sumWbt  += m.wbt || 0;
+                const hasActualWw  = m.actual_ww  !== null && m.actual_ww  !== undefined;
+                const hasActualWbt = m.actual_wbt !== null && m.actual_wbt !== undefined;
+                sumBestWw  += hasActualWw  ? m.actual_ww  : (m.ww  || 0);
+                sumBestWbt += hasActualWbt ? m.actual_wbt : (m.wbt || 0);
+                if (hasActualWw || hasActualWbt) correctedCount++;
+            }
+            return { sumCal, sumWw, sumWbt, sumBestWw, sumBestWbt, correctedCount, count: dayMeals.length };
+        }
+
+        function refreshDaySummary(dateKey) {
+            const { sumCal, sumWw, sumWbt, sumBestWw, sumBestWbt, correctedCount, count } = calcDayTotals(dateKey);
+            const collapseId = `day-${dateKey.replace(/-/g, '')}`;
+
+            const pills = document.getElementById(`pills-${collapseId}`);
+            if (pills) pills.innerHTML = pillsHtml(sumCal, sumBestWw, sumBestWbt);
+
+            const sumRow = document.getElementById(`sum-row-${collapseId}`);
+            if (sumRow) sumRow.outerHTML = renderSummaryRow(sumCal, sumWw, sumWbt, sumBestWw, sumBestWbt, correctedCount, count, collapseId);
+        }
+
+        function renderSummaryRow(cal, childWw, childWbt, bestWw, bestWbt, correctedCount, count, collapseId) {
+            const hasCorrections = correctedCount > 0;
+            const correctionNote = hasCorrections
+                ? `<div style="font-size:.7rem;color:#1565c0;font-weight:500;margin-top:.2rem">
+                       <i class="fas fa-pen-to-square me-1"></i>uwzględniono korektę rodzica (${correctedCount} ${pluralPosilek(correctedCount)})
+                   </div>`
+                : '';
+
+            const bars = TARGETS
+                ? `<div class="prog-wrap">
+                       ${progBar(Math.round(cal), TARGETS.kcal, 'kcal', 'kcal')}
+                       ${progBar(bestWw, TARGETS.ww, 'WW', 'ww')}
+                       ${progBar(bestWbt, TARGETS.wbt, 'WBT', 'wbt')}
+                   </div>`
+                : '';
+
+            return `<tr class="daily-summary" id="sum-row-${collapseId}">
+                <td colspan="2">
+                    <div class="summary-label"><i class="fas fa-calculator me-1"></i>Suma dnia &mdash; ${count} ${pluralPosilek(count)}</div>
+                    ${bars}
+                </td>
+                <td>
+                    <span class="val-cal">${Math.round(cal)} kcal</span>
+                    ${TARGETS ? `<div style="font-size:.72rem;color:#9aa5b4;font-weight:400">cel: ${TARGETS.kcal}</div>` : ''}
+                </td>
+                <td>
+                    <span class="val-ww">${bestWw.toFixed(1)} WW</span>
+                    <span class="text-muted mx-1">/</span>
+                    <span class="val-wbt">${bestWbt.toFixed(1)} WBT</span>
+                    ${TARGETS ? `<div style="font-size:.72rem;color:#9aa5b4;font-weight:400">cel: ${TARGETS.ww} WW / ${TARGETS.wbt} WBT</div>` : ''}
+                    ${correctionNote}
+                </td>
+                <td>
+                    ${hasCorrections
+                        ? `<span style="font-size:.78rem;color:#6c757d">
+                               dziecko: <span class="val-ww">${childWw.toFixed(1)} WW</span>
+                               / <span class="val-wbt">${childWbt.toFixed(1)} WBT</span>
+                           </span>`
+                        : `<span class="actual-empty">Brak korekt rodzica</span>`}
+                </td>
+            </tr>`;
         }
 
         async function loadMeals() {
-            const tbody = document.getElementById('meals-tbody');
-            const counter = document.getElementById('meal-count');
             try {
                 const resp = await fetch(`/api/meals/${USER_ID}`);
                 const meals = await resp.json();
+                document.getElementById('loading').style.display = 'none';
 
-                counter.textContent = `${meals.length} posiłków`;
-
-                if (meals.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
-                                <em>Brak zapisanych posiłków.</em>
-                            </td>
-                        </tr>`;
+                if (!meals.length) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    document.getElementById('total-count').textContent = '0 posiłków';
                     return;
                 }
 
-                tbody.innerHTML = meals.map(m => {
-                    const hasActual = m.actual_ww !== null || m.actual_wbt !== null;
-                    const displayHtml = hasActual
-                        ? `<span class="actual-display">${fmt(m.actual_ww, ' WW')} / ${fmt(m.actual_wbt, ' WBT')}</span>`
-                        : `<span class="actual-empty">Nie uzupełniono</span>`;
-                    return `
-                    <tr>
-                        <td class="text-nowrap">${formatTimestamp(m.timestamp)}</td>
-                        <td><strong>${m.meal_name}</strong></td>
-                        <td>${fmt(m.calories, ' kcal')}</td>
-                        <td>${fmt(m.ww, ' WW')} / ${fmt(m.wbt, ' WBT')}</td>
-                        <td>
-                            <div class="mb-2" id="display-${m.id}">${displayHtml}</div>
-                            <div class="d-flex align-items-center gap-2">
-                                <input type="number" id="aww-${m.id}" class="form-control form-control-sm actual-input"
-                                       value="${m.actual_ww ?? ''}" step="0.1" min="0" placeholder="WW">
-                                <input type="number" id="awbt-${m.id}" class="form-control form-control-sm actual-input"
-                                       value="${m.actual_wbt ?? ''}" step="0.1" min="0" placeholder="WBT">
-                                <button class="btn btn-success btn-sm px-3" onclick="saveActual(${m.id})">
-                                    <i class="fas fa-save me-1"></i> Zapisz
-                                </button>
-                                <i class="fas fa-check-circle text-success fs-5" id="saved-${m.id}" style="display:none"></i>
-                            </div>
-                        </td>
-                    </tr>`;
-                }).join('');
+                document.getElementById('total-count').textContent =
+                    `${meals.length} ${pluralPosilek(meals.length)}`;
+                document.getElementById('days-container').style.display = 'block';
+                allMeals = meals;
+                renderDays(meals);
             } catch {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center text-danger py-4">
-                            Błąd ładowania danych.
-                        </td>
-                    </tr>`;
-                counter.textContent = 'Błąd';
+                document.getElementById('loading').innerHTML =
+                    '<div class="text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Błąd ładowania danych. Odśwież stronę.</div>';
             }
         }
 
         async function saveActual(mealId) {
-            const aww = parseFloat(document.getElementById(`aww-${mealId}`).value);
+            const aww  = parseFloat(document.getElementById(`aww-${mealId}`).value);
             const awbt = parseFloat(document.getElementById(`awbt-${mealId}`).value);
-            const actualWw = isNaN(aww) ? null : aww;
+            const actualWw  = isNaN(aww)  ? null : aww;
             const actualWbt = isNaN(awbt) ? null : awbt;
 
-            await fetch(`/api/meal/${mealId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ actual_ww: actualWw, actual_wbt: actualWbt })
-            });
+            try {
+                await fetch(`/api/meal/${mealId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ actual_ww: actualWw, actual_wbt: actualWbt }),
+                });
+            } catch { return; }
+
+            const meal = allMeals.find(m => m.id === mealId);
+            if (meal) { meal.actual_ww = actualWw; meal.actual_wbt = actualWbt; }
 
             const display = document.getElementById(`display-${mealId}`);
-            if (actualWw !== null || actualWbt !== null) {
-                display.innerHTML = `<span class="actual-display">${fmt(actualWw, ' WW')} / ${fmt(actualWbt, ' WBT')}</span>`;
-            } else {
-                display.innerHTML = `<span class="actual-empty">Nie uzupełniono</span>`;
-            }
+            display.innerHTML = (actualWw !== null || actualWbt !== null)
+                ? `<span class="actual-display">${fmt(actualWw, ' WW')} / ${fmt(actualWbt, ' WBT')}</span>`
+                : `<span class="actual-empty">Nie uzupełniono</span>`;
 
             const icon = document.getElementById(`saved-${mealId}`);
             icon.style.display = 'inline';
-            setTimeout(() => icon.style.display = 'none', 2000);
+            setTimeout(() => { icon.style.display = 'none'; }, 2000);
+
+            refreshDaySummary(mealDateMap[mealId]);
+        }
+
+        function esc(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
 
         loadMeals();
