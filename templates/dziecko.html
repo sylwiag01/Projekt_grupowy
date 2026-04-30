@@ -12,14 +12,11 @@
 </head>
 <body class="min-h-screen">
 
-  <!-- Floating candy background -->
   <div class="candy-bg" aria-hidden="true" id="candy-bg"></div>
 
-  <!-- Header -->
   <div class="site-header">
     <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="/dziecko" class="logo">⭐ GlikoKids</a>
-      <!-- Switch to parent view -->
       <a href="{{ url_for('rodzic') }}"
          style="background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);color:#fff;border-radius:2rem;padding:0.35rem 1rem;font-weight:700;font-size:0.82rem;text-decoration:none;backdrop-filter:blur(4px);transition:background .2s;"
          onmouseover="this.style.background='rgba(255,255,255,0.4)'"
@@ -31,7 +28,6 @@
 
   <div class="page-wrap max-w-2xl mx-auto px-4 py-5 space-y-5">
 
-    <!-- Player card -->
     <div class="player-card">
       <div class="flex items-center gap-5">
         <div class="flex-shrink-0 text-center cursor-pointer select-none" onclick="petClick()">
@@ -40,7 +36,6 @@
             Zdobądźmy gwiazdki! ⭐
           </p>
         </div>
-        <!-- Postęp -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--text-soft)">
@@ -60,7 +55,6 @@
       </div>
     </div>
 
-    <!-- Activities -->
     <div>
       <h2 class="text-center text-3xl font-extrabold mb-5" style="font-family:'Bubblegum Sans',cursive;animation:rainbowText 4s linear infinite">Co chcesz robić? 🎮</h2>
       <div class="grid grid-cols-3 gap-4">
@@ -86,7 +80,6 @@
       </div>
     </div>
 
-    <!-- Friends -->
     <div class="friends-card">
       <h3 class="text-xl font-extrabold mb-4" style="font-family:'Bubblegum Sans',cursive;color:var(--purple)">👫 Twoi znajomi</h3>
       <div id="friends-grid" class="grid grid-cols-3 gap-3 text-center"></div>

@@ -54,7 +54,6 @@
                 </ul>
 
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <!-- Switch to child view -->
                     <li class="nav-item">
                         <a href="{{ url_for('dziecko') }}" class="btn btn-switch">
                             <i class="fas fa-child me-1"></i> Widok dziecka
@@ -161,7 +160,6 @@
             </div>
         </div>
 
-        <!-- Friends management -->
         <div class="row mt-2">
             <div class="col-12 mb-4">
                 <div class="card shadow">
@@ -171,7 +169,6 @@
                     </div>
                     <div class="card-body">
 
-                        <!-- Add friend form -->
                         <div class="mb-4">
                             <p class="small text-muted mb-2">Dodaj znajomego wpisując adres email jego rodzica.</p>
                             <div class="input-group" style="max-width:420px;">
@@ -185,14 +182,12 @@
 
                         <hr class="my-3">
 
-                        <!-- Pending incoming requests -->
                         <div id="requests-section" style="display:none;" class="mb-4">
                             <h6 class="fw-bold mb-3" style="color:#f6c23e;"><i class="fas fa-clock me-1"></i> Oczekujące zaproszenia</h6>
                             <div id="requests-list"></div>
                             <hr class="my-3">
                         </div>
 
-                        <!-- Accepted friends list -->
                         <h6 class="fw-bold text-muted text-uppercase small mb-3">Znajomi</h6>
                         <div id="friends-list">
                             <p class="text-muted small" id="no-friends-msg">Brak znajomych. Dodaj pierwszego powyżej!</p>
@@ -223,14 +218,12 @@
                 const activities = await actRes.json();
                 const meals      = await mealRes.json();
 
-                // Activity count
                 document.getElementById('activity-count').textContent = activities.length;
 
-                // WW totals from today's meals
                 const today = new Date().toISOString().slice(0, 10);
                 const todayMeals = meals.filter(m => m.timestamp.startsWith(today));
                 const wwSpent  = todayMeals.reduce((s, m) => s + (m.actual_ww || m.ww || 0), 0);
-                const wwTarget = 12; // could come from child stats in the future
+                const wwTarget = 12;
                 const wwLeft   = Math.max(0, wwTarget - wwSpent);
                 const pct      = Math.round((wwSpent / wwTarget) * 100);
 
@@ -238,7 +231,6 @@
                     `${wwSpent.toFixed(1)} / ${wwTarget}<br><small>WW</small>`;
                 document.getElementById('ww-pct').textContent = `${pct}% zrealizowane`;
 
-                // Accuracy from quiz/game scores
                 const scored = activities.filter(a => a.score !== null);
                 const avgScore = scored.length
                     ? Math.round(scored.reduce((s, a) => s + a.score, 0) / scored.length)
@@ -286,7 +278,6 @@
             const friends  = await frRes.json();
             const requests = await reqRes.json();
 
-            // Pending requests
             const reqSection = document.getElementById('requests-section');
             const reqList    = document.getElementById('requests-list');
             const badge      = document.getElementById('requests-badge');
@@ -307,7 +298,6 @@
                 badge.style.display = 'none';
             }
 
-            // Accepted friends
             const friendsList  = document.getElementById('friends-list');
             const noFriendsMsg = document.getElementById('no-friends-msg');
             if (friends.length > 0) {

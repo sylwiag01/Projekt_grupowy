@@ -1,4 +1,3 @@
-/* ── GlikoKids Custom DaisyUI Theme ─────────────────────────────── */
 [data-theme="glikokids"] {
   color-scheme: light;
   --p:  29 83% 52%;   --pf: 29 83% 42%;   --pc: 0 0% 100%;
@@ -17,7 +16,6 @@
   --animation-btn: 0.2s;
 }
 
-/* ── CSS vars ────────────────────────────────────────────────────── */
 :root {
   --orange:    #E87F24;
   --orange-lt: #FFF4E6;
@@ -45,7 +43,6 @@
 
 body { font-family: 'Nunito', sans-serif; }
 
-/* ── Animated background ─────────────────────────────────────────── */
 body {
   background: linear-gradient(135deg, #FFF4E6 0%, #FFF0F7 40%, #F0F8FF 70%, #F0FFF4 100%);
   background-size: 400% 400%;
@@ -61,7 +58,6 @@ body {
   100% { background-position: 0% 0%; }
 }
 
-/* ── Floating candy background ───────────────────────────────────── */
 .candy-bg {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -86,10 +82,8 @@ body {
   100% { transform: translateY(-110vh) rotate(720deg) scale(1.1); opacity: 0; }
 }
 
-/* ── Core page wrapper sits above candy-bg ───────────────────────── */
 .page-wrap { position: relative; z-index: 1; }
 
-/* ── Animations ─────────────────────────────────────────────────── */
 @keyframes popIn {
   from { transform: scale(0.4); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
@@ -167,7 +161,6 @@ body {
 
 .star-animate { animation: spin-glow 1.2s ease-out forwards; }
 
-/* ── Header / Logo ───────────────────────────────────────────────── */
 .logo {
   font-family: 'Bubblegum Sans', cursive;
   font-size: 2.2rem;
@@ -187,7 +180,6 @@ body {
   z-index: 10;
 }
 
-/* ── Level bar ───────────────────────────────────────────────────── */
 .level-bar {
   background: linear-gradient(135deg, #FFD166 0%, #FF9A3C 100%);
   display: flex; align-items: center; justify-content: space-between;
@@ -215,7 +207,6 @@ body {
 .stars-display { display:flex; align-items:center; gap:4px; font-size:14px; }
 .star-icon { color:var(--yellow); animation: heartBeat 2s ease infinite; }
 
-/* ── Mission card ────────────────────────────────────────────────── */
 .mission-card {
   background: linear-gradient(135deg, #FFF9F0, #FFF0F7);
   border: none;
@@ -233,7 +224,6 @@ body {
 .mission-text  { font-size:15px; font-weight:700; color:var(--text); line-height:1.5; }
 .mission-text strong { color:var(--orange); font-size:1.1em; }
 
-/* ── Game grid ───────────────────────────────────────────────────── */
 .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
 @media(max-width:500px){ .game-grid{ grid-template-columns:1fr; } }
 .panel {
@@ -249,7 +239,6 @@ body {
   color:var(--text-soft); margin-bottom:10px;
 }
 
-/* ── Food items ──────────────────────────────────────────────────── */
 .food-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .food-item {
   position:relative;
@@ -287,7 +276,6 @@ body {
 }
 .food-item:hover .tooltip { display:block; animation: popIn 0.15s ease; }
 
-/* ── Plate ───────────────────────────────────────────────────────── */
 .plate-area { min-height:130px; display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start; }
 .plate-empty { width:100%; text-align:center; font-size:13px; color:var(--gray-md); padding:24px 0; font-weight:600; }
 .plate-item {
@@ -308,7 +296,6 @@ body {
 }
 .remove-btn:hover { background:var(--red); color:#fff; transform:scale(1.2); }
 
-/* ── WW bar ──────────────────────────────────────────────────────── */
 .ww-bar-wrap   { margin-bottom:14px; }
 .ww-bar-labels { display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--text-soft); margin-bottom:6px; }
 .ww-bar-track  {
@@ -329,7 +316,6 @@ body {
 .ww-bar-fill.over { background: linear-gradient(90deg, var(--red), #C0392B, var(--red)); background-size:200% 100%; color:#fff; animation:shimmer 2s linear infinite; }
 .ww-bar-limit  { position:absolute; top:0; bottom:0; width:3px; background:rgba(0,0,0,.2); border-radius:2px; }
 
-/* ── Stats ───────────────────────────────────────────────────────── */
 .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
 .stat-card  {
   background: rgba(255,255,255,0.8);
@@ -346,7 +332,6 @@ body {
 .stat-val.over { color:var(--red); }
 .stat-sub   { font-size:10px; color:var(--text-soft); }
 
-/* ── Feedback box ────────────────────────────────────────────────── */
 .feedback-box {
   border-radius: 2rem; padding:16px 20px; font-size:14px; font-weight:700;
   line-height:1.5; margin-bottom:14px; display:flex; align-items:flex-start; gap:12px;
@@ -360,7 +345,6 @@ body {
 .feedback-box.over { background:linear-gradient(135deg,rgba(253,236,234,0.9),rgba(254,202,202,0.9)); box-shadow:0 6px 22px rgba(231,76,60,0.15); }
 .feedback-icon { font-size:1.5rem; flex-shrink:0; margin-top:1px; }
 
-/* ── Action buttons ──────────────────────────────────────────────── */
 .action-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
 .action-row .btn { flex:1; min-width:120px; }
 
@@ -388,7 +372,6 @@ body {
 }
 .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
 
-/* ── Result overlay ──────────────────────────────────────────────── */
 .overlay {
   position:fixed; inset:0;
   background: radial-gradient(ellipse at center, rgba(50,20,0,.5) 0%, rgba(0,0,0,.65) 100%);
@@ -422,7 +405,6 @@ body {
 .result-stat .rl { font-size:10px; font-weight:700; color:var(--text-soft); text-transform:uppercase; }
 .result-stars { font-size:2rem; margin-bottom:14px; letter-spacing:6px; animation:heartBeat 1s ease infinite; }
 
-/* ── Quiz card ───────────────────────────────────────────────────── */
 .quiz-card {
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -456,7 +438,6 @@ body {
 }
 .star-row { font-size:2rem; letter-spacing:4px; }
 
-/* ── Quiz answer buttons ─────────────────────────────────────────── */
 .answer-btn {
   display:block; width:100%; text-align:left;
   border: none;
@@ -497,7 +478,6 @@ body {
   color:var(--red);
 }
 
-/* ── Posilek search dropdown ─────────────────────────────────────── */
 .search-wrap   { position:relative; }
 .search-drop   {
   display:none; position:absolute; left:0; right:0; z-index:50;
@@ -519,7 +499,6 @@ body {
 .sri-meta { font-size:11px; color:var(--text-soft); }
 .sri-ww   { font-size:12px; font-weight:700; color:var(--orange); white-space:nowrap; }
 
-/* ── Plate rows (posilek.html) ───────────────────────────────────── */
 .plate-row {
   display:flex; align-items:center; gap:10px;
   background:linear-gradient(135deg, var(--orange-lt), #FFF0D6);
@@ -543,7 +522,6 @@ body {
 }
 .pr-remove:hover { background:var(--red); color:#fff; transform:scale(1.2) rotate(90deg); }
 
-/* ── Activity cards (dziecko.html) ──────────────────────────────── */
 .activity-card {
   border-radius: 2rem;
   text-decoration: none;
@@ -594,7 +572,6 @@ body {
 }
 .activity-sub { font-size:11px; color:rgba(255,255,255,0.85); font-weight:600; margin-top:3px; text-align:center; }
 
-/* ── Player card ─────────────────────────────────────────────────── */
 .player-card {
   background: rgba(255,255,255,0.8);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -603,7 +580,6 @@ body {
   box-shadow: 0 10px 36px rgba(232,127,36,0.14), 0 3px 10px rgba(0,0,0,0.05);
 }
 
-/* ── Friends card ────────────────────────────────────────────────── */
 .friends-card {
   background: rgba(255,255,255,0.8);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);

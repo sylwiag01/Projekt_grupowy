@@ -102,14 +102,12 @@
             const lvl = LEVELS[currentLevel];
             const pct = Math.min(100, (totWW / lvl.barMax) * 100);
 
-            /* bar */
             const bar = document.getElementById('ww-bar');
             bar.style.width = pct.toFixed(1) + '%';
             bar.className = 'ww-bar-fill' +
                 (totWW > lvl.maxWW ? ' over' : totWW >= lvl.minWW ? ' ok' : '');
             bar.textContent = pct > 8 ? totWW.toFixed(1) + ' WW' : '';
 
-            /* stats */
             const wwEl = document.getElementById('stat-ww');
             wwEl.textContent = totWW.toFixed(1);
             wwEl.className = 'stat-val' + (totWW > lvl.maxWW ? ' over' : totWW >= lvl.minWW ? ' ok' : '');
@@ -181,7 +179,6 @@
 
             const won = totWW >= lvl.minWW && totWW <= lvl.maxWW;
 
-            /* stars */
             let stars = 0;
             if (won) {
                 const margin = lvl.maxWW - totWW;
