@@ -55,6 +55,18 @@ def _calc_wbt(protein, fat):
     return round((float(protein or 0) * 4 + float(fat or 0) * 9) / 100, 1)
 
 
+def _calc_daily_targets(stats):
+    age = stats.age_years if stats else None
+    weight = stats.weight_kg if stats else None
+    if not age and not weight:
+        return None
+    daily_kcal = (1000 + 100 * age) if age else round(weight * 35)
+    carb_g = (daily_kcal * 0.50) / 4
+    daily_ww = round(carb_g / 10, 1)
+    daily_wbt = round(daily_kcal * 0.50 / 100, 1)
+    return {'kcal': round(daily_kcal), 'ww': daily_ww, 'wbt': daily_wbt}
+
+
 def _fetch_off(tag, page_size=500):
     all_products = []
     page = 1
@@ -244,7 +256,10 @@ def gra():
 @app.route('/posilek')
 @login_required
 def posilek():
-    return render_template('posilek.html', user_id=current_user.child_id)
+    stats = ChildStats.query.filter_by(child_id=current_user.child_id) \
+        .order_by(ChildStats.recorded_at.desc()).first()
+    targets = _calc_daily_targets(stats)
+    return render_template('posilek.html', user_id=current_user.child_id, targets=targets)
 
 
 @app.route('/rodzic')

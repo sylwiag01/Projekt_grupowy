@@ -26,6 +26,43 @@
 
     <h2 class="text-center text-3xl font-extrabold" style="font-family:'Bubblegum Sans',cursive;animation:rainbowText 5s linear infinite">🍽️ Mój posiłek</h2>
 
+    {% if targets %}
+    <!-- Daily targets card -->
+    <div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
+      <div class="card-body p-5">
+        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🎯 Twoje dzienne zapotrzebowanie</h3>
+        <div class="stats stats-horizontal shadow w-full mb-4" style="border-radius:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.07);border:none">
+          <div class="stat place-items-center py-3">
+            <div class="stat-title text-xs font-bold uppercase tracking-wider">🌾 WW / dzień</div>
+            <div class="stat-value text-primary">{{ targets.ww }}</div>
+          </div>
+          <div class="stat place-items-center py-3">
+            <div class="stat-title text-xs font-bold uppercase tracking-wider">🥩 WBT / dzień</div>
+            <div class="stat-value" style="color:var(--orange)">{{ targets.wbt }}</div>
+          </div>
+          <div class="stat place-items-center py-3">
+            <div class="stat-title text-xs font-bold uppercase tracking-wider">🔥 kcal / dzień</div>
+            <div class="stat-value">{{ targets.kcal }}</div>
+          </div>
+        </div>
+        <!-- Tip -->
+        <div class="flex items-start gap-3 p-4 rounded-2xl" style="background:linear-gradient(135deg,#fff9c4,#fff3cd)">
+          <span style="font-size:1.8rem;line-height:1">💡</span>
+          <div>
+            <div class="font-extrabold mb-1" style="font-family:'Bubblegum Sans',cursive;font-size:1rem">Wskazówka dla Ciebie!</div>
+            <div class="font-semibold text-sm" style="font-family:'Nunito',sans-serif;color:#555">
+              Twoje {{ targets.ww }} WW dziennie najlepiej podzielić tak:
+              śniadanie&nbsp;<strong>~{{ (targets.ww * 0.25) | round(1) }}&nbsp;WW</strong>,
+              obiad&nbsp;<strong>~{{ (targets.ww * 0.35) | round(1) }}&nbsp;WW</strong>,
+              kolacja&nbsp;<strong>~{{ (targets.ww * 0.20) | round(1) }}&nbsp;WW</strong>
+              i dwie małe przekąski. Tak cukier będzie stabilniejszy przez cały dzień! ⭐
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Search -->
     <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
       <div class="card-body p-5">
@@ -71,6 +108,34 @@
           </div>
         </div>
 
+        {% if targets %}
+        <!-- Progress vs daily targets -->
+        <div class="mb-4 space-y-2">
+          <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:var(--text-soft)">Ten posiłek z Twojego dziennego planu:</div>
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>🌾 WW</span>
+              <span id="ww-progress-text">0.0 / {{ targets.ww }}</span>
+            </div>
+            <progress class="progress progress-primary w-full" id="ww-bar" value="0" max="{{ targets.ww }}"></progress>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>🥩 WBT</span>
+              <span id="wbt-progress-text">0.0 / {{ targets.wbt }}</span>
+            </div>
+            <progress class="progress progress-warning w-full" id="wbt-bar" value="0" max="{{ targets.wbt }}"></progress>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>🔥 kcal</span>
+              <span id="cal-progress-text">0 / {{ targets.kcal }}</span>
+            </div>
+            <progress class="progress progress-error w-full" id="cal-bar" value="0" max="{{ targets.kcal }}"></progress>
+          </div>
+        </div>
+        {% endif %}
+
         <div class="form-control mb-4">
           <label class="label pb-1"><span class="label-text font-bold">Nazwa posiłku</span></label>
           <input id="meal-name" type="text" class="input input-bordered" style="font-family:'Nunito',sans-serif;font-weight:600"
@@ -90,6 +155,7 @@
 
   <script>
     const USER_ID = {{ user_id }};
+    const DAILY_TARGETS = {{ targets | tojson if targets else 'null' }};
 
     const CAT_EMOJI = {
       'Owoce':'🍎','Warzywa':'🥦','Nabiał':'🧀','Mięso':'🍗','Pieczywo':'🍞','Zboża':'🌾',
@@ -202,6 +268,15 @@
       document.getElementById('total-ww').textContent  = ww.toFixed(1);
       document.getElementById('total-wbt').textContent = wbt.toFixed(1);
       document.getElementById('total-cal').textContent = Math.round(cal);
+
+      if (DAILY_TARGETS) {
+        const wwBar  = document.getElementById('ww-bar');
+        const wbtBar = document.getElementById('wbt-bar');
+        const calBar = document.getElementById('cal-bar');
+        if (wwBar)  { wwBar.value  = ww;           document.getElementById('ww-progress-text').textContent  = `${ww.toFixed(1)} / ${DAILY_TARGETS.ww}`; }
+        if (wbtBar) { wbtBar.value = wbt;           document.getElementById('wbt-progress-text').textContent = `${wbt.toFixed(1)} / ${DAILY_TARGETS.wbt}`; }
+        if (calBar) { calBar.value = Math.round(cal); document.getElementById('cal-progress-text').textContent = `${Math.round(cal)} / ${DAILY_TARGETS.kcal}`; }
+      }
     }
 
     // ── Meal name ─────────────────────────────────────────────────────
