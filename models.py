@@ -85,3 +85,10 @@ class Dish(db.Model):
     fat      = db.Column(db.Float)
     ww       = db.Column(db.Float)
     wbt      = db.Column(db.Float)
+
+
+class UserProgress(db.Model):
+    id        = db.Column(db.Integer, primary_key=True)
+    child_id  = db.Column(db.Integer, db.ForeignKey('child.id'), unique=True, nullable=False)
+    total_xp  = db.Column(db.Integer, default=0, nullable=False)
+    coins     = db.Column(db.Integer, default=0, nullable=False)

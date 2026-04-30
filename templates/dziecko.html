@@ -34,29 +34,28 @@
     <!-- Player card -->
     <div class="player-card">
       <div class="flex items-center gap-5">
-        <!-- Bear avatar -->
         <div class="flex-shrink-0 text-center cursor-pointer select-none" onclick="petClick()">
-          <div class="text-6xl" style="display:inline-block;animation:wiggle 2.5s ease-in-out infinite">🐻</div>
+          <div class="text-6xl" style="display:inline-block;animation:wiggle 2.5s ease-in-out infinite">{{ progress.animal_icon }}</div>
           <p id="pet-message" class="mt-1 text-xs font-bold" style="display:none;color:var(--text-soft);max-width:80px;animation:popIn .3s ease">
             Zdobądźmy gwiazdki! ⭐
           </p>
         </div>
-        <!-- Progress -->
+        <!-- Postęp -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--text-soft)">
               Cześć, {{ child.name }}! 👋
             </span>
             <div class="flex gap-2">
-              <span style="background:linear-gradient(135deg,#FFC81E,#FF9A3C);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(255,200,30,0.3)">⭐ 12</span>
-              <span style="background:linear-gradient(135deg,#3498DB,#2980B9);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(52,152,219,0.3)">🪙 8</span>
+              <span style="background:linear-gradient(135deg,#FFC81E,#FF9A3C);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(255,200,30,0.3)">⭐ {{ progress.total_xp }}</span>
+              <span style="background:linear-gradient(135deg,#3498DB,#2980B9);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(52,152,219,0.3)">🪙 {{ progress.coins }}</span>
             </div>
           </div>
-          <h3 class="text-2xl font-extrabold mb-3" style="font-family:'Bubblegum Sans',cursive;color:var(--orange);text-shadow:0 2px 6px rgba(232,127,36,0.2)">Odkrywca 🚀</h3>
+          <h3 class="text-2xl font-extrabold mb-3" style="font-family:'Bubblegum Sans',cursive;color:var(--orange);text-shadow:0 2px 6px rgba(232,127,36,0.2)">{{ progress.level_name }}</h3>
           <div style="background:var(--gray);border-radius:20px;height:20px;overflow:hidden;border:2px solid var(--gray-md);box-shadow:inset 0 2px 4px rgba(0,0,0,0.08)">
-            <div style="width:45%;height:100%;border-radius:20px;background:linear-gradient(90deg,#FF6B9D,#FFC81E,#2ECC71);background-size:200% 100%;animation:shimmer 2s linear infinite"></div>
+            <div style="width:{{ progress.xp_percent }}%;height:100%;border-radius:20px;background:linear-gradient(90deg,#FF6B9D,#FFC81E,#2ECC71);background-size:200% 100%;animation:shimmer 2s linear infinite"></div>
           </div>
-          <p class="text-xs font-bold mt-1" style="color:var(--text-soft)">45 / 100 XP do następnego poziomu</p>
+          <p class="text-xs font-bold mt-1" style="color:var(--text-soft)">{{ progress.xp_in_level }} / {{ progress.xp_for_next }} XP do następnego poziomu</p>
         </div>
       </div>
     </div>

@@ -206,6 +206,14 @@
             }).catch(() => {});
         }
 
+        function submitGameResult(stars) {
+            fetch('/game/result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stars }),
+            }).catch(() => {});
+        }
+
         function showResult({ won, stars, totWW, totWBT, totKcal, isLast, text }) {
             document.getElementById('r-emoji').textContent = won ? (stars === 3 ? '🏆' : '🎉') : '😅';
             document.getElementById('r-title').textContent = won ? (stars === 3 ? 'Perfekcyjnie!' : 'Brawo!') : 'Prawie!';
@@ -236,6 +244,7 @@
                     stars,
                     ww: parseFloat(totWW.toFixed(1)),
                 });
+                submitGameResult(stars);
             }
             document.getElementById('overlay').classList.add('show');
         }

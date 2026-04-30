@@ -8,7 +8,8 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import inspect, text
 
 from extensions import db, login_manager
-from models import Activity, Child, ChildStats, Dish, Meal, Parent, Produce
+from models import Activity, Child, ChildStats, Dish, Meal, Parent, Produce, UserProgress
+from progression_service import LEVELS, award_game_stars, award_xp, get_progress_data
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///glikokids.db'
@@ -230,7 +231,8 @@ def logout():
 @app.route('/dziecko')
 @login_required
 def dziecko():
-    return render_template('dziecko.html', child=current_user.child)
+    progress = get_progress_data(current_user.child_id)
+    return render_template('dziecko.html', child=current_user.child, progress=progress)
 
 
 @app.route('/quiz')
@@ -405,6 +407,39 @@ def save_activity():
     db.session.add(entry)
     db.session.commit()
     return jsonify({'id': entry.id}), 201
+
+
+@app.route('/user/progress')
+@login_required
+def user_progress():
+    return jsonify(get_progress_data(current_user.child_id))
+
+
+@app.route('/quiz/result', methods=['POST'])
+@login_required
+def quiz_result():
+    data = request.get_json()
+    if not data or 'correct_answers' not in data:
+        return jsonify({'error': 'correct_answers jest wymagane'}), 400
+    correct = max(0, int(data['correct_answers']))
+    result = award_xp(current_user.child_id, correct)
+    return jsonify(result), 200
+
+
+@app.route('/game/result', methods=['POST'])
+@login_required
+def game_result():
+    data = request.get_json()
+    if not data or 'stars' not in data:
+        return jsonify({'error': 'stars jest wymagane'}), 400
+    stars = max(0, min(3, int(data['stars'])))
+    result = award_game_stars(current_user.child_id, stars)
+    return jsonify(result), 200
+
+
+@app.route('/levels')
+def levels():
+    return jsonify(LEVELS)
 
 
 @app.route('/api/activity/<int:child_id>/today')
