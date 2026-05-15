@@ -29,7 +29,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
         <div class="container">
-            <a class="navbar-brand font-weight-bold" href="{{ url_for('rodzic') }}">
+            <a class="navbar-brand fw-bold" href="{{ url_for('rodzic') }}">
                 <i class="fas fa-heartbeat"></i> GlikoKids
             </a>
 
@@ -80,6 +80,12 @@
                                 <span class="dropdown-item-text text-muted small">
                                     <i class="fas fa-child me-1"></i> Dziecko: <strong>{{ child.name }}</strong>
                                 </span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('ustawienia') }}">
+                                    <i class="fas fa-cog fa-sm fa-fw me-2"></i> Ustawienia
+                                </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
