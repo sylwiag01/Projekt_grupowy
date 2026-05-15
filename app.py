@@ -241,19 +241,19 @@ def logout():
 @login_required
 def dziecko():
     progress = get_progress_data(current_user.child_id)
-    return render_template('dziecko.html', child=current_user.child, progress=progress)
+    return render_template('dziecko.html', parent=current_user, child=current_user.child, progress=progress)
 
 
 @app.route('/quiz')
 @login_required
 def quiz():
-    return render_template('quiz.html', user_id=current_user.child_id)
+    return render_template('quiz.html', parent=current_user, user_id=current_user.child_id)
 
 
 @app.route('/gra')
 @login_required
 def gra():
-    return render_template('gra.html', user_id=current_user.child_id)
+    return render_template('gra.html', parent=current_user, user_id=current_user.child_id)
 
 
 @app.route('/posilek')
@@ -262,7 +262,7 @@ def posilek():
     stats = ChildStats.query.filter_by(child_id=current_user.child_id) \
         .order_by(ChildStats.recorded_at.desc()).first()
     targets = _calc_daily_targets(stats)
-    return render_template('posilek.html', user_id=current_user.child_id, targets=targets)
+    return render_template('posilek.html', parent=current_user, user_id=current_user.child_id, targets=targets)
 
 
 @app.route('/rodzic')
@@ -277,19 +277,20 @@ def historia_rodzic():
     stats = ChildStats.query.filter_by(child_id=current_user.child_id) \
         .order_by(ChildStats.recorded_at.desc()).first()
     targets = _calc_daily_targets(stats)
-    return render_template('historia_rodzic.html', user_id=current_user.child_id, targets=targets)
+    return render_template('historia_rodzic.html', parent=current_user, user_id=current_user.child_id, targets=targets)
 
 
 @app.route('/aktywnosc_dziecka')
 @login_required
 def aktywnosc_dziecka():
-    return render_template('aktywnosc_dziecka.html', child_id=current_user.child_id)
+    return render_template('aktywnosc_dziecka.html', parent=current_user, child_id=current_user.child_id)
 
 
 @app.route('/baza_rodzic')
 @login_required
 def baza_rodzic():
     return render_template('baza_rodzic.html',
+                           parent=current_user,
                            produce_cats=[c[0] for c in PRODUCE_CATEGORIES],
                            dish_cats=[c[0] for c in DISH_CATEGORIES])
 
