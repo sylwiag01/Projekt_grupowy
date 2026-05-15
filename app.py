@@ -295,6 +295,63 @@ def baza_rodzic():
                            dish_cats=[c[0] for c in DISH_CATEGORIES])
 
 
+@app.route('/ustawienia', methods=['GET', 'POST'])
+@login_required
+def ustawienia():
+    child = current_user.child
+    stats = ChildStats.query.filter_by(child_id=current_user.child_id) \
+        .order_by(ChildStats.recorded_at.desc()).first()
+
+    if request.method == 'POST':
+        parent_name = request.form.get('parent_name', '').strip()
+        if parent_name:
+            current_user.name = parent_name
+
+        child_name = request.form.get('child_name', '').strip()
+        if child_name:
+            child.name = child_name
+
+        weight = request.form.get('weight_kg', type=float)
+        height = request.form.get('height_cm', type=float)
+        age = request.form.get('age_years', type=int)
+        insulin_ratio = request.form.get('insulin_to_carb_ratio', type=float)
+        blood_sugar = request.form.get('blood_sugar_target', type=float)
+
+        new_stats = ChildStats(
+            child_id=child.id,
+            weight_kg=weight,
+            height_cm=height,
+            age_years=age,
+            insulin_to_carb_ratio=insulin_ratio,
+            blood_sugar_target=blood_sugar,
+        )
+        db.session.add(new_stats)
+
+        current_pw = request.form.get('current_password', '')
+        new_pw = request.form.get('new_password', '')
+        confirm_pw = request.form.get('confirm_password', '')
+        if new_pw:
+            if not current_user.check_password(current_pw):
+                db.session.rollback()
+                flash('Aktualne hasło jest nieprawidłowe.', 'danger')
+                return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
+            if new_pw != confirm_pw:
+                db.session.rollback()
+                flash('Nowe hasła nie są identyczne.', 'danger')
+                return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
+            if len(new_pw) < 6:
+                db.session.rollback()
+                flash('Hasło musi mieć co najmniej 6 znaków.', 'danger')
+                return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
+            current_user.set_password(new_pw)
+
+        db.session.commit()
+        flash('Zmiany zostały zapisane.', 'success')
+        return redirect(url_for('ustawienia'))
+
+    return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
+
+
 
 @app.route('/api/meal', methods=['POST'])
 def save_meal():

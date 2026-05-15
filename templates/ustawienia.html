@@ -18,7 +18,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
         <div class="container">
-            <a class="navbar-brand font-weight-bold" href="baza_rodzic.html">
+            <a class="navbar-brand fw-bold" href="/rodzic">
                 <i class="fas fa-heartbeat"></i> GlikoKids
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -27,24 +27,29 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="rodzic.html"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
+                        <a class="nav-link" href="/rodzic"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="historia_rodzic.html"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
+                        <a class="nav-link" href="/aktywnosc_dziecka"><i class="fas fa-child me-1"></i> Aktywność Dziecka</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="baza_rodzic.html"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
+                        <a class="nav-link" href="/historia_rodzic"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/baza_rodzic"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3 position-relative">
+                        <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center active" href="#" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle fa-lg me-2"></i> Tata Ani
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle fa-lg me-2"></i> {{ parent.name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li><a class="dropdown-item active" href="ustawienia.html">Ustawienia</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#">Wyloguj się</a></li>
+                            <li><a class="dropdown-item active" href="/ustawienia"><i class="fas fa-cog fa-sm me-2"></i>Ustawienia</a></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt fa-sm me-2"></i>Wyloguj się</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -55,6 +60,18 @@
     <div class="container">
         <h2 class="h4 text-gray-800 mb-4">Ustawienia Systemu</h2>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/ustawienia">
         <div class="row">
             <div class="col-lg-6">
                 <div class="card settings-card">
@@ -63,17 +80,29 @@
                         <h5 class="mb-0">Twój Profil (Rodzic)</h5>
                     </div>
                     <div class="card-body">
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label text-muted small">Imię i nazwisko</label>
-                                <input type="text" class="form-control" value="Jan Kowalski">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label text-muted small">Adres E-mail</label>
-                                <input type="email" class="form-control" value="tata.ani@email.com">
-                            </div>
-                            <button type="button" class="btn btn-outline-primary btn-sm">Zmień hasło</button>
-                        </form>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Imię i nazwisko</label>
+                            <input type="text" class="form-control" name="parent_name" value="{{ parent.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Adres E-mail</label>
+                            <input type="email" class="form-control" value="{{ parent.email }}" disabled>
+                            <div class="form-text text-muted">Adres e-mail nie może być zmieniony.</div>
+                        </div>
+                        <hr>
+                        <p class="text-muted small mb-2">Zmiana hasła (zostaw puste, jeśli nie chcesz zmieniać)</p>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Aktualne hasło</label>
+                            <input type="password" class="form-control" name="current_password" autocomplete="current-password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Nowe hasło</label>
+                            <input type="password" class="form-control" name="new_password" autocomplete="new-password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Potwierdź nowe hasło</label>
+                            <input type="password" class="form-control" name="confirm_password" autocomplete="new-password">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -87,25 +116,36 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label text-muted small">Imię dziecka</label>
-                            <input type="text" class="form-control" value="Ania">
+                            <input type="text" class="form-control" name="child_name" value="{{ child.name }}">
                         </div>
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label text-muted small">Dzienny cel WW</label>
-                                <input type="number" class="form-control" value="12.0" step="0.5">
+                                <label class="form-label text-muted small">Wiek (lata)</label>
+                                <input type="number" class="form-control" name="age_years" min="1" max="18"
+                                       value="{{ stats.age_years if stats and stats.age_years else '' }}">
                             </div>
                             <div class="col-6 mb-3">
-                                <label class="form-label text-muted small">Dzienny cel WBT</label>
-                                <input type="number" class="form-control" value="4.0" step="0.5">
+                                <label class="form-label text-muted small">Masa ciała (kg)</label>
+                                <input type="number" class="form-control" name="weight_kg" step="0.1" min="0"
+                                       value="{{ stats.weight_kg if stats and stats.weight_kg else '' }}">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Wybrany Avatar</label>
-                            <select class="form-select">
-                                <option selected>Smok DiaBohater</option>
-                                <option>Super Jabłko</option>
-                                <option>Kot Liczy-Węgle</option>
-                            </select>
+                            <label class="form-label text-muted small">Wzrost (cm)</label>
+                            <input type="number" class="form-control" name="height_cm" step="0.1" min="0"
+                                   value="{{ stats.height_cm if stats and stats.height_cm else '' }}">
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-muted small">Współczynnik insulina/WW</label>
+                                <input type="number" class="form-control" name="insulin_to_carb_ratio" step="0.1" min="0"
+                                       value="{{ stats.insulin_to_carb_ratio if stats and stats.insulin_to_carb_ratio else '' }}">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-muted small">Docelowy poziom cukru</label>
+                                <input type="number" class="form-control" name="blood_sugar_target" step="0.1" min="0"
+                                       value="{{ stats.blood_sugar_target if stats and stats.blood_sugar_target else '' }}">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -115,7 +155,7 @@
                 <div class="card settings-card">
                     <div class="settings-header d-flex align-items-center">
                         <div class="icon-box bg-warning text-white"><i class="fas fa-bell"></i></div>
-                        <h5 class="mb-0">Powiadomienia i Integracje</h5>
+                        <h5 class="mb-0">Powiadomienia</h5>
                     </div>
                     <div class="card-body">
                         <div class="form-check form-switch mb-3">
@@ -132,9 +172,10 @@
         </div>
 
         <div class="d-flex justify-content-end mb-5">
-            <button class="btn btn-secondary me-2">Anuluj</button>
-            <button class="btn btn-primary px-4">Zapisz wszystkie zmiany</button>
+            <a href="/rodzic" class="btn btn-secondary me-2">Anuluj</a>
+            <button type="submit" class="btn btn-primary px-4">Zapisz wszystkie zmiany</button>
         </div>
+        </form>
 
         <footer class="text-center text-muted pb-4">
             <small>&copy; 2026 GlikoKids Team</small>
