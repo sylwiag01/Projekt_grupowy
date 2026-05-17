@@ -12,6 +12,9 @@
 </head>
 <body class="min-h-screen">
 
+  <!-- Confetti container -->
+  <div id="confetti-container" aria-hidden="true"></div>
+
   <!-- Floating candy background -->
   <div class="candy-bg" aria-hidden="true" id="candy-bg"></div>
 
@@ -157,6 +160,44 @@
     const USER_ID = {{ user_id }};
     const DAILY_TARGETS = {{ targets | tojson if targets else 'null' }};
 
+    function playSound(type) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const schedule = (freq, start, dur, vol = 0.26) => {
+          const osc = ctx.createOscillator(), gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.type = 'sine'; osc.frequency.value = freq;
+          gain.gain.setValueAtTime(vol, start);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+          osc.start(start); osc.stop(start + dur);
+        };
+        const t = ctx.currentTime;
+        if (type === 'plop') {
+          schedule(520, t, 0.08, 0.18); schedule(780, t + 0.06, 0.12, 0.14);
+        } else if (type === 'win') {
+          [523, 659, 784, 1047, 1319].forEach((f, i) => schedule(f, t + i * 0.12, 0.4, 0.28));
+        }
+      } catch (_) {}
+    }
+
+    function spawnConfetti(count = 40) {
+      const emojis = ['⭐', '🌟', '✨', '🎉', '🎊', '💫', '🍽️', '🌈', '💚'];
+      const container = document.getElementById('confetti-container');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('span');
+        el.className = 'confetti-piece';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = (Math.random() * 100) + '%';
+        el.style.fontSize = (14 + Math.random() * 22) + 'px';
+        el.style.animationDuration = (1.2 + Math.random() * 1.6) + 's';
+        el.style.animationDelay = (Math.random() * 0.7) + 's';
+        container.appendChild(el);
+      }
+      setTimeout(() => { container.innerHTML = ''; }, 3500);
+    }
+
     const CAT_EMOJI = {
       'Owoce':'🍎','Warzywa':'🥦','Nabiał':'🧀','Mięso':'🍗','Pieczywo':'🍞','Zboża':'🌾',
       'Zupy':'🍲','Dania gotowe':'🍽️','Sałatki':'🥗','Desery':'🍰','Przekąski':'🍿',
@@ -213,6 +254,9 @@
       closeDrop();
       renderPlate();
       autoName();
+      playSound('plop');
+      const newRow = document.getElementById('pr-' + (plate.length - 1));
+      if (newRow) { newRow.style.animation = 'none'; newRow.offsetHeight; newRow.style.animation = 'popInBounce .3s cubic-bezier(.34,1.56,.64,1)'; }
     }
 
     // ── Plate ─────────────────────────────────────────────────────────
@@ -305,7 +349,19 @@
       try {
         const resp = await fetch('/api/meal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
         if (resp.ok) {
-          summary.innerHTML = `<div class="alert alert-success mt-2">🎉 <strong>Super robota!</strong> Zjadłeś: <strong>${esc(mealName)}</strong> | WW: <strong>${data.ww}</strong> | WBT: <strong>${data.wbt}</strong> | 🔥 ${data.calories} kcal</div>`;
+          playSound('win');
+          spawnConfetti(45);
+          summary.innerHTML = `
+            <div style="background:linear-gradient(135deg,#d4f5e2,#e8faf0);border:2px solid #2ECC71;border-radius:1.5rem;padding:20px;text-align:center;animation:popInBounce .4s cubic-bezier(.34,1.56,.64,1)">
+              <div style="font-size:3rem;margin-bottom:6px">🎉</div>
+              <div style="font-family:'Bubblegum Sans',cursive;font-size:1.4rem;color:#1a7a42;font-weight:800;margin-bottom:8px">Super robota!</div>
+              <div style="font-size:0.9rem;font-weight:700;color:#2d6a4f;margin-bottom:10px">Zapisałeś: <strong>${esc(mealName)}</strong></div>
+              <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#2980B9">🌾 WW: ${data.ww}</span>
+                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:var(--orange)">🥩 WBT: ${data.wbt}</span>
+                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#e74c3c">🔥 ${data.calories} kcal</span>
+              </div>
+            </div>`;
           fetch('/api/activity', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

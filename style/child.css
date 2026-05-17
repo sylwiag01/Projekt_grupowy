@@ -405,6 +405,28 @@ body {
 .result-stat .rl { font-size:10px; font-weight:700; color:var(--text-soft); text-transform:uppercase; }
 .result-stars { font-size:2rem; margin-bottom:14px; letter-spacing:6px; animation:heartBeat 1s ease infinite; }
 
+#confetti-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; overflow:hidden; }
+.confetti-piece {
+  position: absolute;
+  top: -40px;
+  animation: confettiFall linear forwards;
+  user-select: none;
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg) scale(0.6); opacity: 0; }
+}
+@keyframes starPop {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.result-stars .star-anim {
+  display: inline-block;
+  animation: starPop 0.4s cubic-bezier(.34,1.56,.64,1) both;
+}
+
 .quiz-card {
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);

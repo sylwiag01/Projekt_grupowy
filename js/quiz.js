@@ -96,6 +96,49 @@ let score = 0;
 let answered = false;
 let questions = [];
 
+function playSound(type) {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const schedule = (freq, start, dur, vol = 0.28) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine'; osc.frequency.value = freq;
+            gain.gain.setValueAtTime(vol, start);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+            osc.start(start); osc.stop(start + dur);
+        };
+        const t = ctx.currentTime;
+        if (type === 'correct') {
+            schedule(660, t, 0.12); schedule(880, t + 0.1, 0.18);
+        } else if (type === 'wrong') {
+            schedule(320, t, 0.15); schedule(220, t + 0.14, 0.25);
+        } else if (type === 'win3') {
+            [523, 659, 784, 1047, 1319].forEach((f, i) => schedule(f, t + i * 0.12, 0.4, 0.3));
+        } else if (type === 'win') {
+            [523, 659, 784, 1047].forEach((f, i) => schedule(f, t + i * 0.13, 0.32, 0.26));
+        }
+    } catch (_) {}
+}
+
+function spawnConfetti(count = 35) {
+    const emojis = ['⭐', '🌟', '✨', '🎉', '🎊', '💫', '🏆', '🧠', '🌈'];
+    const container = document.getElementById('confetti-container');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement('span');
+        el.className = 'confetti-piece';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = (Math.random() * 100) + '%';
+        el.style.fontSize = (14 + Math.random() * 22) + 'px';
+        el.style.animationDuration = (1.2 + Math.random() * 1.6) + 's';
+        el.style.animationDelay = (Math.random() * 0.7) + 's';
+        container.appendChild(el);
+    }
+    setTimeout(() => { container.innerHTML = ''; }, 3500);
+}
+
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -145,11 +188,17 @@ function selectAnswer(btn, isCorrect) {
     if (isCorrect) {
         btn.classList.add('correct');
         score++;
-        document.getElementById('score-live').textContent = score;
+        playSound('correct');
+        const scoreLive = document.getElementById('score-live');
+        scoreLive.textContent = score;
+        scoreLive.style.animation = 'none';
+        scoreLive.offsetHeight;
+        scoreLive.style.animation = 'popInBounce .35s cubic-bezier(.34,1.56,.64,1)';
         document.getElementById('feedback-text').innerHTML =
             `<span style="color:var(--green-dk)">🎉 Brawo! ${questions[currentIndex].explain}</span>`;
     } else {
         btn.classList.add('wrong');
+        playSound('wrong');
         document.getElementById('feedback-text').innerHTML =
             `<span style="color:var(--red)">😅 Nie tym razem. ${questions[currentIndex].explain}</span>`;
         const correctText = questions[currentIndex].answers[questions[currentIndex].correct];
@@ -209,9 +258,22 @@ function showResults() {
 
     document.getElementById('result-emoji').textContent = emoji;
     document.getElementById('result-score').textContent = `${score} / ${total}`;
-    document.getElementById('result-stars').textContent = '⭐'.repeat(score) || '—';
     document.getElementById('result-msg').textContent = msg;
     document.getElementById('result-sub').textContent = sub;
+
+    const starsEl = document.getElementById('result-stars');
+    if (score > 0) {
+        starsEl.innerHTML = Array.from({ length: score }, (_, i) =>
+            `<span class="star-anim" style="animation-delay:${i * 0.08}s">⭐</span>`
+        ).join('');
+    } else {
+        starsEl.textContent = '—';
+    }
+
+    if (pct >= 0.8) {
+        playSound(pct === 1 ? 'win3' : 'win');
+        spawnConfetti(pct === 1 ? 55 : 35);
+    }
 }
 
 startQuiz();

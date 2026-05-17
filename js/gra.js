@@ -220,12 +220,70 @@
             }).catch(() => {});
         }
 
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const schedule = (freq, start, dur, vol = 0.3) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(vol, start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+                    osc.start(start);
+                    osc.stop(start + dur);
+                };
+                const t = ctx.currentTime;
+                if (type === 'win3') {
+                    [523, 659, 784, 1047, 1319].forEach((f, i) => schedule(f, t + i * 0.12, 0.45, 0.32));
+                } else if (type === 'win') {
+                    [523, 659, 784, 1047].forEach((f, i) => schedule(f, t + i * 0.13, 0.35, 0.28));
+                } else {
+                    schedule(380, t, 0.2, 0.2);
+                    schedule(260, t + 0.2, 0.35, 0.2);
+                }
+            } catch (_) {}
+        }
+
+        function spawnConfetti(count = 35) {
+            const emojis = ['⭐', '🌟', '✨', '🎉', '🎊', '💫', '🏆', '🌈'];
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('span');
+                el.className = 'confetti-piece';
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = (Math.random() * 100) + '%';
+                el.style.fontSize = (14 + Math.random() * 22) + 'px';
+                el.style.animationDuration = (1.2 + Math.random() * 1.6) + 's';
+                el.style.animationDelay = (Math.random() * 0.7) + 's';
+                container.appendChild(el);
+            }
+            setTimeout(() => { container.innerHTML = ''; }, 3500);
+        }
+
         function showResult({ won, stars, totWW, totWBT, totKcal, isLast, text }) {
             document.getElementById('r-emoji').textContent = won ? (stars === 3 ? '🏆' : '🎉') : '😅';
             document.getElementById('r-title').textContent = won ? (stars === 3 ? 'Perfekcyjnie!' : 'Brawo!') : 'Prawie!';
             document.getElementById('r-title').className = 'result-title ' + (won ? 'win' : 'lose');
-            document.getElementById('r-stars').textContent = won ? '⭐'.repeat(stars) : '💪';
+            const starsEl = document.getElementById('r-stars');
+            if (won) {
+                starsEl.innerHTML = Array.from({ length: stars }, (_, i) =>
+                    `<span class="star-anim" style="animation-delay:${i * 0.15}s">⭐</span>`
+                ).join('');
+            } else {
+                starsEl.textContent = '💪';
+            }
             document.getElementById('r-text').textContent = text;
+
+            if (won) {
+                playSound(stars === 3 ? 'win3' : 'win');
+                spawnConfetti(stars === 3 ? 50 : 30);
+            } else {
+                playSound('lose');
+            }
             document.getElementById('r-ww').textContent = totWW.toFixed(1);
             document.getElementById('r-wbt').textContent = totWBT.toFixed(1);
             document.getElementById('r-kcal').textContent = Math.round(totKcal);
