@@ -11,6 +11,15 @@
             { id: 'orange', name: 'Pomarańcza', icon: '🍊', ww: 1.5, wbt: 0, kcal: 70, note: '1 sztuka (~150g)' },
             { id: 'oats', name: 'Płatki owsiane', icon: '🥣', ww: 3.0, wbt: 1.0, kcal: 150, note: 'pół szklanki (40g)' },
             { id: 'chicken', name: 'Kurczak', icon: '🍗', ww: 0, wbt: 3.0, kcal: 165, note: '1 kawałek (100g)' },
+            { id: 'pasta', name: 'Makaron', icon: '🍝', ww: 2.5, wbt: 0.5, kcal: 140, note: 'pół szklanki ugotowanego (80g)' },
+            { id: 'pizza', name: 'Pizza', icon: '🍕', ww: 3.0, wbt: 1.5, kcal: 230, note: '1 kawałek (~100g)' },
+            { id: 'soup', name: 'Zupa pomidorowa', icon: '🍲', ww: 1.5, wbt: 0.5, kcal: 80, note: 'talerz z ryżem (300ml)' },
+            { id: 'pierogi', name: 'Pierogi', icon: '🥟', ww: 2.5, wbt: 1.0, kcal: 180, note: '4 sztuki (~150g)' },
+            { id: 'sandwich', name: 'Kanapka', icon: '🥪', ww: 2.0, wbt: 1.5, kcal: 180, note: '2 kromki z wędliną' },
+            { id: 'grapes', name: 'Winogrona', icon: '🍇', ww: 2.0, wbt: 0, kcal: 90, note: 'mała kiść (~100g)' },
+            { id: 'carrot', name: 'Marchewka', icon: '🥕', ww: 0.5, wbt: 0, kcal: 35, note: '1 sztuka (~80g)' },
+            { id: 'fish', name: 'Paluszki rybne', icon: '🐟', ww: 1.5, wbt: 2.0, kcal: 150, note: '3 sztuki (~90g)' },
+            { id: 'cocoa', name: 'Kakao', icon: '🍫', ww: 1.5, wbt: 0.5, kcal: 90, note: 'kubek z mlekiem (200ml)' },
         ];
 
         const LEVELS = [
