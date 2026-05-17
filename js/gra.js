@@ -47,6 +47,38 @@
                 overMsg: 'Za ciężko na kolację! Wieczorem organizm potrzebuje mniej węglowodanów, bo nie biegamy już aktywnie. Wybierz lżejsze produkty!',
                 lowMsg: 'Kolacja potrzebuje choć 2 WW, żebyś miał(a) siłę do rana. Dodaj jeszcze coś lekkiego!',
             },
+            {
+                label: 'Poziom 4 – Detektyw Przekąsek', emoji: '🍿',
+                meal: 'przekąskę', minWW: 1, maxWW: 2, barMax: 3,
+                msg: 'Ułóż lekką przekąskę z <strong>1–2 WW</strong>. To drugie śniadanie lub podwieczorek – coś małego, żeby nie być głodnym!',
+                winMsg: 'Idealna przekąska! Między posiłkami wystarczy 1–2 WW. Mały zastrzyk energii bez skoku cukru – mądry wybór! 🍿',
+                overMsg: 'Za dużo jak na przekąskę! Powinna być lekka – maks 2 WW. Usuń jeden produkt!',
+                lowMsg: 'Jeszcze mało! Dodaj choć 1 WW, żeby zaspokoić głód między posiłkami.',
+            },
+            {
+                label: 'Poziom 5 – Sportowiec', emoji: '⚽',
+                meal: 'obiad sportowy', minWW: 5, maxWW: 6, barMax: 9,
+                msg: 'Masz dziś trening! Ułóż obiad z <strong>5–6 WW</strong>. Podczas sportu spalasz więcej energii – potrzebujesz więcej węglowodanów!',
+                winMsg: 'Super! Przed sportem potrzebujesz więcej WW – organizm spali je podczas treningu. Aktywność fizyczna obniża cukier, więc więcej WW to dobry pomysł! ⚽',
+                overMsg: 'Za dużo! Nawet przed treningiem powyżej 6 WW to za duże obciążenie. Usuń coś i zamień na lżejszy produkt!',
+                lowMsg: 'Za mało energii przed treningiem! Potrzebujesz co najmniej 5 WW. Dodaj ziemniaki, ryż albo makaron!',
+            },
+            {
+                label: 'Poziom 6 – Urodzinowy Detektyw', emoji: '🎂',
+                meal: 'posiłek na przyjęciu', minWW: 3, maxWW: 5, barMax: 8,
+                msg: 'Jesteś na urodzinach! Ułóż posiłek z <strong>3–5 WW</strong>. Uwaga – pizza i ciasto mają dużo WW! Musisz wybrać mądrze.',
+                winMsg: 'Brawo! Nawet na przyjęciu potrafisz liczyć WW! Możesz się bawić i jeść smacznie, ale z głową. Jesteś naprawdę mądry/a! 🎉',
+                overMsg: 'Ups! Na przyjęciu łatwo przesadzić. Jeden kawałek pizzy LUB kawałek ciasta – nie oba naraz. Usuń coś!',
+                lowMsg: 'Talerz za pusty! Na przyjęciu możesz zjeść troszkę więcej. Dodaj coś pysznego w granicach 3–5 WW!',
+            },
+            {
+                label: 'Poziom 7 – EKSPERT 🔬', emoji: '🧪',
+                meal: 'kolację eksperta', minWW: 2.5, maxWW: 3.0, barMax: 5,
+                msg: 'TRYB EKSPERTA! Ułóż kolację z dokładnie <strong>2.5–3.0 WW</strong>. Zakres jest bardzo wąski – musisz liczyć precyzyjnie!',
+                winMsg: 'NIESAMOWITE! Trafiłeś/aś w bardzo wąski zakres eksperta! To prawdziwy talent do liczenia WW – twój diabetolog byłby z ciebie bardzo dumny! 🔬',
+                overMsg: 'Prawie! Przekroczyłeś/aś zakres eksperta. Nawet 0.5 WW robi różnicę – usuń coś małego!',
+                lowMsg: 'Brakuje! W trybie eksperta musisz trafić dokładnie w 2.5–3.0 WW. Może dodaj marchewkę (0.5 WW)?',
+            },
         ];
 
         let currentLevel = 0;
@@ -236,7 +268,9 @@
                     osc.stop(start + dur);
                 };
                 const t = ctx.currentTime;
-                if (type === 'win3') {
+                if (type === 'grandmaster') {
+                    [523, 659, 784, 1047, 1319, 1047, 784, 1047, 1319, 1568].forEach((f, i) => schedule(f, t + i * 0.1, 0.5, 0.3));
+                } else if (type === 'win3') {
                     [523, 659, 784, 1047, 1319].forEach((f, i) => schedule(f, t + i * 0.12, 0.45, 0.32));
                 } else if (type === 'win') {
                     [523, 659, 784, 1047].forEach((f, i) => schedule(f, t + i * 0.13, 0.35, 0.28));
@@ -265,11 +299,17 @@
         }
 
         function showResult({ won, stars, totWW, totWBT, totKcal, isLast, text }) {
-            document.getElementById('r-emoji').textContent = won ? (stars === 3 ? '🏆' : '🎉') : '😅';
-            document.getElementById('r-title').textContent = won ? (stars === 3 ? 'Perfekcyjnie!' : 'Brawo!') : 'Prawie!';
-            document.getElementById('r-title').className = 'result-title ' + (won ? 'win' : 'lose');
+            const isGrandMaster = won && isLast;
+            document.getElementById('r-emoji').textContent = isGrandMaster ? '👑' : won ? (stars === 3 ? '🏆' : '🎉') : '😅';
+            document.getElementById('r-title').textContent = isGrandMaster ? 'WIELKI MISTRZ!' : won ? (stars === 3 ? 'Perfekcyjnie!' : 'Brawo!') : 'Prawie!';
+            document.getElementById('r-title').className = 'result-title ' + (isGrandMaster ? 'grand-master' : won ? 'win' : 'lose');
+            document.querySelector('.result-card').classList.toggle('grand-master', isGrandMaster);
             const starsEl = document.getElementById('r-stars');
-            if (won) {
+            if (isGrandMaster) {
+                starsEl.innerHTML = Array.from({ length: 7 }, (_, i) =>
+                    `<span class="star-anim" style="animation-delay:${i * 0.1}s">🏆</span>`
+                ).join('');
+            } else if (won) {
                 starsEl.innerHTML = Array.from({ length: stars }, (_, i) =>
                     `<span class="star-anim" style="animation-delay:${i * 0.15}s">⭐</span>`
                 ).join('');
@@ -277,10 +317,11 @@
                 starsEl.textContent = '💪';
             }
             document.getElementById('r-text').textContent = text;
+            document.getElementById('r-badge').style.display = isGrandMaster ? 'block' : 'none';
 
             if (won) {
-                playSound(stars === 3 ? 'win3' : 'win');
-                spawnConfetti(stars === 3 ? 50 : 30);
+                playSound(isGrandMaster ? 'grandmaster' : stars === 3 ? 'win3' : 'win');
+                spawnConfetti(isGrandMaster ? 100 : stars === 3 ? 50 : 30);
             } else {
                 playSound('lose');
             }
@@ -293,7 +334,7 @@
                 btn.textContent = '🔄 Spróbuj jeszcze raz';
                 btn.onclick = () => { closeOverlay(); clearPlate(); };
             } else if (isLast) {
-                btn.textContent = '🏁 Zagraj od nowa!';
+                btn.textContent = '🔄 Zagraj od nowa!';
                 btn.onclick = () => { closeOverlay(); currentLevel = 0; initLevel(); };
             } else {
                 btn.textContent = 'Następny poziom! 🚀';

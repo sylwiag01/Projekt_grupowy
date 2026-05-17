@@ -615,3 +615,29 @@ body {
   transition: transform .2s, background .2s;
 }
 .friend-item:hover { transform: translateY(-4px); background: rgba(155,89,182,0.06); }
+
+@keyframes rainbowOutline {
+  0%   { outline-color: #FF6B9D; }
+  16%  { outline-color: #FFC81E; }
+  33%  { outline-color: #2ECC71; }
+  50%  { outline-color: #3498DB; }
+  66%  { outline-color: #9B59B6; }
+  83%  { outline-color: #E87F24; }
+  100% { outline-color: #FF6B9D; }
+}
+
+.grand-master-badge {
+  font-size: 13px; font-weight: 800; color: var(--purple);
+  background: linear-gradient(135deg, var(--orange-lt), var(--pink-lt), var(--purple-lt));
+  border-radius: 2rem; padding: 8px 18px; margin-bottom: 12px;
+  animation: pulseGlow 2s ease infinite; letter-spacing: 1px;
+}
+.result-title.grand-master {
+  font-size: 2.2rem;
+  animation: rainbowText 2s linear infinite;
+}
+.result-card.grand-master {
+  outline: 3px solid #FF6B9D;
+  animation: rainbowOutline 2s linear infinite;
+  box-shadow: 0 24px 64px rgba(232,127,36,0.35), 0 8px 24px rgba(155,89,182,0.25);
+}
