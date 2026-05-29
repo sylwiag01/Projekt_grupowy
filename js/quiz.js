@@ -1,4 +1,5 @@
 const QUESTIONS = [
+    // --- TWOJE ORYGINALNE PYTANIA ---
     {
         q: 'Ile gramów węglowodanów odpowiada 1 WW?',
         answers: ['5 g', '10 g', '15 g', '20 g'],
@@ -89,6 +90,68 @@ const QUESTIONS = [
         correct: 1,
         explain: '10 g ÷ 10 = 1 WW. Mleko ma też WBT, bo zawiera białko i tłuszcz.',
     },
+
+    // --- NOWE PYTANIA ---
+    {
+        q: 'Ile kilokalorii (kcal) z białka i tłuszczu odpowiada 1 WBT?',
+        answers: ['50 kcal', '100 kcal', '150 kcal', '200 kcal'],
+        correct: 1,
+        explain: '1 WBT to porcja produktu, która dostarcza dokładnie 100 kcal pochodzących z białka i tłuszczu.',
+    },
+    {
+        q: 'Jak nazywa się stan, w którym poziom cukru we krwi jest zbyt wysoki?',
+        answers: ['Hiperglikemia', 'Hipoglikemia', 'Hipoksja', 'Glikoliza'],
+        correct: 0,
+        explain: 'Hiperglikemia to przecukrzenie. Wymaga podania odpowiedniej dawki insuliny lub aktywności fizycznej.',
+    },
+    {
+        q: 'Co określa Indeks Glikemiczny (IG)?',
+        answers: ['Ilość kalorii w produkcie', 'Zawartość tłuszczu w jedzeniu', 'Szybkość, z jaką produkt podnosi poziom cukru', 'Ilość witamin w jedzeniu'],
+        correct: 2,
+        explain: 'Indeks Glikemiczny określa, jak szybko po zjedzeniu danego produktu wzrasta poziom glukozy we krwi.',
+    },
+    {
+        q: 'Jak wysiłek fizyczny (np. bieganie, jazda na rowerze) zazwyczaj wpływa na poziom cukru we krwi?',
+        answers: ['Szybko go podnosi', 'Obniża poziom cukru', 'Nie ma żadnego wpływu', 'Zatrzymuje działanie insuliny'],
+        correct: 1,
+        explain: 'Wysiłek fizyczny sprawia, że mięśnie zużywają więcej glukozy, co prowadzi do obniżenia poziomu cukru we krwi.',
+    },
+    {
+        q: 'Którą insulinę podaje się zazwyczaj bezpośrednio przed posiłkiem?',
+        answers: ['Insulinę bazową (długodziałającą)', 'Insulinę szybkodziałającą', 'Nie ma to znaczenia', 'Tylko rano po przebudzeniu'],
+        correct: 1,
+        explain: 'Insulinę szybkodziałającą podaje się przed jedzeniem, aby pokryć skok cukru spowodowany węglowodanami z posiłku.',
+    },
+    {
+        q: 'Co oznacza badanie HbA1c (hemoglobina glikowana)?',
+        answers: ['Poziom cukru w danym momencie', 'Ilość wyprodukowanej insuliny', 'Średni poziom cukru z ostatnich 3 miesięcy', 'Ciśnienie krwi'],
+        correct: 2,
+        explain: 'Hemoglobina glikowana (HbA1c) to ważne badanie, które pokazuje średnie stężenie glukozy we krwi w ciągu ostatnich 2-3 miesięcy.',
+    },
+    {
+        q: 'Jeśli Twój przelicznik to 1 jednostka insuliny na 1 WW, ile jednostek musisz podać na posiłek mający 5 WW?',
+        answers: ['1 jednostkę', '2,5 jednostki', '5 jednostek', '10 jednostek'],
+        correct: 2,
+        explain: 'Skoro 1 WW wymaga 1 jednostki insuliny, to 5 WW wymaga podania 5 jednostek (5 x 1).',
+    },
+    {
+        q: 'Czym charakteryzuje się cukrzyca typu 1?',
+        answers: ['Brak produkcji insuliny przez trzustkę', 'Zbyt duża produkcja insuliny', 'Oporność komórek na insulinę', 'Występuje tylko u osób otyłych'],
+        correct: 0,
+        explain: 'W cukrzycy typu 1 układ odpornościowy niszczy komórki trzustki, przez co organizm przestaje samodzielnie produkować insulinę.',
+    },
+    {
+        q: 'Jaki hormon działa przeciwnie do insuliny, ratując przed ciężką hipoglikemią?',
+        answers: ['Adrenalina', 'Glukagon', 'Tyroksyna', 'Melatonina'],
+        correct: 1,
+        explain: 'Glukagon to hormon, który uwalnia zapasy glukozy z wątroby, szybko podnosząc poziom cukru we krwi.',
+    },
+    {
+        q: 'Jaki jest prawidłowy poziom cukru we krwi na czczo u zdrowej osoby (bez cukrzycy)?',
+        answers: ['70-99 mg/dl', '100-125 mg/dl', '126-150 mg/dl', 'Powyżej 150 mg/dl'],
+        correct: 0,
+        explain: 'Prawidłowa glikemia na czczo u zdrowego człowieka wynosi od 70 do 99 mg/dl. Powyżej tej wartości diagnozuje się stan przedcukrzycowy lub cukrzycę.'
+    }
 ];
 
 let currentIndex = 0;
