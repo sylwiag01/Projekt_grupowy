@@ -410,6 +410,15 @@ def save_meal():
     return jsonify({'id': meal.id}), 201
 
 
+@app.route('/api/meal/<int:meal_id>', methods=['DELETE'])
+@login_required
+def delete_meal(meal_id):
+    meal = db.get_or_404(Meal, meal_id)
+    db.session.delete(meal)
+    db.session.commit()
+    return jsonify({'ok': True})
+
+
 @app.route('/api/meal/<int:meal_id>', methods=['PATCH'])
 def update_meal(meal_id):
     meal = db.get_or_404(Meal, meal_id)

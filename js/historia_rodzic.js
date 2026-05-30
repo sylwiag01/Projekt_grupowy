@@ -139,7 +139,10 @@ function renderMealRow(m) {
                 <input type="number" id="awbt-${m.id}" class="form-control form-control-sm actual-input"
                        value="${m.actual_wbt ?? ''}" step="0.1" min="0" placeholder="WBT">
                 <button class="btn btn-outline-success btn-sm" onclick="saveActual(${m.id})" title="Zapisz">
-                    <i class="fas fa-save"></i>
+                    <i class="fas fa-floppy-disk"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteMeal(${m.id})" title="Usuń posiłek">
+                    <i class="fas fa-trash"></i>
                 </button>
                 <i class="fas fa-check-circle save-ok" id="saved-${m.id}" style="display:none"></i>
             </div>
@@ -273,6 +276,39 @@ async function saveActual(mealId) {
     setTimeout(() => { icon.style.display = 'none'; }, 2000);
 
     refreshDaySummary(mealDateMap[mealId]);
+}
+
+async function deleteMeal(mealId) {
+    if (!confirm('Czy na pewno chcesz usunąć ten posiłek?')) return;
+
+    try {
+        const resp = await fetch(`/api/meal/${mealId}`, { method: 'DELETE' });
+        if (!resp.ok) return;
+    } catch { return; }
+
+    const dateKey = mealDateMap[mealId];
+    allMeals = allMeals.filter(m => m.id !== mealId);
+    delete mealDateMap[mealId];
+
+    const row = document.getElementById(`row-${mealId}`);
+    if (row) row.remove();
+
+    const remaining = allMeals.filter(m => mealDateMap[m.id] === dateKey);
+    const collapseId = `day-${dateKey.replace(/-/g, '')}`;
+
+    if (remaining.length === 0) {
+        const dayCard = document.getElementById(collapseId)?.closest('.day-card');
+        if (dayCard) dayCard.remove();
+        if (!allMeals.length) {
+            document.getElementById('days-container').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'block';
+        }
+    } else {
+        refreshDaySummary(dateKey);
+    }
+
+    const total = allMeals.length;
+    document.getElementById('total-count').textContent = `${total} ${pluralPosilek(total)}`;
 }
 
 function esc(s) {
