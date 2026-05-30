@@ -211,7 +211,7 @@ function shuffle(arr) {
 }
 
 function startQuiz() {
-    questions = shuffle([...QUESTIONS]);
+    questions = shuffle([...QUESTIONS]).slice(0, 5);
     currentIndex = 0;
     score = 0;
     answered = false;
