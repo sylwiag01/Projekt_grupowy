@@ -377,6 +377,15 @@ def ustawienia():
 
 
 
+@app.route('/api/daily_targets/<int:child_id>')
+@login_required
+def daily_targets(child_id):
+    stats = ChildStats.query.filter_by(child_id=child_id) \
+        .order_by(ChildStats.recorded_at.desc()).first()
+    targets = _calc_daily_targets(stats)
+    return jsonify(targets)
+
+
 @app.route('/api/verify-pin', methods=['POST'])
 @login_required
 def verify_pin():
@@ -602,7 +611,7 @@ def get_activities_today(child_id):
 
 @app.route('/api/activity/<int:child_id>')
 def get_activities(child_id):
-    per_page = 10
+    per_page = min(request.args.get('per_page', 10, type=int), 500)
     page = request.args.get('page', 1, type=int)
     q = (Activity.query
          .filter_by(child_id=child_id)

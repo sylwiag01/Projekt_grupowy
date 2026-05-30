@@ -336,29 +336,13 @@
 
     loadToday();
     loadHistory(1);
+    loadCharts();
 
-    async function loadHistory(page = 1) {
-      const tbody = document.getElementById('history-tbody');
-      const badge = document.getElementById('history-count');
+    async function loadCharts() {
       try {
-        const data = await fetch(`/api/activity/${CHILD_ID}?page=${page}`).then(r => r.json());
-        badge.textContent = `${data.total} łącznie`;
-
-        if (!data.items.length) {
-          // ... (Twój obecny kod) ...
-          return;
-        }
-
-        // ... (Twój obecny kod tworzący <tr>) ...
-
-        renderPagination(data.page, data.pages);
-        
-        // NOWA LINIJKA: Rysowanie wykresów na podstawie pobranych danych
+        const data = await fetch(`/api/activity/${CHILD_ID}?page=1&per_page=500`).then(r => r.json());
         renderCharts(data.items);
-
-      } catch (e) {
-        // ...
-      }
+      } catch (e) { /* wykresy pozostają puste */ }
     }
   </script>
 </body>

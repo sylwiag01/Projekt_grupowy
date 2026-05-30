@@ -231,40 +231,42 @@
 
     async function loadStats() {
         try {
-            const [actRes, mealRes] = await Promise.all([
+            const [actRes, mealRes, targetsRes] = await Promise.all([
                 fetch(`/api/activity/${CHILD_ID}/today`),
                 fetch(`/api/meals/${CHILD_ID}`),
+                fetch(`/api/daily_targets/${CHILD_ID}`),
             ]);
             const activities = await actRes.json();
             const meals      = await mealRes.json();
+            const targets    = await targetsRes.json();
 
             document.getElementById('activity-count').textContent = activities.length;
 
             const today = new Date().toISOString().slice(0, 10);
             const todayMeals = meals.filter(m => m.timestamp.startsWith(today));
             const wwSpent  = todayMeals.reduce((s, m) => s + (m.actual_ww || m.ww || 0), 0);
-            const wwTarget = 12;
-            const wwLeft   = Math.max(0, wwTarget - wwSpent);
-            const pct      = Math.round((wwSpent / wwTarget) * 100);
+            const wwTarget = targets ? targets.ww : null;
+            const wwLeft   = wwTarget ? Math.max(0, wwTarget - wwSpent) : 0;
+            const pct      = wwTarget ? Math.round((wwSpent / wwTarget) * 100) : 0;
 
             document.getElementById('ww-label').innerHTML =
-                `${wwSpent.toFixed(1)} / ${wwTarget}<br><small>WW</small>`;
-            document.getElementById('ww-pct').textContent = `${pct}% zrealizowane`;
+                `${wwSpent.toFixed(1)} / ${wwTarget ?? '—'}<br><small>WW</small>`;
+            document.getElementById('ww-pct').textContent = wwTarget ? `${pct}% zrealizowane` : 'Brak celu — uzupełnij profil';
 
-            const scored = activities.filter(a => a.score !== null);
-            const avgScore = scored.length
-                ? Math.round(scored.reduce((s, a) => s + a.score, 0) / scored.length)
+            const quizActs = activities.filter(a => a.activity_type === 'quiz' && a.score !== null);
+            const avgScore = quizActs.length
+                ? Math.round(quizActs.reduce((s, a) => s + a.score, 0) / quizActs.length)
                 : 0;
-            document.getElementById('accuracy-pct').textContent = scored.length ? `${avgScore}%` : '—';
+            document.getElementById('accuracy-pct').textContent = quizActs.length ? `${avgScore}%` : '—';
             document.getElementById('accuracy-bar').style.width = `${avgScore}%`;
 
-            renderChart(wwSpent, wwLeft);
+            renderChart(wwSpent, wwLeft, wwTarget);
         } catch (e) {
             console.error('Stats load error', e);
         }
     }
 
-    function renderChart(spent, left) {
+    function renderChart(spent, left, target) {
         const ctx = document.getElementById('wwProgressChart').getContext('2d');
         if (wwChart) wwChart.destroy();
         wwChart = new Chart(ctx, {
