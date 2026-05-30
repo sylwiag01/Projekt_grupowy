@@ -21,6 +21,7 @@ class Parent(UserMixin, db.Model):
     name          = db.Column(db.String(100), nullable=False)
     email         = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    pin_hash      = db.Column(db.String(256), nullable=True)
     child_id      = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=True)
     child         = db.relationship('Child', backref=db.backref('parent', uselist=False))
 
@@ -29,6 +30,14 @@ class Parent(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def set_pin(self, pin):
+        self.pin_hash = generate_password_hash(pin)
+
+    def check_pin(self, pin):
+        if not self.pin_hash:
+            return False
+        return check_password_hash(self.pin_hash, pin)
 
 
 class Meal(db.Model):
