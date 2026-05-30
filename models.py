@@ -1,44 +1,104 @@
-import json
-from flask import Blueprint, jsonify
 from datetime import datetime
-from models import db, Activity
 
-api_bp = Blueprint('api', __name__)
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
-@api_bp.route('/api/activity/<int:child_id>/today_progress')
-def get_today_progress(child_id):
-    today = datetime.utcnow().date()
-    
-    activities_today = Activity.query.filter(
-        Activity.child_id == child_id,
-        Activity.activity_type == 'meal',
-        db.func.date(Activity.created_at) == today
-    ).all()
+from extensions import db
 
-    total_ww = 0.0
-    correct_calculations = 0
-    total_meals = len(activities_today)
 
-    for act in activities_today:
-        # score traktujemy jako ilość wpisanego WW
-        if act.score is not None:
-            total_ww += act.score
-            
-        # Z formatu Text() dekodujemy JSON, by sprawdzić poprawność
-        if act.details:
-            try:
-                details_dict = json.loads(act.details)
-                if details_dict.get('is_correct') == True:
-                    correct_calculations += 1
-            except json.JSONDecodeError:
-                pass # Pomijamy jeśli details to nie jest poprawny JSON
+class Child(db.Model):
+    id         = db.Column(db.Integer, primary_key=True)
+    name       = db.Column(db.String(100), nullable=False)
+    meals      = db.relationship('Meal',       backref='child', lazy=True)
+    stats      = db.relationship('ChildStats', backref='child', lazy=True,
+                                 order_by='ChildStats.recorded_at')
+    activities = db.relationship('Activity',   backref='child', lazy=True,
+                                 order_by='Activity.created_at')
 
-    incorrect_calculations = total_meals - correct_calculations
 
-    return jsonify({
-        "total_ww": round(total_ww, 1),
-        "daily_limit_ww": 15, 
-        "correct_calculations": correct_calculations,
-        "incorrect_calculations": incorrect_calculations,
-        "total_meals": total_meals
-    })
+class Parent(UserMixin, db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    name          = db.Column(db.String(100), nullable=False)
+    email         = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
+    child_id      = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=True)
+    child         = db.relationship('Child', backref=db.backref('parent', uselist=False))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+class Meal(db.Model):
+    id         = db.Column(db.Integer, primary_key=True)
+    child_id   = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    meal_name  = db.Column(db.String(200), nullable=False)
+    timestamp  = db.Column(db.DateTime, default=datetime.utcnow)
+    calories   = db.Column(db.Float)
+    ww         = db.Column(db.Float)
+    wbt        = db.Column(db.Float)
+    actual_ww  = db.Column(db.Float)
+    actual_wbt = db.Column(db.Float)
+
+
+class ChildStats(db.Model):
+    id                    = db.Column(db.Integer, primary_key=True)
+    child_id              = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    weight_kg             = db.Column(db.Float)
+    height_cm             = db.Column(db.Float)
+    age_years             = db.Column(db.Integer)
+    insulin_to_carb_ratio = db.Column(db.Float)
+    blood_sugar_target    = db.Column(db.Float)
+    recorded_at           = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Activity(db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    child_id      = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    activity_type = db.Column(db.String(20), nullable=False)
+    score         = db.Column(db.Float)
+    details       = db.Column(db.Text)
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Produce(db.Model):
+    id        = db.Column(db.Integer, primary_key=True)
+    name      = db.Column(db.String(200), nullable=False)
+    category  = db.Column(db.String(100))
+    calories  = db.Column(db.Float)
+    carbs     = db.Column(db.Float)
+    protein   = db.Column(db.Float)
+    fat       = db.Column(db.Float)
+    ww        = db.Column(db.Float)
+    wbt       = db.Column(db.Float)
+    is_custom = db.Column(db.Boolean, default=False, nullable=False)
+
+
+class Dish(db.Model):
+    id        = db.Column(db.Integer, primary_key=True)
+    name      = db.Column(db.String(200), nullable=False)
+    category  = db.Column(db.String(100))
+    calories  = db.Column(db.Float)
+    carbs     = db.Column(db.Float)
+    protein   = db.Column(db.Float)
+    fat       = db.Column(db.Float)
+    ww        = db.Column(db.Float)
+    wbt       = db.Column(db.Float)
+    is_custom = db.Column(db.Boolean, default=False, nullable=False)
+
+
+class UserProgress(db.Model):
+    id        = db.Column(db.Integer, primary_key=True)
+    child_id  = db.Column(db.Integer, db.ForeignKey('child.id'), unique=True, nullable=False)
+    total_xp  = db.Column(db.Integer, default=0, nullable=False)
+    coins     = db.Column(db.Integer, default=0, nullable=False)
+
+
+class Friendship(db.Model):
+    id         = db.Column(db.Integer, primary_key=True)
+    child_id_1 = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    child_id_2 = db.Column(db.Integer, db.ForeignKey('child.id'), nullable=False)
+    status     = db.Column(db.String(20), default='pending', nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
