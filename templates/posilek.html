@@ -67,13 +67,12 @@
     {% endif %}
 
     <!-- Search -->
-    <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
+    <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08);position:relative;z-index:2" class="card bg-base-100">
       <div class="card-body p-5">
         <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🔍 Dodaj produkty</h3>
         <div class="search-wrap">
           <input id="search-input" type="text" class="input input-bordered w-full" style="font-family:'Nunito',sans-serif;font-weight:600"
                  placeholder="np. jabłko, chleb, jogurt…" autocomplete="off">
-          <div class="search-drop" id="search-drop"></div>
         </div>
         <p class="text-xs font-semibold mt-2" style="color:var(--text-soft)">Zacznij pisać, żeby znaleźć produkty z bazy danych 🌟</p>
       </div>
@@ -208,8 +207,14 @@
 
     // ── Search ────────────────────────────────────────────────────────
     const searchInput = document.getElementById('search-input');
-    const searchDrop  = document.getElementById('search-drop');
-    let searchTimer   = null;
+
+    const searchDrop = document.createElement('div');
+    searchDrop.id = 'search-drop';
+    searchDrop.className = 'search-drop';
+    searchDrop.style.cssText = 'position:fixed;z-index:9999;margin-top:0';
+    document.body.appendChild(searchDrop);
+
+    let searchTimer = null;
 
     searchInput.addEventListener('input', () => {
       clearTimeout(searchTimer);
@@ -229,13 +234,21 @@
       } catch { closeDrop(); }
     }
 
+    function positionDrop() {
+      const rect = searchInput.getBoundingClientRect();
+      searchDrop.style.top   = (rect.bottom + 6) + 'px';
+      searchDrop.style.left  = rect.left + 'px';
+      searchDrop.style.width = rect.width + 'px';
+    }
+
     function renderDrop() {
+      positionDrop();
       if (!searchData.length) {
         searchDrop.innerHTML = '<div class="sri" style="cursor:default;color:var(--text-soft)">Brak wyników 😕</div>';
       } else {
         searchDrop.innerHTML = searchData.map((item, i) => {
           const emoji = CAT_EMOJI[item.category] || '🍴';
-          return `<div class="sri" onclick="addItem(${i})">
+          return `<div class="sri" onmousedown="event.preventDefault();addItem(${i})">
             <span style="font-size:1.3rem">${emoji}</span>
             <div style="flex:1;min-width:0">
               <div class="sri-name">${esc(item.name)}</div>
