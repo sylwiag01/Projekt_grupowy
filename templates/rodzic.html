@@ -27,345 +27,359 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url_for('rodzic') }}">
-                <i class="fas fa-heartbeat"></i> GlikoKids
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{{ url_for('rodzic') }}">
+            <i class="fas fa-heartbeat"></i> GlikoKids
+        </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('rodzic') }}"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('aktywnosc_dziecka') }}"><i class="fas fa-child me-1"></i> Aktywność Dziecka</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('historia_rodzic') }}"><i class="fas fa-history me-1"></i> Historia Posiłków</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('baza_rodzic') }}"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
-                    </li>
-                </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('rodzic') }}"><i class="fas fa-chart-pie me-1"></i>
+                        Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('aktywnosc_dziecka') }}"><i class="fas fa-child me-1"></i>
+                        Aktywność Dziecka</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('historia_rodzic') }}"><i class="fas fa-history me-1"></i>
+                        Historia Posiłków</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('baza_rodzic') }}"><i class="fas fa-apple-alt me-1"></i> Baza
+                        Produktów</a>
+                </li>
+            </ul>
 
-                <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <li class="nav-item">
-                        <a href="{{ url_for('dziecko') }}" class="btn btn-switch">
-                            <i class="fas fa-child me-1"></i> Widok dziecka
-                        </a>
-                    </li>
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <li class="nav-item">
+                    <a href="{{ url_for('dziecko') }}" class="btn btn-switch">
+                        <i class="fas fa-child me-1"></i> Widok dziecka
+                    </a>
+                </li>
 
-                    <li class="nav-item me-2 position-relative">
-                        <a class="nav-link text-white" href="#" title="Powiadomienia">
-                            <i class="fas fa-bell fa-lg"></i>
-                            <span class="position-absolute translate-middle bg-danger border border-light rounded-circle"
-                                  style="width:10px;height:10px;top:10px;right:0;">
+                <li class="nav-item me-2 position-relative">
+                    <a class="nav-link text-white" href="#" title="Powiadomienia">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="position-absolute translate-middle bg-danger border border-light rounded-circle"
+                              style="width:10px;height:10px;top:10px;right:0;">
                                 <span class="visually-hidden">Nowe powiadomienia</span>
                             </span>
-                        </a>
-                    </li>
+                    </a>
+                </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#"
-                           id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle fa-lg me-2"></i> {{ parent.name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#"
+                       id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle fa-lg me-2"></i> {{ parent.name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li>
                                 <span class="dropdown-item-text text-muted small">
                                     <i class="fas fa-child me-1"></i> Dziecko: <strong>{{ child.name }}</strong>
                                 </span>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('ustawienia') }}">
-                                    <i class="fas fa-cog fa-sm fa-fw me-2"></i> Ustawienia
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw me-2"></i> Wyloguj się
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('ustawienia') }}">
+                                <i class="fas fa-cog fa-sm fa-fw me-2"></i> Ustawienia
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw me-2"></i> Wyloguj się
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="goal-section">
+                <h2 class="h4 text-primary">Nasz Cel</h2>
+                <p class="text-muted">
+                    Budujemy samodzielność w zarządzaniu cukrzycą typu 1. Dzięki grywalizacji nauka obliczania
+                    wymienników WW i WBT staje się zabawą, a Ty zyskujesz spokój ducha, wiedząc, że <strong>{{ child.name }}</strong> czuje się
+                    pewnie.
+                </p>
             </div>
         </div>
-    </nav>
-
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="goal-section">
-                    <h2 class="h4 text-primary">Nasz Cel</h2>
-                    <p class="text-muted">
-                        Budujemy samodzielność <strong>{{ child.name }}</strong> w zarządzaniu cukrzycą typu 1.
-                        Dzięki grywalizacji, nauka obliczania wymienników WW i WBT staje się zabawą,
-                        a Ty zyskujesz spokój ducha, wiedząc, że Twoje dziecko czuje się pewnie.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card stats-card shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Aktywność Dziecka</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    {{ child.name }} wykonało dziś <span class="badge bg-success" id="activity-count">—</span> obliczeń WW/WBT!
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-calculator fa-2x text-secondary opacity-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="card shadow h-100 py-2" style="border-left: 4px solid #1cc88a;">
-                    <div class="card-body">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-3">Dzisiejsze postępy (WW)</div>
-                        <div class="row align-items-center">
-                            <div class="col-6 text-center">
-                                <div style="position:relative;height:120px;width:120px;margin:0 auto;">
-                                    <canvas id="wwProgressChart"></canvas>
-                                    <div id="ww-label" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:bold;color:#5a5c69;text-align:center;">
-                                        — / —<br><small>WW</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <span class="small font-weight-bold">Cel dzienny:</span>
-                                    <span class="float-end text-muted small" id="ww-pct">—</span>
-                                </div>
-                                <h6 class="small font-weight-bold mt-4">
-                                    Poprawność obliczeń: <span class="float-end text-success" id="accuracy-pct">—</span>
-                                </h6>
-                                <div class="progress mb-2" style="height:10px;">
-                                    <div class="progress-bar bg-success" id="accuracy-bar" role="progressbar"
-                                         style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small class="text-muted">{{ child.name }} — postępy z dzisiaj</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-12 mb-4">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background:#fff;border-bottom:2px solid #eaecf4;">
-                        <h6 class="m-0 fw-bold text-primary"><i class="fas fa-user-friends me-2"></i>Znajomi dziecka</h6>
-                        <span class="badge bg-warning text-dark" id="requests-badge" style="display:none;font-size:.75rem;"></span>
-                    </div>
-                    <div class="card-body">
-
-                        <div class="mb-4">
-                            <p class="small text-muted mb-2">Dodaj znajomego wpisując adres email jego rodzica.</p>
-                            <div class="input-group" style="max-width:420px;">
-                                <input type="email" class="form-control" id="friend-email" placeholder="email@rodzica.pl">
-                                <button class="btn btn-primary" onclick="addFriend()">
-                                    <i class="fas fa-plus me-1"></i> Dodaj
-                                </button>
-                            </div>
-                            <div id="add-friend-msg" class="mt-2 small"></div>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <div id="requests-section" style="display:none;" class="mb-4">
-                            <h6 class="fw-bold mb-3" style="color:#f6c23e;"><i class="fas fa-clock me-1"></i> Oczekujące zaproszenia</h6>
-                            <div id="requests-list"></div>
-                            <hr class="my-3">
-                        </div>
-
-                        <h6 class="fw-bold text-muted text-uppercase small mb-3">Znajomi</h6>
-                        <div id="friends-list">
-                            <p class="text-muted small" id="no-friends-msg">Brak znajomych. Dodaj pierwszego powyżej!</p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <footer class="text-center mt-5 text-muted pb-4">
-            <small>&copy; 2026 GlikoKids Team – Digital Health Project</small>
-        </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const CHILD_ID = {{ child.id }};
-        let wwChart = null;
-
-        async function loadStats() {
-            try {
-                const [actRes, mealRes] = await Promise.all([
-                    fetch(`/api/activity/${CHILD_ID}/today`),
-                    fetch(`/api/meals/${CHILD_ID}`),
-                ]);
-                const activities = await actRes.json();
-                const meals      = await mealRes.json();
-
-                document.getElementById('activity-count').textContent = activities.length;
-
-                const today = new Date().toISOString().slice(0, 10);
-                const todayMeals = meals.filter(m => m.timestamp.startsWith(today));
-                const wwSpent  = todayMeals.reduce((s, m) => s + (m.actual_ww || m.ww || 0), 0);
-                const wwTarget = 12;
-                const wwLeft   = Math.max(0, wwTarget - wwSpent);
-                const pct      = Math.round((wwSpent / wwTarget) * 100);
-
-                document.getElementById('ww-label').innerHTML =
-                    `${wwSpent.toFixed(1)} / ${wwTarget}<br><small>WW</small>`;
-                document.getElementById('ww-pct').textContent = `${pct}% zrealizowane`;
-
-                const scored = activities.filter(a => a.score !== null);
-                const avgScore = scored.length
-                    ? Math.round(scored.reduce((s, a) => s + a.score, 0) / scored.length)
-                    : 0;
-                document.getElementById('accuracy-pct').textContent = scored.length ? `${avgScore}%` : '—';
-                document.getElementById('accuracy-bar').style.width = `${avgScore}%`;
-
-                renderChart(wwSpent, wwLeft);
-            } catch (e) {
-                console.error('Stats load error', e);
-            }
-        }
-
-        function renderChart(spent, left) {
-            const ctx = document.getElementById('wwProgressChart').getContext('2d');
-            if (wwChart) wwChart.destroy();
-            wwChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Spożyte WW', 'Pozostało do celu'],
-                    datasets: [{
-                        data: [spent || 0.01, left || 0.01],
-                        backgroundColor: ['#1cc88a', '#eaecf4'],
-                        hoverBackgroundColor: ['#17a673', '#dddfeb'],
-                        borderWidth: 0,
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: true } },
-                },
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', loadStats);
-    </script>
-
-    <script>
-        async function loadFriends() {
-            const [frRes, reqRes] = await Promise.all([
-                fetch('/api/friends'),
-                fetch('/api/friends/requests'),
-            ]);
-            const friends  = await frRes.json();
-            const requests = await reqRes.json();
-
-            const reqSection = document.getElementById('requests-section');
-            const reqList    = document.getElementById('requests-list');
-            const badge      = document.getElementById('requests-badge');
-            if (requests.length > 0) {
-                badge.textContent = requests.length + ' nowe';
-                badge.style.display = 'inline-block';
-                reqSection.style.display = 'block';
-                reqList.innerHTML = requests.map(r => `
-                    <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background:#fffbf0;border:1px solid #fde68a;">
-                        <span><i class="fas fa-child me-2 text-warning"></i><strong>${escHtml(r.from_parent_name)}</strong> (dziecko: ${escHtml(r.from_child_name)}) chce zostać znajomym!</span>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-success" onclick="acceptFriend(${r.id})"><i class="fas fa-check"></i> Akceptuj</button>
-                            <button class="btn btn-sm btn-danger" onclick="rejectFriend(${r.id})"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>`).join('');
-            } else {
-                reqSection.style.display = 'none';
-                badge.style.display = 'none';
-            }
-
-            const friendsList  = document.getElementById('friends-list');
-            const noFriendsMsg = document.getElementById('no-friends-msg');
-            if (friends.length > 0) {
-                noFriendsMsg.style.display = 'none';
-                friendsList.innerHTML = friends.map(f => `
-                    <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background:#f8f9fa;border:1px solid #e3e6f0;">
-                        <div class="d-flex align-items-center gap-3">
-                            <span style="font-size:1.8rem;">${f.animal_icon}</span>
-                            <div>
-                                <strong>${escHtml(f.name)}</strong>
-                                <div class="small text-muted">${escHtml(f.level_name)}</div>
-                                <div class="progress mt-1" style="height:6px;width:120px;">
-                                    <div class="progress-bar bg-primary" style="width:${f.xp_percent}%"></div>
-                                </div>
-                                <div class="text-muted" style="font-size:0.72rem;">${f.xp_in_level} / ${f.xp_for_next} XP</div>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card stats-card shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Aktywność Dziecka
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ child.name }} wykonało dziś <span class="badge bg-success"
+                                                                     id="activity-count">—</span> obliczeń WW/WBT!
                             </div>
                         </div>
-                    </div>`).join('');
-            } else {
-                noFriendsMsg.style.display = 'block';
-                if (friends.length === 0 && requests.length === 0) {
-                    friendsList.innerHTML = '';
-                }
+                        <div class="col-auto">
+                            <i class="fas fa-calculator fa-2x text-secondary opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100 py-2" style="border-left: 4px solid #1cc88a;">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-3">Dzisiejsze postępy (WW)</div>
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div style="position:relative;height:120px;width:120px;margin:0 auto;">
+                                <canvas id="wwProgressChart"></canvas>
+                                <div id="ww-label"
+                                     style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:bold;color:#5a5c69;text-align:center;">
+                                    — / —<br><small>WW</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <span class="small font-weight-bold">Cel dzienny:</span>
+                                <span class="float-end text-muted small" id="ww-pct">—</span>
+                            </div>
+                            <h6 class="small font-weight-bold mt-4">
+                                Poprawność obliczeń: <span class="float-end text-success" id="accuracy-pct">—</span>
+                            </h6>
+                            <div class="progress mb-2" style="height:10px;">
+                                <div class="progress-bar bg-success" id="accuracy-bar" role="progressbar"
+                                     style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted">{{ child.name }} — postępy z dzisiaj</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center"
+                     style="background:#fff;border-bottom:2px solid #eaecf4;">
+                    <h6 class="m-0 fw-bold text-primary"><i class="fas fa-user-friends me-2"></i>Znajomi dziecka</h6>
+                    <span class="badge bg-warning text-dark" id="requests-badge"
+                          style="display:none;font-size:.75rem;"></span>
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-4">
+                        <p class="small text-muted mb-2">Dodaj znajomego wpisując adres email jego rodzica.</p>
+                        <div class="input-group" style="max-width:420px;">
+                            <input type="email" class="form-control" id="friend-email" placeholder="email@rodzica.pl">
+                            <button class="btn btn-primary" onclick="addFriend()">
+                                <i class="fas fa-plus me-1"></i> Dodaj
+                            </button>
+                        </div>
+                        <div id="add-friend-msg" class="mt-2 small"></div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div id="requests-section" style="display:none;" class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color:#f6c23e;"><i class="fas fa-clock me-1"></i> Oczekujące
+                            zaproszenia</h6>
+                        <div id="requests-list"></div>
+                        <hr class="my-3">
+                    </div>
+
+                    <h6 class="fw-bold text-muted text-uppercase small mb-3">Znajomi</h6>
+                    <div id="friends-list">
+                        <p class="text-muted small" id="no-friends-msg">Brak znajomych. Dodaj pierwszego powyżej!</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5 text-muted pb-4">
+        <small>&copy; 2026 GlikoKids Team – Digital Health Project</small>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const CHILD_ID = {{ child.id }};
+    let wwChart = null;
+
+    async function loadStats() {
+        try {
+            const [actRes, mealRes] = await Promise.all([
+                fetch(`/api/activity/${CHILD_ID}/today`),
+                fetch(`/api/meals/${CHILD_ID}`),
+            ]);
+            const activities = await actRes.json();
+            const meals      = await mealRes.json();
+
+            document.getElementById('activity-count').textContent = activities.length;
+
+            const today = new Date().toISOString().slice(0, 10);
+            const todayMeals = meals.filter(m => m.timestamp.startsWith(today));
+            const wwSpent  = todayMeals.reduce((s, m) => s + (m.actual_ww || m.ww || 0), 0);
+            const wwTarget = 12;
+            const wwLeft   = Math.max(0, wwTarget - wwSpent);
+            const pct      = Math.round((wwSpent / wwTarget) * 100);
+
+            document.getElementById('ww-label').innerHTML =
+                `${wwSpent.toFixed(1)} / ${wwTarget}<br><small>WW</small>`;
+            document.getElementById('ww-pct').textContent = `${pct}% zrealizowane`;
+
+            const scored = activities.filter(a => a.score !== null);
+            const avgScore = scored.length
+                ? Math.round(scored.reduce((s, a) => s + a.score, 0) / scored.length)
+                : 0;
+            document.getElementById('accuracy-pct').textContent = scored.length ? `${avgScore}%` : '—';
+            document.getElementById('accuracy-bar').style.width = `${avgScore}%`;
+
+            renderChart(wwSpent, wwLeft);
+        } catch (e) {
+            console.error('Stats load error', e);
+        }
+    }
+
+    function renderChart(spent, left) {
+        const ctx = document.getElementById('wwProgressChart').getContext('2d');
+        if (wwChart) wwChart.destroy();
+        wwChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Spożyte WW', 'Pozostało do celu'],
+                datasets: [{
+                    data: [spent || 0.01, left || 0.01],
+                    backgroundColor: ['#1cc88a', '#eaecf4'],
+                    hoverBackgroundColor: ['#17a673', '#dddfeb'],
+                    borderWidth: 0,
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            },
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadStats);
+</script>
+
+<script>
+    async function loadFriends() {
+        const [frRes, reqRes] = await Promise.all([
+            fetch('/api/friends'),
+            fetch('/api/friends/requests'),
+        ]);
+        const friends  = await frRes.json();
+        const requests = await reqRes.json();
+
+        const reqSection = document.getElementById('requests-section');
+        const reqList    = document.getElementById('requests-list');
+        const badge      = document.getElementById('requests-badge');
+        if (requests.length > 0) {
+            badge.textContent = requests.length + ' nowe';
+            badge.style.display = 'inline-block';
+            reqSection.style.display = 'block';
+            reqList.innerHTML = requests.map(r => `
+                <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background:#fffbf0;border:1px solid #fde68a;">
+                    <span><i class="fas fa-child me-2 text-warning"></i><strong>${escHtml(r.from_parent_name)}</strong> (dziecko: ${escHtml(r.from_child_name)}) chce zostać znajomym!</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-success" onclick="acceptFriend(${r.id})"><i class="fas fa-check"></i> Akceptuj</button>
+                        <button class="btn btn-sm btn-danger" onclick="rejectFriend(${r.id})"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>`).join('');
+        } else {
+            reqSection.style.display = 'none';
+            badge.style.display = 'none';
+        }
+
+        const friendsList  = document.getElementById('friends-list');
+        const noFriendsMsg = document.getElementById('no-friends-msg');
+        if (friends.length > 0) {
+            noFriendsMsg.style.display = 'none';
+            friendsList.innerHTML = friends.map(f => `
+                <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background:#f8f9fa;border:1px solid #e3e6f0;">
+                    <div class="d-flex align-items-center gap-3">
+                        <span style="font-size:1.8rem;">${f.animal_icon}</span>
+                        <div>
+                            <strong>${escHtml(f.name)}</strong>
+                            <div class="small text-muted">${escHtml(f.level_name)}</div>
+                            <div class="progress mt-1" style="height:6px;width:120px;">
+                                <div class="progress-bar bg-primary" style="width:${f.xp_percent}%"></div>
+                            </div>
+                            <div class="text-muted" style="font-size:0.72rem;">${f.xp_in_level} / ${f.xp_for_next} XP</div>
+                        </div>
+                    </div>
+                </div>`).join('');
+        } else {
+            noFriendsMsg.style.display = 'block';
+            if (friends.length === 0 && requests.length === 0) {
+                friendsList.innerHTML = '';
             }
         }
+    }
 
-        async function addFriend() {
-            const email = document.getElementById('friend-email').value.trim();
-            const msgEl = document.getElementById('add-friend-msg');
-            if (!email) { msgEl.innerHTML = '<span class="text-danger">Wpisz adres email.</span>'; return; }
+    async function addFriend() {
+        const email = document.getElementById('friend-email').value.trim();
+        const msgEl = document.getElementById('add-friend-msg');
+        if (!email) { msgEl.innerHTML = '<span class="text-danger">Wpisz adres email.</span>'; return; }
 
-            const res  = await fetch('/api/friends/add', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({email}),
-            });
-            const data = await res.json();
+        const res  = await fetch('/api/friends/add', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email}),
+        });
+        const data = await res.json();
 
-            if (res.ok) {
-                msgEl.innerHTML = `<span class="text-success"><i class="fas fa-check me-1"></i>Wysłano zaproszenie do rodzica dziecka <strong>${escHtml(data.friend_name)}</strong>!</span>`;
-                document.getElementById('friend-email').value = '';
-                loadFriends();
-            } else {
-                msgEl.innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>${escHtml(data.error)}</span>`;
-            }
-        }
-
-        async function acceptFriend(id) {
-            await fetch(`/api/friends/${id}/accept`, {method: 'POST'});
+        if (res.ok) {
+            msgEl.innerHTML = `<span class="text-success"><i class="fas fa-check me-1"></i>Wysłano zaproszenie do rodzica dziecka <strong>${escHtml(data.friend_name)}</strong>!</span>`;
+            document.getElementById('friend-email').value = '';
             loadFriends();
+        } else {
+            msgEl.innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>${escHtml(data.error)}</span>`;
         }
+    }
 
-        async function rejectFriend(id) {
-            await fetch(`/api/friends/${id}/reject`, {method: 'POST'});
-            loadFriends();
-        }
+    async function acceptFriend(id) {
+        await fetch(`/api/friends/${id}/accept`, {method: 'POST'});
+        loadFriends();
+    }
 
-        function escHtml(str) {
-            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
+    async function rejectFriend(id) {
+        await fetch(`/api/friends/${id}/reject`, {method: 'POST'});
+        loadFriends();
+    }
 
-        document.addEventListener('DOMContentLoaded', loadFriends);
-    </script>
+    function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadFriends);
+</script>
 </body>
 </html>
