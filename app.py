@@ -141,6 +141,11 @@ def _migrate_db():
         if 'blood_sugar_target' not in existing_stats:
             conn.execute(text('ALTER TABLE child_stats ADD COLUMN blood_sugar_target FLOAT'))
 
+    existing_parent = {col['name'] for col in inspector.get_columns('parent')}
+    with db.engine.begin() as conn:
+        if 'pin_hash' not in existing_parent:
+            conn.execute(text('ALTER TABLE parent ADD COLUMN pin_hash VARCHAR(256)'))
+
     for table in ('produce', 'dish'):
         if inspector.has_table(table):
             existing = {col['name'] for col in inspector.get_columns(table)}
@@ -190,6 +195,8 @@ def register():
         insulin_ratio = request.form.get('insulin_to_carb_ratio', type=float)
         blood_sugar = request.form.get('blood_sugar_target', type=float)
 
+        pin = request.form.get('pin', '').strip()
+
         if not parent_name or not email or not password or not child_name:
             flash('Wypełnij wszystkie wymagane pola.', 'danger')
             return render_template('register.html')
@@ -198,6 +205,9 @@ def register():
             return render_template('register.html')
         if len(password) < 6:
             flash('Hasło musi mieć co najmniej 6 znaków.', 'danger')
+            return render_template('register.html')
+        if not pin or not pin.isdigit() or len(pin) != 4:
+            flash('PIN musi składać się z dokładnie 4 cyfr.', 'danger')
             return render_template('register.html')
         if Parent.query.filter_by(email=email).first():
             flash('Konto z tym adresem e-mail już istnieje.', 'danger')
@@ -209,6 +219,7 @@ def register():
 
         parent = Parent(name=parent_name, email=email, child_id=child.id)
         parent.set_password(password)
+        parent.set_pin(pin)
         db.session.add(parent)
 
         stats = ChildStats(
@@ -345,12 +356,39 @@ def ustawienia():
                 return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
             current_user.set_password(new_pw)
 
+        new_pin = request.form.get('new_pin', '').strip()
+        if new_pin:
+            current_pin = request.form.get('current_pin', '').strip()
+            if current_user.pin_hash and not current_user.check_pin(current_pin):
+                db.session.rollback()
+                flash('Aktualny PIN jest nieprawidłowy.', 'danger')
+                return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
+            if not new_pin.isdigit() or len(new_pin) != 4:
+                db.session.rollback()
+                flash('Nowy PIN musi składać się z dokładnie 4 cyfr.', 'danger')
+                return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
+            current_user.set_pin(new_pin)
+
         db.session.commit()
         flash('Zmiany zostały zapisane.', 'success')
         return redirect(url_for('ustawienia'))
 
     return render_template('ustawienia.html', parent=current_user, child=child, stats=stats)
 
+
+
+@app.route('/api/verify-pin', methods=['POST'])
+@login_required
+def verify_pin():
+    data = request.get_json()
+    pin = (data.get('pin') or '').strip() if data else ''
+    if not pin or not pin.isdigit() or len(pin) != 4:
+        return jsonify({'ok': False, 'error': 'Nieprawidłowy format PIN.'}), 400
+    if not current_user.pin_hash:
+        return jsonify({'ok': True, 'no_pin': True})
+    if current_user.check_pin(pin):
+        return jsonify({'ok': True})
+    return jsonify({'ok': False, 'error': 'Nieprawidłowy PIN. Spróbuj jeszcze raz.'}), 401
 
 
 @app.route('/api/meal', methods=['POST'])
