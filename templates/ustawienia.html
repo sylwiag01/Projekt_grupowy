@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ustawienia - GlikoKids</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style/parent.css">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .navbar { background-color: #4e73df; }
-        .settings-card { border-radius: 15px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .settings-header { background-color: #fff; border-bottom: 1px solid #edf2f9; padding: 1.25rem; border-radius: 15px 15px 0 0; }
-        .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
+        .settings-card { border-radius: 14px !important; border: none !important; box-shadow: 0 3px 12px rgba(61,146,133,0.08) !important; margin-bottom: 25px; }
+        .settings-header { background-color: #fff; border-bottom: 1px solid #EEE8E0; padding: 1.25rem; border-radius: 14px 14px 0 0; display: flex; align-items: center; }
+        .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; }
+        .icon-box.bg-primary { background-color: #3D9285 !important; }
+        .icon-box.bg-success { background-color: #5BAD8C !important; }
+        .icon-box.bg-danger  { background-color: #D96060 !important; }
     </style>
 </head>
 <body>
@@ -19,7 +22,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/rodzic">
-                <i class="fas fa-heartbeat"></i> GlikoKids
+               GlikoKids
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -39,17 +42,17 @@
                         <a class="nav-link" href="/baza_rodzic"><i class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-3 position-relative">
-                        <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
-                    </li>
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle fa-lg me-2"></i> {{ parent.name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li><a class="dropdown-item active" href="/ustawienia"><i class="fas fa-cog fa-sm me-2"></i>Ustawienia</a></li>
-                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt fa-sm me-2"></i>Wyloguj się</a></li>
+                            <li><span class="dropdown-item-text text-muted small"><i class="fas fa-child me-1"></i> Dziecko: <strong>{{ child.name }}</strong></span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item active" href="{{ url_for('ustawienia') }}"><i class="fas fa-cog fa-sm fa-fw me-2"></i> Ustawienia</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2"></i> Wyloguj się</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -58,7 +61,12 @@
     </nav>
 
     <div class="container">
-        <h2 class="h4 text-gray-800 mb-4">Ustawienia Systemu</h2>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="h4 fw-bold mb-0"><i class="fas fa-cog me-2 text-primary"></i>Ustawienia</h2>
+                <p class="text-muted small mb-0 mt-1">Zarządzaj profilem rodzica, dziecka i kodem PIN</p>
+            </div>
+        </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}

@@ -6,127 +6,141 @@
     <title>Historia Posiłków - GlikoKids</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700;800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="/style/parent.css">
     <link rel="stylesheet" href="/style/historia_rodzic.css">
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/rodzic">GlikoKids</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/rodzic">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/aktywnosc_dziecka">Aktywność Dziecka</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/historia_rodzic">Historia Posiłków</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/baza_rodzic">Baza Produktów</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-3 position-relative">
-                        <a class="nav-link text-white" href="#"><i class="fas fa-bell fa-lg"></i></a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle fa-lg me-2"></i> {{ parent.name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li><a class="dropdown-item" href="/ustawienia"><i class="fas fa-cog fa-sm me-2"></i>Ustawienia</a></li>
-                            <li><a class="dropdown-item text-danger" href="#">Wyloguj się</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+<nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/rodzic">GlikoKids</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/rodzic"><i class="fas fa-chart-pie me-1"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('aktywnosc_dziecka') }}"><i class="fas fa-child me-1"></i>
+                        Aktywność Dziecka</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/historia_rodzic"><i class="fas fa-history me-1"></i> Historia
+                        Posiłków</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " aria-current="page" href="/baza_rodzic"><i
+                            class="fas fa-apple-alt me-1"></i> Baza Produktów</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle fa-lg me-2"></i> {{ parent.name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><span class="dropdown-item-text text-muted small"><i class="fas fa-child me-1"></i> Dziecko: <strong>{{ child.name }}</strong></span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{{ url_for('ustawienia') }}"><i
+                                class="fas fa-cog fa-sm fa-fw me-2"></i> Ustawienia</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i
+                                class="fas fa-sign-out-alt fa-sm fa-fw me-2"></i> Wyloguj się</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="container pb-5">
+<div class="container pb-5">
 
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <div>
-                <h2 class="h4 fw-bold text-dark mb-0"><i class="fas fa-history text-primary me-2"></i>Historia Posiłków</h2>
-                <p class="text-muted small mb-0 mt-1">Dzienne zestawienie posiłków dziecka z podsumowaniem WW, WBT i kalorii</p>
-            </div>
-            <span class="badge bg-secondary fs-6 fw-normal" id="total-count" style="min-width:90px">Ładowanie…</span>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="h4 fw-bold text-dark mb-0"><i class="fas fa-history text-primary me-2"></i>Historia Posiłków</h2>
+            <p class="text-muted small mb-0 mt-1">Dzienne zestawienie posiłków dziecka z podsumowaniem WW, WBT i
+                kalorii</p>
         </div>
-
-        {% if targets %}
-        <div class="targets-card">
-            <div class="targets-header">
-                <i class="fas fa-bullseye fa-lg"></i>
-                <h6>Dzienne zapotrzebowanie dziecka</h6>
-            </div>
-            <div class="targets-body">
-                <div class="row g-3">
-                    <div class="col-4">
-                        <div class="target-block kcal">
-                            <div class="target-val kcal">{{ targets.kcal }}</div>
-                            <div class="target-unit">kcal / dzień</div>
-                            <div class="target-label">Energia</div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="target-block ww">
-                            <div class="target-val ww">{{ targets.ww }}</div>
-                            <div class="target-unit">WW / dzień</div>
-                            <div class="target-label">Węglowodany</div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="target-block wbt">
-                            <div class="target-val wbt">{{ targets.wbt }}</div>
-                            <div class="target-unit">WBT / dzień</div>
-                            <div class="target-label">Białko + tłuszcz</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="target-note">
-                    <i class="fas fa-info-circle me-1 text-primary"></i>
-                    Wartości wyliczone na podstawie wieku i masy ciała dziecka.
-                    Postęp względem tych celów widoczny jest w podsumowaniu każdego dnia.
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="no-targets-notice mb-4">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            Brak danych o dziecku (wiek / masa ciała). Uzupełnij profil, aby zobaczyć dzienne zapotrzebowanie.
-            <a href="/rodzic" class="fw-semibold ms-1">Przejdź do ustawień →</a>
-        </div>
-        {% endif %}
-
-        <div id="loading" class="text-center py-5 text-muted">
-            <div class="spinner-border text-primary mb-3" role="status"></div>
-            <div>Ładowanie posiłków…</div>
-        </div>
-
-        <div id="days-container" style="display:none"></div>
-
-        <div id="empty-state" class="empty-state day-card" style="display:none">
-            <i class="fas fa-utensils"></i>
-            <h5 class="fw-semibold text-muted">Brak zapisanych posiłków</h5>
-            <p class="small">Posiłki pojawią się tutaj po tym, jak dziecko je zapisze w aplikacji.</p>
-        </div>
-
-        <footer class="text-center mt-5 text-muted pb-2">
-            <small>&copy; 2026 GlikoKids Team</small>
-        </footer>
+        <span class="badge bg-secondary fs-6 fw-normal" id="total-count" style="min-width:90px">Ładowanie…</span>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const USER_ID = {{ user_id }};
-        const TARGETS = {{ targets | tojson if targets else 'null' }};
-    </script>
-    <script src="/js/historia_rodzic.js"></script>
+    {% if targets %}
+    <div class="targets-card">
+        <div class="targets-header">
+            <i class="fas fa-bullseye fa-lg"></i>
+            <h6>Dzienne zapotrzebowanie dziecka</h6>
+        </div>
+        <div class="targets-body">
+            <div class="row g-3">
+                <div class="col-4">
+                    <div class="target-block kcal">
+                        <div class="target-val kcal">{{ targets.kcal }}</div>
+                        <div class="target-unit">kcal / dzień</div>
+                        <div class="target-label">Energia</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="target-block ww">
+                        <div class="target-val ww">{{ targets.ww }}</div>
+                        <div class="target-unit">WW / dzień</div>
+                        <div class="target-label">Węglowodany</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="target-block wbt">
+                        <div class="target-val wbt">{{ targets.wbt }}</div>
+                        <div class="target-unit">WBT / dzień</div>
+                        <div class="target-label">Białko + tłuszcz</div>
+                    </div>
+                </div>
+            </div>
+            <div class="target-note">
+                <i class="fas fa-info-circle me-1 text-primary"></i>
+                Wartości wyliczone na podstawie wieku i masy ciała dziecka.
+                Postęp względem tych celów widoczny jest w podsumowaniu każdego dnia.
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-targets-notice mb-4">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Brak danych o dziecku (wiek / masa ciała). Uzupełnij profil, aby zobaczyć dzienne zapotrzebowanie.
+        <a href="/rodzic" class="fw-semibold ms-1">Przejdź do ustawień →</a>
+    </div>
+    {% endif %}
+
+    <div id="loading" class="text-center py-5 text-muted">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <div>Ładowanie posiłków…</div>
+    </div>
+
+    <div id="days-container" style="display:none"></div>
+
+    <div id="empty-state" class="empty-state day-card" style="display:none">
+        <i class="fas fa-utensils"></i>
+        <h5 class="fw-semibold text-muted">Brak zapisanych posiłków</h5>
+        <p class="small">Posiłki pojawią się tutaj po tym, jak dziecko je zapisze w aplikacji.</p>
+    </div>
+
+    <footer class="text-center mt-5 text-muted pb-2">
+        <small>&copy; 2026 GlikoKids Team</small>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const USER_ID = {{ user_id }};
+    const TARGETS = {{ targets | tojson if targets else 'null' }};
+</script>
+<script src="/js/historia_rodzic.js"></script>
 </body>
 </html>

@@ -5,72 +5,198 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rejestracja – GlikoKids</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --p-primary:  #3D9285;
+      --amber:      #D98C2A;
+      --amber-pale: #FEF4D8;
+      --cream:      #FAF6EE;
+      --warm-dark:  #28200F;
+      --warm-mid:   #6B5344;
+      --warm-light: #B09070;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
       justify-content: center;
       padding: 2.5rem 1rem;
-      font-family: 'Segoe UI', sans-serif;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(61,146,133,0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(217,140,42,0.08) 0%, transparent 45%);
     }
+
     .auth-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(61,146,133,0.12), 0 2px 8px rgba(40,32,15,0.06);
       width: 100%;
       max-width: 560px;
       padding: 2.5rem 2rem;
     }
+
     .brand {
       text-align: center;
-      margin-bottom: 1.8rem;
+      margin-bottom: 2rem;
     }
-    .brand-icon { font-size: 2.6rem; display: block; margin-bottom: 0.4rem; }
-    .brand h1 { font-size: 1.7rem; font-weight: 700; color: #4e73df; margin: 0; }
-    .brand p { color: #6c757d; font-size: 0.88rem; margin: 0.3rem 0 0; }
+    .brand-gem {
+      display: inline-block;
+      width: 14px; height: 14px;
+      background: var(--amber);
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .brand h1 {
+      font-family: 'Lora', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--p-primary);
+      margin: 0;
+      display: inline;
+    }
+    .brand-sub {
+      display: block;
+      color: var(--warm-light);
+      font-size: 0.85rem;
+      font-style: italic;
+      margin-top: 0.4rem;
+    }
 
     .section-header {
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      padding: 0.7rem 1rem;
+      padding: 0.65rem 1rem;
       border-radius: 10px;
       margin-bottom: 1.2rem;
     }
-    .section-parent { background: #e8edff; color: #3a56c7; }
-    .section-child  { background: #e6f8f1; color: #1a8a5e; }
+    .section-parent { background: #E0F0EE; color: #2F7268; }
+    .section-child  { background: #FFF5EE; color: #A05030; }
 
-    .form-label { font-weight: 600; color: #495057; font-size: 0.88rem; }
-    .form-text  { font-size: 0.78rem; }
+    .form-label {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--warm-mid);
+      margin-bottom: 0.35rem;
+    }
+    .form-text { font-size: 0.78rem; color: var(--warm-light); }
+
+    .form-control,
+    .form-select {
+      border: 1.5px solid #C8DDD9;
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.6rem 0.9rem;
+      color: var(--warm-dark);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--p-primary);
+      box-shadow: 0 0 0 3px rgba(61,146,133,0.15);
+      outline: none;
+    }
+
+    .required-star { color: #D96060; }
 
     .btn-register {
-      background-color: #4e73df;
-      border-color: #4e73df;
-      font-weight: 700;
-      padding: 0.7rem;
+      background: var(--p-primary);
+      border: none;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
       font-size: 1rem;
+      padding: 0.7rem;
+      border-radius: 10px;
+      width: 100%;
+      cursor: pointer;
+      transition: background .18s, box-shadow .18s;
+      box-shadow: 0 3px 10px rgba(61,146,133,0.28);
     }
-    .btn-register:hover { background-color: #2e59d9; border-color: #2653d4; }
+    .btn-register:hover {
+      background: #2F7268;
+      box-shadow: 0 5px 14px rgba(61,146,133,0.36);
+    }
 
-    .divider { border-top: 1px solid #e3e6f0; margin: 1.5rem 0; }
-    .login-link { text-align: center; font-size: 0.9rem; color: #6c757d; }
-    .login-link a { color: #4e73df; font-weight: 600; text-decoration: none; }
+    .divider {
+      border: none;
+      border-top: 1px solid #EEE8E0;
+      margin: 1.5rem 0;
+    }
+
+    .login-link {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--warm-mid);
+    }
+    .login-link a {
+      color: var(--p-primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
     .login-link a:hover { text-decoration: underline; }
 
-    .required-star { color: #e74a3b; }
+    .alert {
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: none;
+      margin-bottom: 1rem;
+    }
+    .alert-danger  { background: #FDECEA; color: #8A2020; }
+    .alert-success { background: #E8F5F0; color: #2F7268; }
+    .alert-warning { background: var(--amber-pale); color: #7A5010; }
+    .btn-close { opacity: 0.5; }
+
+    /* Podgląd zapotrzebowania */
+    #targets-preview .section-header { background: var(--amber-pale); color: #7A5010; }
+    .preview-block {
+      text-align: center;
+      padding: 0.6rem;
+      border-radius: 10px;
+    }
+    .preview-block.kcal { background: #FFF5EE; }
+    .preview-block.ww   { background: #E0F0EE; }
+    .preview-block.wbt  { background: var(--amber-pale); }
+    .preview-val {
+      font-family: 'Lora', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+    .preview-val.kcal { color: #C07020; }
+    .preview-val.ww   { color: var(--p-primary); }
+    .preview-val.wbt  { color: var(--amber); }
+    .preview-lbl { font-size: 0.75rem; font-weight: 600; color: var(--warm-light); }
+    .preview-note {
+      font-size: 0.78rem;
+      color: var(--warm-light);
+      background: #F5F9F8;
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      margin-top: 0.75rem;
+    }
   </style>
 </head>
 <body>
   <div class="auth-card">
     <div class="brand">
-      <span class="brand-icon">🩺</span>
-      <h1>GlikoKids</h1>
-      <p>Utwórz konto dla siebie i swojego dziecka</p>
+      <div>
+        <span class="brand-gem"></span>
+        <h1>GlikoKids</h1>
+      </div>
+      <span class="brand-sub">Utwórz konto dla siebie i swojego dziecka</span>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -84,7 +210,7 @@
 
     <form method="POST" action="{{ url_for('register') }}" novalidate>
 
-      <!-- ── Dane rodzica ── -->
+      <!-- Dane rodzica -->
       <div class="section-header section-parent">
         <i class="fas fa-user-circle"></i> Dane rodzica
       </div>
@@ -109,44 +235,36 @@
 
       <div class="row g-3 mb-3">
         <div class="col-sm-6">
-          <label for="password" class="form-label">
-            Hasło <span class="required-star">*</span>
-          </label>
+          <label for="password" class="form-label">Hasło <span class="required-star">*</span></label>
           <input type="password" class="form-control" id="password" name="password"
                  placeholder="min. 6 znaków" required>
         </div>
         <div class="col-sm-6">
-          <label for="confirm_password" class="form-label">
-            Potwierdź hasło <span class="required-star">*</span>
-          </label>
+          <label for="confirm_password" class="form-label">Potwierdź hasło <span class="required-star">*</span></label>
           <input type="password" class="form-control" id="confirm_password" name="confirm_password"
                  placeholder="••••••••" required>
         </div>
       </div>
 
       <div class="mb-4">
-        <label for="pin" class="form-label">
-          PIN rodzica <span class="required-star">*</span>
-        </label>
+        <label for="pin" class="form-label">PIN rodzica <span class="required-star">*</span></label>
         <input type="password" class="form-control" id="pin" name="pin"
                placeholder="4 cyfry" maxlength="4" inputmode="numeric"
                pattern="[0-9]{4}" autocomplete="new-password" required
                value="{{ request.form.get('pin', '') }}">
-        <div class="form-text text-muted">
+        <div class="form-text">
           <i class="fas fa-lock me-1"></i>
           4-cyfrowy PIN chroni panel rodzica — dziecko musi go podać, by tam wejść.
         </div>
       </div>
 
-      <!-- ── Dane dziecka ── -->
+      <!-- Dane dziecka -->
       <div class="section-header section-child">
         <i class="fas fa-child"></i> Dane dziecka
       </div>
 
       <div class="mb-3">
-        <label for="child_name" class="form-label">
-          Imię dziecka <span class="required-star">*</span>
-        </label>
+        <label for="child_name" class="form-label">Imię dziecka <span class="required-star">*</span></label>
         <input type="text" class="form-control" id="child_name" name="child_name"
                placeholder="np. Ania" required
                value="{{ request.form.get('child_name', '') }}">
@@ -175,66 +293,61 @@
 
       <div class="row g-3 mb-4">
         <div class="col-sm-6">
-          <label for="insulin_to_carb_ratio" class="form-label">
-            Współczynnik insulina / WW
-          </label>
+          <label for="insulin_to_carb_ratio" class="form-label">Współczynnik insulina / WW</label>
           <input type="number" class="form-control" id="insulin_to_carb_ratio" name="insulin_to_carb_ratio"
                  placeholder="np. 1.5" step="0.1" min="0.1" max="20"
                  value="{{ request.form.get('insulin_to_carb_ratio', '') }}">
-          <div class="form-text text-muted">Jednostki insuliny na 1 WW (10 g węglowodanów)</div>
+          <div class="form-text">Jednostki insuliny na 1 WW (10 g węglowodanów)</div>
         </div>
         <div class="col-sm-6">
-          <label for="blood_sugar_target" class="form-label">
-            Docelowy poziom cukru (mg/dL)
-          </label>
+          <label for="blood_sugar_target" class="form-label">Docelowy poziom cukru (mg/dL)</label>
           <input type="number" class="form-control" id="blood_sugar_target" name="blood_sugar_target"
                  placeholder="np. 120" step="1" min="60" max="300"
                  value="{{ request.form.get('blood_sugar_target', '') }}">
-          <div class="form-text text-muted">Ustalony z diabetologiem cel glikemii</div>
+          <div class="form-text">Ustalony z diabetologiem cel glikemii</div>
         </div>
       </div>
 
-      <!-- ── Szacowane zapotrzebowanie (podgląd na żywo) ── -->
+      <!-- Szacowane zapotrzebowanie -->
       <div id="targets-preview" class="mb-4" style="display:none">
-        <div class="section-header" style="background:#fff3cd;color:#856404;">
+        <div class="section-header" style="background:var(--amber-pale);color:#7A5010;">
           <i class="fas fa-chart-pie"></i> Szacowane dzienne zapotrzebowanie dziecka
         </div>
         <div class="row text-center g-2 mb-2">
           <div class="col-4">
-            <div class="p-2 rounded-3" style="background:#e8edff">
-              <div class="fw-bold fs-5 text-primary" id="prev-kcal">–</div>
-              <small class="text-muted fw-semibold">kcal / dzień</small>
+            <div class="preview-block kcal">
+              <div class="preview-val kcal" id="prev-kcal">–</div>
+              <div class="preview-lbl">kcal / dzień</div>
             </div>
           </div>
           <div class="col-4">
-            <div class="p-2 rounded-3" style="background:#e6f8f1">
-              <div class="fw-bold fs-5" style="color:#1a8a5e" id="prev-ww">–</div>
-              <small class="text-muted fw-semibold">🌾 WW / dzień</small>
+            <div class="preview-block ww">
+              <div class="preview-val ww" id="prev-ww">–</div>
+              <div class="preview-lbl">🌾 WW / dzień</div>
             </div>
           </div>
           <div class="col-4">
-            <div class="p-2 rounded-3" style="background:#fff3cd">
-              <div class="fw-bold fs-5" style="color:#b8860b" id="prev-wbt">–</div>
-              <small class="text-muted fw-semibold">🥩 WBT / dzień</small>
+            <div class="preview-block wbt">
+              <div class="preview-val wbt" id="prev-wbt">–</div>
+              <div class="preview-lbl">🥩 WBT / dzień</div>
             </div>
           </div>
         </div>
-        <div class="small text-muted p-2 rounded-3" style="background:#f8f9fa">
+        <div class="preview-note">
           <i class="fas fa-info-circle me-1"></i>
           Wartości szacunkowe wyliczone ze wzoru dla dzieci (1000&nbsp;+&nbsp;100×wiek kcal).
           Dokładne normy ustala <strong>diabetolog lub dietetyk</strong>.
         </div>
       </div>
 
-      <button type="submit" class="btn btn-register btn-primary w-100">
+      <button type="submit" class="btn-register">
         <i class="fas fa-user-plus me-2"></i> Zarejestruj się
       </button>
     </form>
 
-    <div class="divider"></div>
+    <hr class="divider">
     <p class="login-link">
-      Masz już konto?
-      <a href="{{ url_for('login') }}">Zaloguj się</a>
+      Masz już konto? <a href="{{ url_for('login') }}">Zaloguj się</a>
     </p>
   </div>
 

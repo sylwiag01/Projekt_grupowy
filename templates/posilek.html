@@ -7,7 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style/child.css">
 </head>
 <body class="min-h-screen">
@@ -27,13 +27,13 @@
 
   <div class="page-wrap max-w-2xl mx-auto px-4 py-6 space-y-4">
 
-    <h2 class="text-center text-3xl font-extrabold" style="font-family:'Bubblegum Sans',cursive;animation:rainbowText 5s linear infinite">🍽️ Mój posiłek</h2>
+    <h2 class="text-center text-3xl font-extrabold" style="font-family:'Baloo 2',sans-serif;animation:rainbowText 5s linear infinite">🍽️ Mój posiłek</h2>
 
     {% if targets %}
     <!-- Daily targets card -->
     <div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
       <div class="card-body p-5">
-        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🎯 Twoje dzienne zapotrzebowanie</h3>
+        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Baloo 2',sans-serif">🎯 Twoje dzienne zapotrzebowanie</h3>
         <div class="stats stats-horizontal shadow w-full mb-4" style="border-radius:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.07);border:none">
           <div class="stat place-items-center py-3">
             <div class="stat-title text-xs font-bold uppercase tracking-wider">🌾 WW / dzień</div>
@@ -52,7 +52,7 @@
         <div class="flex items-start gap-3 p-4 rounded-2xl" style="background:linear-gradient(135deg,#fff9c4,#fff3cd)">
           <span style="font-size:1.8rem;line-height:1">💡</span>
           <div>
-            <div class="font-extrabold mb-1" style="font-family:'Bubblegum Sans',cursive;font-size:1rem">Wskazówka dla Ciebie!</div>
+            <div class="font-extrabold mb-1" style="font-family:'Baloo 2',sans-serif;font-size:1rem">Wskazówka dla Ciebie!</div>
             <div class="font-semibold text-sm" style="font-family:'Nunito',sans-serif;color:#555">
               Twoje {{ targets.ww }} WW dziennie najlepiej podzielić tak:
               śniadanie&nbsp;<strong>~{{ (targets.ww * 0.25) | round(1) }}&nbsp;WW</strong>,
@@ -69,7 +69,7 @@
     <!-- Search -->
     <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08);position:relative;z-index:2" class="card bg-base-100">
       <div class="card-body p-5">
-        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🔍 Dodaj produkty</h3>
+        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Baloo 2',sans-serif">🔍 Dodaj produkty</h3>
         <div class="search-wrap">
           <input id="search-input" type="text" class="input input-bordered w-full" style="font-family:'Nunito',sans-serif;font-weight:600"
                  placeholder="np. jabłko, chleb, jogurt…" autocomplete="off">
@@ -81,7 +81,7 @@
     <!-- Plate -->
     <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
       <div class="card-body p-5">
-        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Bubblegum Sans',cursive">🍽️ Twój talerz</h3>
+        <h3 class="font-extrabold text-lg mb-3" style="font-family:'Baloo 2',sans-serif">🍽️ Twój talerz</h3>
         <div class="space-y-2" id="plate-list">
           <div class="text-center py-6 font-semibold" style="color:var(--text-soft)">
             Talerz jest pusty 🍽️<br><small>Dodaj coś do jedzenia!</small>
@@ -93,7 +93,7 @@
     <!-- Summary + save -->
     <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:2rem;box-shadow:0 8px 30px rgba(0,0,0,0.08)" class="card bg-base-100">
       <div class="card-body p-5">
-        <h3 class="font-extrabold text-lg mb-4" style="font-family:'Bubblegum Sans',cursive">📊 Podsumowanie</h3>
+        <h3 class="font-extrabold text-lg mb-4" style="font-family:'Baloo 2',sans-serif">📊 Podsumowanie</h3>
 
         <div class="stats stats-horizontal shadow w-full mb-5" style="border-radius:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.07);border:none">
           <div class="stat place-items-center py-3">
@@ -365,14 +365,14 @@
           playSound('win');
           spawnConfetti(45);
           summary.innerHTML = `
-            <div style="background:linear-gradient(135deg,#d4f5e2,#e8faf0);border:2px solid #2ECC71;border-radius:1.5rem;padding:20px;text-align:center;animation:popInBounce .4s cubic-bezier(.34,1.56,.64,1)">
+            <div style="background:linear-gradient(135deg,#EAFAF4,#D5F0E4);border:2px solid #82C9A8;border-radius:1.5rem;padding:20px;text-align:center;animation:popInBounce .4s cubic-bezier(.34,1.56,.64,1)">
               <div style="font-size:3rem;margin-bottom:6px">🎉</div>
-              <div style="font-family:'Bubblegum Sans',cursive;font-size:1.4rem;color:#1a7a42;font-weight:800;margin-bottom:8px">Super robota!</div>
-              <div style="font-size:0.9rem;font-weight:700;color:#2d6a4f;margin-bottom:10px">Zapisałeś: <strong>${esc(mealName)}</strong></div>
+              <div style="font-family:'Baloo 2',sans-serif;font-size:1.4rem;color:#3D9285;font-weight:800;margin-bottom:8px">Super robota!</div>
+              <div style="font-size:0.9rem;font-weight:700;color:#2F7268;margin-bottom:10px">Zapisałeś: <strong>${esc(mealName)}</strong></div>
               <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
-                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#2980B9">🌾 WW: ${data.ww}</span>
-                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:var(--orange)">🥩 WBT: ${data.wbt}</span>
-                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#e74c3c">🔥 ${data.calories} kcal</span>
+                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#3D9285">🌾 WW: ${data.ww}</span>
+                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#D98C2A">🥩 WBT: ${data.wbt}</span>
+                <span style="background:#fff;border-radius:1rem;padding:6px 14px;font-weight:800;font-size:0.85rem;color:#C07020">🔥 ${data.calories} kcal</span>
               </div>
             </div>`;
           fetch('/api/activity', {

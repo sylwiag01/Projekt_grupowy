@@ -7,7 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style/child.css">
 </head>
 <body class="min-h-screen">
@@ -26,14 +26,14 @@
   </div>
 
   <div class="page-wrap max-w-2xl mx-auto px-4 py-6">
-    <h2 class="text-center text-3xl font-extrabold mb-1" style="font-family:'Bubblegum Sans',cursive;animation:rainbowText 4s linear infinite">🎯 Quiz wiedzy</h2>
+    <h2 class="text-center text-3xl font-extrabold mb-1" style="font-family:'Baloo 2',sans-serif;animation:rainbowText 4s linear infinite">🎯 Quiz wiedzy</h2>
     <p class="text-center mb-6 text-sm font-semibold" style="color:var(--text-soft)">Za każdą poprawną odpowiedź zyskasz gwiazdkę! ⭐</p>
 
     <!-- Quiz screen -->
     <div id="quiz-screen">
       <div class="flex justify-between items-center mb-2 text-sm font-bold" style="color:var(--text-soft)">
         <span id="q-counter"></span>
-        <span style="background:linear-gradient(135deg,#FFC81E,#FF9A3C);color:#fff;padding:4px 14px;border-radius:2rem;font-weight:800;font-size:13px;box-shadow:0 3px 10px rgba(255,200,30,0.3)">⭐ <span id="score-live">0</span> gwiazdek</span>
+        <span style="background:linear-gradient(135deg,#D98C2A,#F5C567);color:#fff;padding:4px 14px;border-radius:2rem;font-weight:800;font-size:13px;box-shadow:0 3px 10px rgba(217,140,42,0.3)">⭐ <span id="score-live">0</span> gwiazdek</span>
       </div>
 
       <div class="progress-track mb-4">
@@ -56,7 +56,7 @@
         <div id="result-emoji" style="font-size:4.5rem;animation:bounce-in .6s ease"></div>
         <div class="score-display mt-2" id="result-score"></div>
         <div class="star-row my-3" id="result-stars"></div>
-        <p class="font-extrabold text-xl mb-2" id="result-msg" style="font-family:'Bubblegum Sans',cursive"></p>
+        <p class="font-extrabold text-xl mb-2" id="result-msg" style="font-family:'Baloo 2',sans-serif"></p>
         <p class="text-sm mb-6 font-semibold" id="result-sub" style="color:var(--text-soft)"></p>
         <div class="flex gap-3 justify-center flex-wrap">
           <button class="btn btn-primary px-6" onclick="startQuiz()">

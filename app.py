@@ -288,13 +288,13 @@ def historia_rodzic():
     stats = ChildStats.query.filter_by(child_id=current_user.child_id) \
         .order_by(ChildStats.recorded_at.desc()).first()
     targets = _calc_daily_targets(stats)
-    return render_template('historia_rodzic.html', parent=current_user, user_id=current_user.child_id, targets=targets)
+    return render_template('historia_rodzic.html', parent=current_user, child=current_user.child, user_id=current_user.child_id, targets=targets)
 
 
 @app.route('/aktywnosc_dziecka')
 @login_required
 def aktywnosc_dziecka():
-    return render_template('aktywnosc_dziecka.html', parent=current_user, child_id=current_user.child_id)
+    return render_template('aktywnosc_dziecka.html', parent=current_user, child=current_user.child, child_id=current_user.child_id)
 
 
 @app.route('/baza_rodzic')
@@ -302,6 +302,7 @@ def aktywnosc_dziecka():
 def baza_rodzic():
     return render_template('baza_rodzic.html',
                            parent=current_user,
+                           child=current_user.child,
                            produce_cats=[c[0] for c in PRODUCE_CATEGORIES],
                            dish_cats=[c[0] for c in DISH_CATEGORIES])
 
