@@ -10,113 +10,129 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style/child.css">
 </head>
-<body class="min-h-screen">
+<body>
 
-  <div class="candy-bg" aria-hidden="true" id="candy-bg"></div>
+  <!-- ── STREFA GRADIENTU: nav + hero razem ──── -->
+  <div class="c-top-zone">
 
-  <div class="site-header">
-    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="/dziecko" class="logo">⭐ GlikoKids</a>
-      <button onclick="openPinModal()"
-         style="background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);color:#fff;border-radius:2rem;padding:0.35rem 1rem;font-weight:700;font-size:0.82rem;cursor:pointer;backdrop-filter:blur(4px);transition:background .2s;"
-         onmouseover="this.style.background='rgba(255,255,255,0.4)'"
-         onmouseout="this.style.background='rgba(255,255,255,0.25)'">
-        <i class="fas fa-user-circle me-1"></i> Panel rodzica
-      </button>
+    <nav class="c-nav">
+      <div class="c-nav-inner">
+        <a href="/dziecko" class="c-brand">GlikoKids</a>
+        <button onclick="openPinModal()" class="c-parent-btn">
+          <i class="fas fa-user-shield"></i> Panel rodzica
+        </button>
+      </div>
+    </nav>
 
-      <!-- PIN Modal -->
-      <div id="pin-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:24px;padding:2rem 2rem 1.5rem;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;animation:popIn .25s ease">
-          <div style="font-size:3rem;margin-bottom:0.5rem">🔐</div>
-          <h2 style="font-family:'Baloo 2',sans-serif;font-size:1.5rem;color:#3D9285;margin-bottom:0.25rem">Panel rodzica</h2>
-          <p style="color:#666;font-size:0.88rem;margin-bottom:1.25rem">Rodzicu, podaj swój 4-cyfrowy PIN</p>
-          <div id="pin-inputs" style="display:flex;gap:10px;justify-content:center;margin-bottom:1rem">
-            <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
-                   style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
-            <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
-                   style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
-            <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
-                   style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
-            <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
-                   style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
-          </div>
-          <p id="pin-error" style="color:#e74c3c;font-size:0.82rem;min-height:1.2em;margin-bottom:0.75rem"></p>
-          <div style="display:flex;gap:10px;justify-content:center">
-            <button onclick="closePinModal()"
-                    style="padding:0.5rem 1.4rem;border-radius:2rem;border:2px solid #ddd;background:#fff;color:#666;font-weight:700;cursor:pointer;font-size:0.9rem">
-              Anuluj
-            </button>
-            <button onclick="submitPin()"
-                    style="padding:0.5rem 1.4rem;border-radius:2rem;border:none;background:linear-gradient(135deg,#3D9285,#5BAD8C);color:#fff;font-weight:700;cursor:pointer;font-size:0.9rem">
-              Wejdź
-            </button>
-          </div>
-        </div>
+  <!-- ── HERO — pełnoszerokowy pas gradientu ── -->
+  <div id="pin-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:24px;padding:2rem 2rem 1.5rem;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;animation:popIn .25s ease">
+      <div style="font-size:3rem;margin-bottom:0.5rem">🔐</div>
+      <h2 style="font-family:'Baloo 2',sans-serif;font-size:1.5rem;color:#3D9285;margin-bottom:0.25rem">Panel rodzica</h2>
+      <p style="color:#666;font-size:0.88rem;margin-bottom:1.25rem">Rodzicu, podaj swój 4-cyfrowy PIN</p>
+      <div id="pin-inputs" style="display:flex;gap:10px;justify-content:center;margin-bottom:1rem">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
+               style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
+               style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
+               style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]"
+               style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+      </div>
+      <p id="pin-error" style="color:#e74c3c;font-size:0.82rem;min-height:1.2em;margin-bottom:0.75rem"></p>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button onclick="closePinModal()"
+                style="padding:0.5rem 1.4rem;border-radius:2rem;border:2px solid #ddd;background:#fff;color:#666;font-weight:700;cursor:pointer;font-size:0.9rem">
+          Anuluj
+        </button>
+        <button onclick="submitPin()"
+                style="padding:0.5rem 1.4rem;border-radius:2rem;border:none;background:linear-gradient(135deg,#3D9285,#5BAD8C);color:#fff;font-weight:700;cursor:pointer;font-size:0.9rem">
+          Wejdź
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="page-wrap max-w-2xl mx-auto px-4 py-5 space-y-5">
+  <!-- ── HERO — pełnoszerokowy pas gradientu ──── -->
+  <header class="c-hero-band">
+    <div class="c-wrap c-hero-content">
 
-    <div class="player-card">
-      <div class="flex items-center gap-5">
-        <div class="flex-shrink-0 text-center cursor-pointer select-none" onclick="petClick()">
-          <div class="text-6xl" style="display:inline-block;animation:wiggle 2.5s ease-in-out infinite">{{ progress.animal_icon }}</div>
-          <p id="pet-message" class="mt-1 text-xs font-bold" style="display:none;color:var(--text-soft);max-width:80px;animation:popIn .3s ease">
-            Zdobądźmy gwiazdki! ⭐
-          </p>
+      <div class="c-pet" onclick="petClick()">
+        <span class="c-pet-emoji-lg">{{ progress.animal_icon }}</span>
+        <p id="pet-message" class="c-pet-msg-hero" style="display:none">Zdobądźmy gwiazdki! ⭐</p>
+      </div>
+
+      <p class="c-greeting-hero">Cześć, <strong>{{ child.name }}</strong>! 👋</p>
+      <h1 class="c-level-hero">{{ progress.level_name }}</h1>
+
+      <div class="c-xp-section-hero">
+        <div class="c-xp-bar-hero">
+          <div class="c-xp-fill-hero" style="width:{{ progress.xp_percent }}%"></div>
         </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--text-soft)">
-              Cześć, {{ child.name }}! 👋
-            </span>
-            <div class="flex gap-2">
-              <span style="background:linear-gradient(135deg,#D98C2A,#F5C567);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(217,140,42,0.3)">⭐ {{ progress.total_xp }}</span>
-              <span style="background:linear-gradient(135deg,#3D9285,#5BAD8C);color:#fff;padding:4px 12px;border-radius:2rem;font-weight:800;font-size:12px;box-shadow:0 3px 8px rgba(61,146,133,0.3)">🪙 {{ progress.coins }}</span>
-            </div>
+        <span class="c-xp-label-hero">{{ progress.xp_in_level }} / {{ progress.xp_for_next }} XP</span>
+      </div>
+
+      <div class="c-badges-hero">
+        <span class="c-badge-hero c-badge-xp-h">⭐ {{ progress.total_xp }} XP</span>
+        <span class="c-badge-hero c-badge-coin-h">🪙 {{ progress.coins }}</span>
+      </div>
+
+    </div>
+  </header>
+
+  </div><!-- /c-top-zone -->
+
+  <!-- ── TREŚĆ GŁÓWNA ──────────────────────────── -->
+  <main class="c-wrap c-main">
+
+    <!-- AKTYWNOŚCI -->
+    <section class="c-section">
+      <div class="c-activity-grid">
+
+        <a href="/gra" class="c-activity-card c-gry">
+          <span class="c-act-deco" aria-hidden="true">🎮</span>
+          <div class="c-act-icon">🎮</div>
+          <span class="c-act-label">Gry</span>
+          <span class="c-act-sub">Misje i gwiazdki</span>
+        </a>
+
+        <a href="/quiz" class="c-activity-card c-quiz">
+          <span class="c-act-deco" aria-hidden="true">❓</span>
+          <div class="c-act-icon">❓</div>
+          <span class="c-act-label">Quiz</span>
+          <span class="c-act-sub">Sprawdź wiedzę</span>
+        </a>
+
+        <a href="/posilek" class="c-activity-card c-posilek">
+          <span class="c-act-deco" aria-hidden="true">🍽️</span>
+          <div class="c-act-icon">🍽️</div>
+          <span class="c-act-label">Posiłek</span>
+          <span class="c-act-sub">Zapisz co zjadłeś</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ZNAJOMI -->
+    <section class="c-section">
+      <div class="c-friends-card">
+        <div class="c-friends-header">
+          <span class="c-friends-title">Znajomi</span>
+          <span class="c-friends-count" id="friends-count" style="display:none"></span>
+        </div>
+        <div class="c-friends-body">
+          <div id="friends-grid" class="c-friends-grid"></div>
+          <div id="friends-empty" class="c-friends-empty" style="display:none">
+            <span class="c-friends-empty-icon">🌟</span>
+            <p class="c-friends-empty-text">Nie masz jeszcze znajomych</p>
+            <p class="c-friends-empty-hint">Poproś rodzica, żeby dodał znajomego!</p>
           </div>
-          <h3 class="text-2xl font-extrabold mb-3" style="font-family:'Baloo 2',sans-serif;color:var(--orange);text-shadow:0 2px 6px rgba(232,127,36,0.2)">{{ progress.level_name }}</h3>
-          <div style="background:var(--gray);border-radius:20px;height:20px;overflow:hidden;border:2px solid var(--gray-md);box-shadow:inset 0 2px 4px rgba(0,0,0,0.08)">
-            <div style="width:{{ progress.xp_percent }}%;height:100%;border-radius:20px;background:linear-gradient(90deg,#FF6B9D,#FFC81E,#2ECC71);background-size:200% 100%;animation:shimmer 2s linear infinite"></div>
-          </div>
-          <p class="text-xs font-bold mt-1" style="color:var(--text-soft)">{{ progress.xp_in_level }} / {{ progress.xp_for_next }} XP do następnego poziomu</p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div>
-      <h2 class="text-center text-3xl font-extrabold mb-5" style="font-family:'Baloo 2',sans-serif;animation:rainbowText 4s linear infinite">Co chcesz robić? 🎮</h2>
-      <div class="grid grid-cols-3 gap-4">
-
-        <a href="/gra" class="activity-card gry">
-          <div class="activity-icon">🎮</div>
-          <span class="activity-label">GRY</span>
-          <span class="activity-sub">Zdobądź gwiazdki!</span>
-        </a>
-
-        <a href="/quiz" class="activity-card quiz">
-          <div class="activity-icon">❓</div>
-          <span class="activity-label">QUIZ</span>
-          <span class="activity-sub">Sprawdź wiedzę!</span>
-        </a>
-
-        <a href="/posilek" class="activity-card posilek">
-          <div class="activity-icon">🍽️</div>
-          <span class="activity-label">POSIŁEK</span>
-          <span class="activity-sub">Zapisz co zjadłeś!</span>
-        </a>
-
-      </div>
-    </div>
-
-    <div class="friends-card">
-      <h3 class="text-xl font-extrabold mb-4" style="font-family:'Baloo 2',sans-serif;color:var(--purple)">👫 Twoi znajomi</h3>
-      <div id="friends-grid" class="grid grid-cols-3 gap-3 text-center"></div>
-      <p id="friends-empty" class="text-center text-sm font-bold" style="color:var(--text-soft);display:none;">Nie masz jeszcze znajomych 🌟<br><span style="font-size:0.75rem;font-weight:400;">Poproś rodzica, żeby dodał znajomego!</span></p>
-    </div>
-
-  </div>
+  </main>
 
   <script>
     function petClick() {
@@ -124,22 +140,8 @@
       m.style.display = m.style.display === 'none' ? 'block' : 'none';
     }
 
-    (function() {
-      const emojis = ['⭐','🍎','🍊','🍋','🍇','🍓','🌟','💫','🎈','🎉','🍭','🧁','🌈','✨','🦋'];
-      const bg = document.getElementById('candy-bg');
-      for (let i = 0; i < 18; i++) {
-        const s = document.createElement('span');
-        s.textContent = emojis[i % emojis.length];
-        s.style.left = (Math.random() * 100) + '%';
-        s.style.fontSize = (1 + Math.random() * 1.2) + 'rem';
-        s.style.animationDuration = (7 + Math.random() * 10) + 's';
-        s.style.animationDelay = (Math.random() * 12) + 's';
-        bg.appendChild(s);
-      }
-    })();
-
     const BADGE_GRADIENTS = [
-      'linear-gradient(135deg,#FF6B9D,#FF4081)',
+      'linear-gradient(135deg,#82C9A8,#4A9878)',
       'linear-gradient(135deg,#D98C2A,#F5C567)',
       'linear-gradient(135deg,#2ECC71,#27AE60)',
       'linear-gradient(135deg,#3498DB,#2980B9)',
@@ -150,28 +152,32 @@
     async function loadFriends() {
       const grid  = document.getElementById('friends-grid');
       const empty = document.getElementById('friends-empty');
+      const count = document.getElementById('friends-count');
       try {
         const res     = await fetch('/api/friends');
         const friends = await res.json();
         if (!Array.isArray(friends) || friends.length === 0) {
           grid.innerHTML = '';
-          empty.style.display = 'block';
+          empty.style.display = 'flex';
           return;
         }
         empty.style.display = 'none';
-        const delays = ['0s', '.4s', '.8s', '1.2s', '1.6s', '2s'];
+        count.textContent = friends.length + (friends.length === 1 ? ' znajomy' : ' znajomych');
+        count.style.display = 'inline-flex';
+        const delays = ['0s', '.3s', '.6s', '.9s', '1.2s', '1.5s'];
         grid.innerHTML = friends.map((f, i) => {
           const grad  = BADGE_GRADIENTS[i % BADGE_GRADIENTS.length];
           const delay = delays[i % delays.length];
           return `
-            <div class="friend-item">
-              <span style="font-size:2.8rem;animation:floatBob 3s ease-in-out infinite;animation-delay:${delay};display:block">${f.animal_icon}</span>
-              <span class="font-bold text-sm">${escHtml(f.name)}</span>
-              <span class="badge font-bold text-xs" style="background:${grad};color:#fff;border:none;">${escHtml(f.level_name)}</span>
-              <div style="margin-top:4px;background:rgba(0,0,0,0.08);border-radius:20px;height:6px;width:80%;margin-left:auto;margin-right:auto;">
-                <div style="width:${f.xp_percent}%;height:100%;border-radius:20px;background:linear-gradient(90deg,#FF6B9D,#FFC81E);"></div>
+            <div class="c-friend-card" style="--fg:${grad};animation-delay:${delay}">
+              <div class="c-friend-stripe"></div>
+              <div class="c-friend-avatar" style="animation-delay:${delay}">${f.animal_icon}</div>
+              <span class="c-friend-name">${escHtml(f.name)}</span>
+              <span class="c-friend-level">${escHtml(f.level_name)}</span>
+              <div class="c-friend-xp-track">
+                <div class="c-friend-xp-fill" style="width:${f.xp_percent}%"></div>
               </div>
-              <span style="font-size:0.65rem;color:var(--text-soft);font-weight:600;">${f.xp_in_level}/${f.xp_for_next} XP</span>
+              <span class="c-friend-xp-label">${f.xp_in_level}/${f.xp_for_next} XP</span>
             </div>`;
         }).join('');
       } catch(e) {

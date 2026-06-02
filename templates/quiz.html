@@ -15,79 +15,133 @@
   <!-- Confetti container -->
   <div id="confetti-container" aria-hidden="true"></div>
 
-  <!-- Floating candy background -->
-  <div class="candy-bg" aria-hidden="true" id="candy-bg"></div>
+  <!-- Nawigacja -->
+  <nav class="c-nav">
+    <div class="c-nav-inner">
+      <a href="/dziecko" class="c-brand">GlikoKids</a>
+      <button onclick="openPinModal()" class="c-parent-btn">
+        <i class="fas fa-user-shield"></i> Panel rodzica
+      </button>
+    </div>
+  </nav>
 
-  <!-- Header -->
-  <div class="site-header">
-    <div class="max-w-2xl mx-auto px-4 py-4 text-center">
-      <a href="/dziecko" class="logo">⭐ GlikoKids</a>
+  <!-- PIN Modal -->
+  <div id="pin-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:24px;padding:2rem 2rem 1.5rem;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;animation:popIn .25s ease">
+      <div style="font-size:3rem;margin-bottom:0.5rem">🔐</div>
+      <h2 style="font-family:'Baloo 2',sans-serif;font-size:1.5rem;color:#3D9285;margin-bottom:0.25rem">Panel rodzica</h2>
+      <p style="color:#666;font-size:0.88rem;margin-bottom:1.25rem">Rodzicu, podaj swój 4-cyfrowy PIN</p>
+      <div id="pin-inputs" style="display:flex;gap:10px;justify-content:center;margin-bottom:1rem">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]" style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]" style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]" style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+        <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]" style="width:52px;height:58px;font-size:1.6rem;text-align:center;border:2px solid #ddd;border-radius:12px;outline:none;font-weight:700;transition:border-color .2s">
+      </div>
+      <p id="pin-error" style="color:#e74c3c;font-size:0.82rem;min-height:1.2em;margin-bottom:0.75rem"></p>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button onclick="closePinModal()" style="padding:0.5rem 1.4rem;border-radius:2rem;border:2px solid #ddd;background:#fff;color:#666;font-weight:700;cursor:pointer;font-size:0.9rem">Anuluj</button>
+        <button onclick="submitPin()" style="padding:0.5rem 1.4rem;border-radius:2rem;border:none;background:linear-gradient(135deg,#3D9285,#5BAD8C);color:#fff;font-weight:700;cursor:pointer;font-size:0.9rem">Wejdź</button>
+      </div>
     </div>
   </div>
 
-  <div class="page-wrap max-w-2xl mx-auto px-4 py-6">
-    <h2 class="text-center text-3xl font-extrabold mb-1" style="font-family:'Baloo 2',sans-serif;animation:rainbowText 4s linear infinite">🎯 Quiz wiedzy</h2>
-    <p class="text-center mb-6 text-sm font-semibold" style="color:var(--text-soft)">Za każdą poprawną odpowiedź zyskasz gwiazdkę! ⭐</p>
+  <!-- Treść quizu -->
+  <div class="c-wrap q-main">
 
-    <!-- Quiz screen -->
+    <!-- Ekran pytania -->
     <div id="quiz-screen">
-      <div class="flex justify-between items-center mb-2 text-sm font-bold" style="color:var(--text-soft)">
-        <span id="q-counter"></span>
-        <span style="background:linear-gradient(135deg,#D98C2A,#F5C567);color:#fff;padding:4px 14px;border-radius:2rem;font-weight:800;font-size:13px;box-shadow:0 3px 10px rgba(217,140,42,0.3)">⭐ <span id="score-live">0</span> gwiazdek</span>
-      </div>
+      <div class="q-card">
 
-      <div class="progress-track mb-4">
-        <div class="progress-bar-quiz" id="progress-bar" style="width:0%"></div>
-      </div>
-
-      <div class="quiz-card">
-        <div class="question-text" id="question-text"></div>
-        <div id="answers-container"></div>
-        <div class="feedback-text text-center" id="feedback-text"></div>
-        <div class="text-center mt-3">
-          <button class="btn btn-primary px-8" id="next-btn" style="display:none" onclick="nextQuestion()"></button>
+        <!-- Zielony header karty: licznik + progress + wynik -->
+        <div class="q-card-head">
+          <div class="q-head-row">
+            <span class="q-counter" id="q-counter">Pytanie 1 / 10</span>
+            <span class="q-score-pill">⭐ <span id="score-live">0</span></span>
+          </div>
+          <div class="q-track">
+            <div class="progress-bar-quiz" id="progress-bar" style="width:0%"></div>
+          </div>
         </div>
+
+        <!-- Biała treść: pytanie + odpowiedzi -->
+        <div class="q-card-body">
+          <div class="question-text" id="question-text"></div>
+          <div id="answers-container" class="q-answers"></div>
+          <div class="feedback-text" id="feedback-text"></div>
+          <div class="q-next-wrap">
+            <button class="q-next-btn" id="next-btn" style="display:none" onclick="nextQuestion()">
+              Następne <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Results screen -->
+    <!-- Ekran wyników -->
     <div id="results-screen" style="display:none">
-      <div class="quiz-card shadow-xl text-center">
-        <div id="result-emoji" style="font-size:4.5rem;animation:bounce-in .6s ease"></div>
-        <div class="score-display mt-2" id="result-score"></div>
-        <div class="star-row my-3" id="result-stars"></div>
-        <p class="font-extrabold text-xl mb-2" id="result-msg" style="font-family:'Baloo 2',sans-serif"></p>
-        <p class="text-sm mb-6 font-semibold" id="result-sub" style="color:var(--text-soft)"></p>
-        <div class="flex gap-3 justify-center flex-wrap">
-          <button class="btn btn-primary px-6" onclick="startQuiz()">
-            <i class="fas fa-redo mr-1"></i> Zagraj jeszcze raz
+      <div class="q-results-card">
+        <div class="q-result-emoji" id="result-emoji"></div>
+        <div class="score-display" id="result-score"></div>
+        <div class="star-row" id="result-stars"></div>
+        <p class="q-result-msg" id="result-msg"></p>
+        <p class="q-result-sub" id="result-sub"></p>
+        <div class="q-result-btns">
+          <button class="q-btn-primary" onclick="startQuiz()">
+            <i class="fas fa-redo"></i> Jeszcze raz
           </button>
-          <a href="/dziecko" class="btn btn-outline px-6">← Powrót do menu</a>
+          <a href="/dziecko" class="q-btn-ghost">← Menu</a>
         </div>
       </div>
     </div>
 
-    <div class="text-center mt-4">
-      <a href="/dziecko" class="btn btn-ghost" id="back-btn">← Powrót do menu</a>
+    <div class="q-back-wrap">
+      <a href="/dziecko" class="q-back-link" id="back-btn">
+        <i class="fas fa-chevron-left"></i> Powrót do menu
+      </a>
     </div>
+
   </div>
 
   <script>const CHILD_ID = {{ user_id }};</script>
   <script src="/js/quiz.js"></script>
   <script>
-    (function() {
-      const emojis = ['⭐','💫','🌟','❓','🎯','✨','🏆','🎉','🧠','📚','💡','🎈'];
-      const bg = document.getElementById('candy-bg');
-      for (let i = 0; i < 14; i++) {
-        const s = document.createElement('span');
-        s.textContent = emojis[i % emojis.length];
-        s.style.left = (Math.random() * 100) + '%';
-        s.style.fontSize = (0.9 + Math.random() * 1.1) + 'rem';
-        s.style.animationDuration = (8 + Math.random() * 10) + 's';
-        s.style.animationDelay = (Math.random() * 14) + 's';
-        bg.appendChild(s);
-      }
-    })();
+    function openPinModal() {
+      const m = document.getElementById('pin-modal');
+      m.style.display = 'flex';
+      document.getElementById('pin-error').textContent = '';
+      document.querySelectorAll('.pin-digit').forEach(function(el) { el.value = ''; el.style.borderColor = '#ddd'; });
+      document.querySelectorAll('.pin-digit')[0].focus();
+    }
+    function closePinModal() { document.getElementById('pin-modal').style.display = 'none'; }
+    document.getElementById('pin-modal').addEventListener('click', function(e) { if (e.target === this) closePinModal(); });
+    document.querySelectorAll('.pin-digit').forEach(function(input, idx, all) {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !input.value && idx > 0) all[idx - 1].focus();
+        if (e.key === 'Enter') submitPin();
+      });
+      input.addEventListener('input', function() {
+        input.value = input.value.replace(/[^0-9]/g, '').slice(-1);
+        if (input.value && idx < all.length - 1) all[idx + 1].focus();
+        input.style.borderColor = input.value ? '#3D9285' : '#ddd';
+      });
+    });
+    async function submitPin() {
+      const pin = Array.from(document.querySelectorAll('.pin-digit')).map(function(d) { return d.value; }).join('');
+      const errEl = document.getElementById('pin-error');
+      if (pin.length !== 4) { errEl.textContent = 'Wpisz wszystkie 4 cyfry.'; return; }
+      try {
+        const res = await fetch('/api/verify-pin', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({pin: pin}) });
+        const data = await res.json();
+        if (data.ok) { window.location.href = '/rodzic'; }
+        else {
+          errEl.textContent = data.error || 'Nieprawidłowy PIN.';
+          document.querySelectorAll('.pin-digit').forEach(function(d) { d.value = ''; d.style.borderColor = '#e74c3c'; });
+          document.querySelectorAll('.pin-digit')[0].focus();
+        }
+      } catch(e) { errEl.textContent = 'Błąd połączenia. Spróbuj ponownie.'; }
+    }
   </script>
+
 </body>
 </html>
