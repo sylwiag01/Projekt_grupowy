@@ -1,5 +1,5 @@
-const QUESTIONS = [
-    // --- TWOJE ORYGINALNE PYTANIA ---
+// --- ZESTAW DLA STARSZYCH (ORYGINALNY) ---
+const QUESTIONS_NORMAL = [
     {
         q: 'Ile gramów węglowodanów odpowiada 1 WW?',
         answers: ['5 g', '10 g', '15 g', '20 g'],
@@ -90,8 +90,6 @@ const QUESTIONS = [
         correct: 1,
         explain: '10 g ÷ 10 = 1 WW. Mleko ma też WBT, bo zawiera białko i tłuszcz.',
     },
-
-    // --- NOWE PYTANIA ---
     {
         q: 'Ile kilokalorii (kcal) z białka i tłuszczu odpowiada 1 WBT?',
         answers: ['50 kcal', '100 kcal', '150 kcal', '200 kcal'],
@@ -154,189 +152,16 @@ const QUESTIONS = [
     }
 ];
 
-let currentIndex = 0;
-let score = 0;
-let answered = false;
-let questions = [];
-
-function playSound(type) {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const schedule = (freq, start, dur, vol = 0.28) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.type = 'sine'; osc.frequency.value = freq;
-            gain.gain.setValueAtTime(vol, start);
-            gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
-            osc.start(start); osc.stop(start + dur);
-        };
-        const t = ctx.currentTime;
-        if (type === 'correct') {
-            schedule(660, t, 0.12); schedule(880, t + 0.1, 0.18);
-        } else if (type === 'wrong') {
-            schedule(320, t, 0.15); schedule(220, t + 0.14, 0.25);
-        } else if (type === 'win3') {
-            [523, 659, 784, 1047, 1319].forEach((f, i) => schedule(f, t + i * 0.12, 0.4, 0.3));
-        } else if (type === 'win') {
-            [523, 659, 784, 1047].forEach((f, i) => schedule(f, t + i * 0.13, 0.32, 0.26));
-        }
-    } catch (_) {}
-}
-
-function spawnConfetti(count = 35) {
-    const emojis = ['⭐', '🌟', '✨', '🎉', '🎊', '💫', '🏆', '🧠', '🌈'];
-    const container = document.getElementById('confetti-container');
-    if (!container) return;
-    container.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-        const el = document.createElement('span');
-        el.className = 'confetti-piece';
-        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        el.style.left = (Math.random() * 100) + '%';
-        el.style.fontSize = (14 + Math.random() * 22) + 'px';
-        el.style.animationDuration = (1.2 + Math.random() * 1.6) + 's';
-        el.style.animationDelay = (Math.random() * 0.7) + 's';
-        container.appendChild(el);
-    }
-    setTimeout(() => { container.innerHTML = ''; }, 3500);
-}
-
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-function startQuiz() {
-    questions = shuffle([...QUESTIONS]).slice(0, 5);
-    currentIndex = 0;
-    score = 0;
-    answered = false;
-    document.getElementById('results-screen').style.display = 'none';
-    document.getElementById('quiz-screen').style.display = 'block';
-    document.getElementById('back-btn').style.display = 'inline-block';
-    renderQuestion();
-}
-
-function renderQuestion() {
-    answered = false;
-    const q = questions[currentIndex];
-    const total = questions.length;
-
-    document.getElementById('q-counter').textContent = `Pytanie ${currentIndex + 1} z ${total}`;
-    document.getElementById('score-live').textContent = score;
-    document.getElementById('progress-bar').style.width = `${(currentIndex / total) * 100}%`;
-    document.getElementById('question-text').textContent = q.q;
-    document.getElementById('feedback-text').textContent = '';
-    document.getElementById('next-btn').style.display = 'none';
-
-    const shuffledAnswers = shuffle(q.answers.map((text, idx) => ({ text, idx })));
-
-    document.getElementById('answers-container').innerHTML = shuffledAnswers.map(a => `
-        <button class="answer-btn" onclick="selectAnswer(this, ${a.idx === q.correct})">
-            ${a.text}
-        </button>
-    `).join('');
-}
-
-function selectAnswer(btn, isCorrect) {
-    if (answered) return;
-    answered = true;
-
-    document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
-
-    if (isCorrect) {
-        btn.classList.add('correct');
-        score++;
-        playSound('correct');
-        const scoreLive = document.getElementById('score-live');
-        scoreLive.textContent = score;
-        scoreLive.style.animation = 'none';
-        scoreLive.offsetHeight;
-        scoreLive.style.animation = 'popInBounce .35s cubic-bezier(.34,1.56,.64,1)';
-        document.getElementById('feedback-text').innerHTML =
-            `<span style="color:var(--green-dk)">🎉 Brawo! ${questions[currentIndex].explain}</span>`;
-    } else {
-        btn.classList.add('wrong');
-        playSound('wrong');
-        document.getElementById('feedback-text').innerHTML =
-            `<span style="color:var(--red)">😅 Nie tym razem. ${questions[currentIndex].explain}</span>`;
-        const correctText = questions[currentIndex].answers[questions[currentIndex].correct];
-        document.querySelectorAll('.answer-btn').forEach(b => {
-            if (b.textContent.trim() === correctText) b.classList.add('correct');
-        });
-    }
-
-    const nextBtn = document.getElementById('next-btn');
-    nextBtn.textContent = currentIndex === questions.length - 1 ? 'Zobacz wyniki 🏆' : 'Następne pytanie →';
-    nextBtn.style.display = 'inline-block';
-}
-
-function nextQuestion() {
-    currentIndex++;
-    if (currentIndex >= questions.length) {
-        showResults();
-    } else {
-        renderQuestion();
-    }
-}
-
-function logActivity(type, actScore, details) {
-    const childId = (typeof CHILD_ID !== 'undefined') ? CHILD_ID : 1;
-    fetch('/api/activity', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ child_id: childId, activity_type: type, score: actScore, details }),
-    }).catch(() => {});
-}
-
-function submitQuizResult(correctAnswers) {
-    fetch('/quiz/result', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correct_answers: correctAnswers }),
-    }).catch(() => {});
-}
-
-function showResults() {
-    document.getElementById('quiz-screen').style.display = 'none';
-    document.getElementById('back-btn').style.display = 'none';
-    document.getElementById('results-screen').style.display = 'block';
-
-    const total = questions.length;
-    const pct = score / total;
-
-    logActivity('quiz', Math.round(pct * 100), { correct: score, total });
-    submitQuizResult(score);
-
-    let emoji, msg, sub;
-    if      (pct === 1)   { emoji = '🏆'; msg = 'Idealny wynik! Jesteś mistrzem WW!';   sub = 'Wszystkie odpowiedzi poprawne – niesamowite!'; }
-    else if (pct >= 0.8)  { emoji = '🎉'; msg = 'Świetnie Ci poszło!';                  sub = 'Jeszcze trochę ćwiczeń i będziesz mistrzem!'; }
-    else if (pct >= 0.6)  { emoji = '😊'; msg = 'Dobry wynik!';                         sub = 'Wiesz już sporo – powtórz i spróbuj jeszcze raz!'; }
-    else if (pct >= 0.4)  { emoji = '🤔'; msg = 'Nieźle, ale możesz lepiej!';           sub = 'Przeczytaj objaśnienia i zagraj ponownie.'; }
-    else                  { emoji = '💪'; msg = 'Nie poddawaj się!';                    sub = 'Każda próba to nauka – spróbuj jeszcze raz!'; }
-
-    document.getElementById('result-emoji').textContent = emoji;
-    document.getElementById('result-score').textContent = `${score} / ${total}`;
-    document.getElementById('result-msg').textContent = msg;
-    document.getElementById('result-sub').textContent = sub;
-
-    const starsEl = document.getElementById('result-stars');
-    if (score > 0) {
-        starsEl.innerHTML = Array.from({ length: score }, (_, i) =>
-            `<span class="star-anim" style="animation-delay:${i * 0.08}s">⭐</span>`
-        ).join('');
-    } else {
-        starsEl.textContent = '—';
-    }
-
-    if (pct >= 0.8) {
-        playSound(pct === 1 ? 'win3' : 'win');
-        spawnConfetti(pct === 1 ? 55 : 35);
-    }
-}
-
-startQuiz();
+// --- ZESTAW DLA MŁODSZYCH DZIECI (ŁATWY JĘZYK) ---
+const QUESTIONS_KIDS = [
+    {
+        q: 'Co oznacza skrót WW, którego używamy przy jedzeniu?',
+        answers: ['Wielki Worek', 'Wymiennik Węglowodanowy', 'Wesoły Wąż', 'Woda i Witaminy'],
+        correct: 1,
+        explain: 'WW to Wymiennik Węglowodanowy – tak liczymy jedzenie, żeby wiedzieć, ile podać insuliny!'
+    },
+    {
+        q: 'Ile gramów węglowodanów (cukrów) to 1 WW?',
+        answers: ['5 gramów', '10 gramów', '15 gramów', '100 gramów'],
+        correct: 1,
+        explain: 'Jeden WW to zawsze równo 10 gramów węglowodan
