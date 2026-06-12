@@ -12,10 +12,8 @@
 </head>
 <body class="min-h-screen">
 
-  <!-- Confetti container -->
   <div id="confetti-container" aria-hidden="true"></div>
 
-  <!-- Nawigacja -->
   <nav class="c-nav">
     <div class="c-nav-inner">
       <a href="/dziecko" class="c-brand">GlikoKids</a>
@@ -25,7 +23,6 @@
     </div>
   </nav>
 
-  <!-- PIN Modal -->
   <div id="pin-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
     <div style="background:#fff;border-radius:24px;padding:2rem 2rem 1.5rem;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;animation:popIn .25s ease">
       <div style="font-size:3rem;margin-bottom:0.5rem">🔐</div>
@@ -45,14 +42,23 @@
     </div>
   </div>
 
-  <!-- Treść quizu -->
   <div class="c-wrap q-main">
 
-    <!-- Ekran pytania -->
-    <div id="quiz-screen">
+    <div id="start-menu" style="text-align: center; padding: 40px 20px;">
+        <h2 style="margin-bottom: 20px; font-family: 'Baloo 2', sans-serif; font-size: 2rem; color: #3D9285;">Wybierz poziom trudności:</h2>
+        
+        <button onclick="startQuiz('kids')" style="padding: 15px 30px; margin: 10px; font-size: 18px; border-radius: 10px; background-color: #ffd166; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            🧸 Dla młodszych
+        </button>
+        
+        <button onclick="startQuiz('normal')" style="padding: 15px 30px; margin: 10px; font-size: 18px; border-radius: 10px; background-color: #06d6a0; color: white; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            🧠 Dla starszych
+        </button>
+    </div>
+
+    <div id="quiz-screen" style="display: none;">
       <div class="q-card">
 
-        <!-- Zielony header karty: licznik + progress + wynik -->
         <div class="q-card-head">
           <div class="q-head-row">
             <span class="q-counter" id="q-counter">Pytanie 1 / 10</span>
@@ -63,7 +69,6 @@
           </div>
         </div>
 
-        <!-- Biała treść: pytanie + odpowiedzi -->
         <div class="q-card-body">
           <div class="question-text" id="question-text"></div>
           <div id="answers-container" class="q-answers"></div>
@@ -78,7 +83,6 @@
       </div>
     </div>
 
-    <!-- Ekran wyników -->
     <div id="results-screen" style="display:none">
       <div class="q-results-card">
         <div class="q-result-emoji" id="result-emoji"></div>
@@ -87,7 +91,7 @@
         <p class="q-result-msg" id="result-msg"></p>
         <p class="q-result-sub" id="result-sub"></p>
         <div class="q-result-btns">
-          <button class="q-btn-primary" onclick="startQuiz()">
+          <button class="q-btn-primary" onclick="location.reload()">
             <i class="fas fa-redo"></i> Jeszcze raz
           </button>
           <a href="/dziecko" class="q-btn-ghost">← Menu</a>
@@ -96,7 +100,7 @@
     </div>
 
     <div class="q-back-wrap">
-      <a href="/dziecko" class="q-back-link" id="back-btn">
+      <a href="/dziecko" class="q-back-link" id="back-btn" style="display: none;">
         <i class="fas fa-chevron-left"></i> Powrót do menu
       </a>
     </div>
