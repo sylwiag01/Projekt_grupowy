@@ -276,9 +276,11 @@ function shuffle(arr) {
 function startQuiz(difficulty = 'normal') {
     currentDifficulty = difficulty;
     
+    const startMenu = document.getElementById('start-menu');
+    if (startMenu) startMenu.style.display = 'none';
+    
     const sourceQuestions = (difficulty === 'kids') ? QUESTIONS_KIDS : QUESTIONS_NORMAL;
     
-    // Ustawione na 10 pytań, tak jak widać to u Ciebie w interfejsie
     questions = shuffle([...sourceQuestions]).slice(0, 10); 
     currentIndex = 0;
     score = 0;
@@ -408,6 +410,3 @@ function showResults() {
         spawnConfetti(pct === 1 ? 55 : 35);
     }
 }
-
-// Uruchomienie standardowego quizu po załadowaniu skryptu
-startQuiz('normal');
